@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[yaakaito github bloh]]></title>
+  <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2012-07-16T17:09:03+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[tanomu]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/07/16/tanomu/"/>
+    <updated>2012-07-16T17:08:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/07/16/tanomu</id>
+    <content type="html"><![CDATA[<p>たのむよーーーー</p>
+]]></content>
+  </entry>
+  
+</feed>
