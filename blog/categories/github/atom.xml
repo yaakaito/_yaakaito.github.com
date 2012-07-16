@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[yaakaito github bloh]]></title>
-  <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: github | yaakaito github bloh]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/github/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
   <updated>2012-07-16T17:32:50+09:00</updated>
   <id>http://yaakaito.github.com/</id>
@@ -12,30 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Octopressのsourceを共有してみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/16/doukana/"/>
-    <updated>2012-07-16T17:28:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/16/doukana</id>
-    <content type="html"><![CDATA[<p>AirとRetina、両方で書く場合があるのでsource以下を共有することにした。
-全部共有しても・・・という感じなのでsource以下を全部サブモジュールっぽく扱うようにした。
-多分これでうまくいってるはず！</p>
-
-<h2>airから書いてdeployした</h2>
-
-<h2>こんどはRetinaから書きたしてdeployした</h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[tanomu]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/16/tanomu/"/>
-    <updated>2012-07-16T17:08:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/16/tanomu</id>
-    <content type="html"><![CDATA[<p>たのむよーーーー</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Objective-CからgithubAPI叩く]]></title>
@@ -57,15 +33,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
 <h2>iOctocat</h2>
 
 <p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[hello world]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/14/hello-world/"/>
-    <updated>2012-07-14T16:43:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/14/hello-world</id>
-    <content type="html"><![CDATA[<p>こんにちは！！！！</p>
 ]]></content>
   </entry>
   

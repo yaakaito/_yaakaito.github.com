@@ -9,7 +9,9 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="たのむよーーーー
+  <meta name="description" content="AirとRetina、両方で書く場合があるのでsource以下を共有することにした。
+全部共有しても・・・という感じなのでsource以下を全部サブモジュールっぽく扱うようにした。
+多分これでうまくいってるはず！ airから書いてdeployした こんどはRetinaから書きたしてdeployした
 ">
   
 
@@ -69,6 +71,48 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-16T17:28:00+09:00" pubdate data-updated="true">Jul 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>AirとRetina、両方で書く場合があるのでsource以下を共有することにした。
+全部共有しても・・・という感じなのでsource以下を全部サブモジュールっぽく扱うようにした。
+多分これでうまくいってるはず！</p>
+
+<h2>airから書いてdeployした</h2>
+
+<h2>こんどはRetinaから書きたしてdeployした</h2>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2012/07/16/tanomu/">Tanomu</a></h1>
     
     
@@ -100,6 +144,92 @@
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-16T12:07:00+09:00" pubdate data-updated="true">Jul 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
+
+<h1>UAGithubEngine</h1>
+
+<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
+GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
+特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
+pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
+per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
+
+<h1>他のgithubアプリとか</h1>
+
+<h2>iOctocat</h2>
+
+<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/14/hello-world/">Hello World</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-14T16:43:00+09:00" pubdate data-updated="true">Jul 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>こんにちは！！！！</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
     <a href="/blog/archives">Blog Archives</a>
@@ -113,7 +243,19 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/16/tanomu/">tanomu</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/14/hello-world/">hello world</a>
       </li>
     
   </ul>
