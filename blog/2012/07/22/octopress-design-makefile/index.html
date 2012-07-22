@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>yaakaito github bloh</title>
+  <title>Octopressのデザインを楽に開発するmakefile - yaakaito github bloh</title>
   <meta name="author" content="yaakaito">
 
   
@@ -19,7 +19,7 @@ $ rake install\["hoge"\] &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://yaakaito.github.com/">
+  <link rel="canonical" href="http://yaakaito.github.com/blog/2012/07/22/octopress-design-makefile/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -61,15 +61,12 @@ $ rake install\["hoge"\] &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/07/22/octopress-design-makefile/">Octopressのデザインを楽に開発するmakefile</a></h1>
+      <h1 class="entry-title">Octopressのデザインを楽に開発するmakefile</h1>
     
     
       <p class="meta">
@@ -92,7 +89,7 @@ $ rake install\["hoge"\] &hellip;">
   </header>
 
 
-  <div class="entry-content"><h2>こんにちは！</h2>
+<div class="entry-content"><h2>こんにちは！</h2>
 
 <p>この記事は僕がプレビュー用にも使っているので無駄な部分も多いですが、あまり気にしないでくださいね！</p>
 
@@ -142,66 +139,16 @@ $ rake install\["hoge"\] &hellip;">
 <p>晴れるといいですね。
 <img src="http://cdn-ak.f.st-hatena.com/images/fotolife/y/yaakaito/20120117/20120117065430.png"></p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
 
-<time datetime="2012-07-16T17:28:00+09:00" pubdate data-updated="true">Jul 16<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>AirとRetina、両方で書く場合があるのでsource以下を共有することにした。
-全部共有しても・・・という感じなのでsource以下を全部サブモジュールっぽく扱うようにした。
-多分これでうまくいってるはず！</p>
-
-<h2>airから書いてdeployした</h2>
-
-<h2>こんどはRetinaから書きたしてdeployした</h2>
-
-<p>イイネ！</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/16/tanomu/">Tanomu</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -213,113 +160,32 @@ $ rake install\["hoge"\] &hellip;">
   
 
 
-<time datetime="2012-07-16T17:08:00+09:00" pubdate data-updated="true">Jul 16<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>たのむよーーーー</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2012-07-22T13:09:00+09:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2012</time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+      <div class="sharing">
   
-
-
-<time datetime="2012-07-16T12:07:00+09:00" pubdate data-updated="true">Jul 16<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
-
-<h1>UAGithubEngine</h1>
-
-<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
-GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
-特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
-pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
-per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
-
-<h1>他のgithubアプリとか</h1>
-
-<h2>iOctocat</h2>
-
-<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/07/22/octopress-design-makefile/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/07/22/octopress-design-makefile/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/14/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
+        <a class="basic-alignment left" href="/blog/2012/07/16/doukana/" title="Previous Post: Octopressのsourceを共有してみる">&laquo; Octopressのsourceを共有してみる</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-14T16:43:00+09:00" pubdate data-updated="true">Jul 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>こんにちは！！！！</p>
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -356,6 +222,7 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
 
   
 </aside>
+
 
     </div>
   </div>
