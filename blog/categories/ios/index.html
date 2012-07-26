@@ -30,7 +30,7 @@
 </head>
 
 <body   >
-  <header role="banner">
+  <header role="banner" class="clear-fix">
     <h1><a href="/"><span>yaakaito github bloh</span></a></h1>
 
 <nav role="navigation"><ul>
@@ -41,7 +41,7 @@
 </nav>
 
   </header>
-  <div role="main">
+  <div role="main" class="separator">
     <div>
 <article role="article">
   
@@ -104,7 +104,13 @@
     
   </ul>
 </section>
-
+<section id="github-repositories">
+  <h3>Github Repositories</h3>
+  <div>
+    <ul class="repositories">
+    </ul>
+  </div> 
+</section>
 
 
 
@@ -116,6 +122,53 @@
 
   </div>
   <aside role="complementary">
+    <div class=".clearfix">
+<section id="recent-archives">
+  <h3>Recent Archives</h3>
+  <div>
+    <ul>
+      
+        <li class="post">
+          <a href="/blog/2012/07/22/octopress-templete/">Octopressのテンプレートを書き換える</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/07/22/octopress-design-makefile/">Octopressのデザインを楽に開発するmakefile</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/07/16/tanomu/">tanomu</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a>
+        </li>
+      
+    </ul>
+  </div>
+</section>
+
+<section id="github-repositories">
+  <h3>Github Repositories</h3>
+  <div>
+    <ul class="repositories">
+    </ul>
+  </div> 
+</section>
+
+<section id="coderwall-badges">
+  <h3>Coderwall Badges</h3>
+  <div>
+    <ul class="badges">
+    </ul>
+  </div> 
+</section>
+
+</div>
     
   </aside>
   <footer role="contentinfo"><p>
@@ -124,27 +177,5 @@
 </p>
 
 </footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
 </body>
 </html>
