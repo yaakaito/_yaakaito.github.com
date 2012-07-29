@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-07-27T01:51:53+09:00</updated>
+  <updated>2012-07-29T19:42:03+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,170 +14,25 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Octopressのテンプレートを書き換える]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/22/octopress-templete/"/>
-    <updated>2012-07-22T21:42:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/22/octopress-templete</id>
-    <content type="html"><![CDATA[<h2>自分のブログくらい自分でデザイン書くんや！</h2>
+    <title type="html"><![CDATA[テストのページだよ]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/07/28/test-page/"/>
+    <updated>2012-07-28T23:06:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/07/28/test-page</id>
+    <content type="html"><![CDATA[<p>aaa
+aaa
+aaa
+aaa
+aa
+aa
+a
+a
+a
+a</p>
 
-<p>というわけでがんばっています。
-経過で分かったこととかまとめておくと誰か喜ぶかもしれないので書いてみました。</p>
-
-<h2>とりあえず全体を弄る</h2>
-
-<p>とりあえず全体を弄りたいときはまず<code>_layout/default.html</code>これが全部の基準になるのでここから読んでいきます。
-こんな感じになってる(省略してます)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;body&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;header</span> <span class="na">role=</span><span class="s">&quot;banner&quot;</span><span class="nt">&gt;</span><h1><a href="http://yaakaito.github.com/"><span>yaakaito github bloh</span></a></h1>
-
-<nav role="navigation"><ul>
-  <li><a href="http://yaakaito.github.com/blog/archives">Archives</a></li>
-  <li><a href="http://yaakaito.github.com/resume">Resume</a></li>
-  <li><a href="http://yaakaito.github.com/contact">Contact</a></li>
-</ul>
-</nav>
-<span class="nt">&lt;/header&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;nav</span> <span class="na">role=</span><span class="s">&quot;navigation&quot;</span><span class="nt">&gt;</span><ul class="subscription" data-subscription="rss">
-  <li><a href="http://yaakaito.github.com/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:yaakaito.github.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul>
-  <li><a href="http://yaakaito.github.com/blog/archives">Archives</a></li>
-  <li><a href="http://yaakaito.github.com/resume">Resume</a></li>
-  <li><a href="http://yaakaito.github.com/contact">Contact</a></li>
-</ul>
-
-<span class="nt">&lt;/nav&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;content&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      Liquid error: undefined method `gsub' for nil:NilClass
-</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;footer</span> <span class="na">role=</span><span class="s">&quot;contentinfo&quot;</span><span class="nt">&gt;</span><p>
-  Copyright &copy; 2012 - yaakaito -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-<span class="nt">&lt;/footer&gt;</span>
-</span><span class='line'>  
-
-<script type="text/javascript">
-      var disqus_shortname = 'yaakaitoorg';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://yaakaito.github.com/blog/2012/07/22/octopress-templete/';
-        var disqus_url = 'http://yaakaito.github.com/blog/2012/07/22/octopress-templete/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</span><span class='line'><span class="nt">&lt;/body&gt;</span>
-</span><span class='line'><span class="nt">&lt;/html&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>今回はナビゲーションはheaderの中にいれたりとか、大外のdivは１つが都合がよかったので修正しました。
-あとはroleもトップにタイトルをでかでかと配置するわけでもないので少し変更。</p>
-
-<p>ここからはこれをベースに読んでいきます。</p>
-
-<h2>ヘッダーをいじる</h2>
-
-<p>どうやら <code>_include/header.html</code> と <code>_include/navigation.html</code> を弄れば良さげに見えます。
-まずは <code>_include/header.html</code> をみてみましょう、実装が・・・ないだと・・・。
-<code>_include/custome/header.html</code>をみろとのことなのでそっちを見ましょう。ありましたね！！１
-自分のスタイルにあわせて編集しましょう。</p>
-
-<p>次はナビゲーション、今回はheader > nav な構築なのであわせてしまってもよいかもしれません。
-とりあえず <code>_include/navigation</code> をみてみましょう、お、今回は結構ある！
-けどやっぱり肝心の弄りたいところはcustom下にあるんですね、ふーむ。
-いろいろ悩んだ結果今回は検索は別でやるしってことで <code>_include/navigation.html</code> は捨てて <code>_include/header.html</code>から
-<code>_include/custom/header.html</code>と<code>_include/custom/navigation</code>を呼ぶことに。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;header</span> <span class="na">role=</span><span class="s">&quot;banner&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <h1><a href="http://yaakaito.github.com/"><span>yaakaito github bloh</span></a></h1>
-
-<nav role="navigation"><ul>
-  <li><a href="http://yaakaito.github.com/blog/archives">Archives</a></li>
-  <li><a href="http://yaakaito.github.com/resume">Resume</a></li>
-  <li><a href="http://yaakaito.github.com/contact">Contact</a></li>
-</ul>
-</nav>
-
-</span><span class='line'>  <span class="nt">&lt;/header&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じにして、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><h1><a href="http://yaakaito.github.com/"><span>yaakaito github bloh</span></a></h1>
-
-</span><span class='line'><span class="nt">&lt;nav</span> <span class="na">role=</span><span class="s">&quot;navigation&quot;</span><span class="nt">&gt;</span>\{\% include custom/navigation.html \%\}<span class="nt">&lt;/nav&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>さらにこんな感じにする、headerとかnavigationの内容はちょいちょいかわりそうなので<code>custom</code>以下にあるのが良さそうですね。</p>
+<p>a
+a
+a
+aaaaaaaaa</p>
 ]]></content>
   </entry>
   
