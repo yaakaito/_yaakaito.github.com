@@ -9,9 +9,9 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Blog Archive 2012 Angular.jsでcoderwallのバッチ取得してみる
-Jul 30 2012 posted in AngularJS, JavaScript テストのページだよ
-Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
+  <meta name="description" content="Blog Archive 2012 OctopressでAngularJSを使う
+Aug 01 2012 posted in AngularJS, JavaScript, Octopress Angular.jsでcoderwallのバッチ取得してみる
+Jul 30 2012 posted in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -58,6 +58,20 @@ Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
 
   
   <h2>2012</h2>
+
+<article>
+  
+<h1><a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a></h1>
+<time datetime="2012-08-01T02:54:00+09:00" pubdate><span class='month'>Aug</span> <span class='day'>01</span> <span class='year'>2012</span></time>
+
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/octopress/'>Octopress</a></span>
+</footer>
+
+
+</article>
+
+
 
 <article>
   
@@ -155,6 +169,10 @@ Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
         </li>
       
@@ -170,22 +188,36 @@ Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
           <a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a>
         </li>
       
-        <li class="post">
-          <a href="/blog/2012/07/16/tanomu/">tanomu</a>
-        </li>
-      
     </ul>
   </div>
   <p><a href="./archives/">Show All &raquo;</a></p>
 </section>
+
 <section id="github-repositories">
   <h3>Github Repositories</h3>
-  <div>
+  <div ng-controller="githubCtlr">
     <ul class="repositories">
+      
+        <li ng-repeat="repo in repos" data-lang="{{ repo.language | lowercase }}">
+          <a href="{{ repo.html_url }}">{{ repo.full_name }}</a>
+        </li>
+      
     </ul>
   </div> 
   <p><a href="http://github.com/">Show Github &raquo;</a></p>
+  <script>
+    function githubCtlr($scope, $http) {
+      $scope.repos = [];
+      $http.jsonp("https://api.github.com/users/yaakaito/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+        var count = 7 || 5;
+        for(var i = 0; i < count; i++) {
+          $scope.repos.push(data.data[i]);
+        }
+      });
+    }
+  </script>
 </section>
+
 
 <section id="coderwall-badges">
   <h3>Coderwall Badges</h3>
@@ -198,8 +230,6 @@ Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
       
     </ul>
   </div> 
-  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
-  </div>
   <script>
     function coderwallController($scope, $http) {
     
@@ -211,6 +241,8 @@ Jul 28 2012 posted in HTML, JavaScript, テスト &hellip;">
     }
     
   </script> 
+
+  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
 </section>
 
 

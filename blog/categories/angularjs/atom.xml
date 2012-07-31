@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-01T02:35:10+09:00</updated>
+  <updated>2012-08-01T04:32:15+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,134 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OctopressでAngularJSを使う]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/08/01/octopress-angular/"/>
+    <updated>2012-08-01T02:54:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/08/01/octopress-angular</id>
+    <content type="html"><![CDATA[<p>こんにちは！<a href="http://octopress.org">Octopress</a>、カスタマイズしてますか？
+えっ、テンプレートを変えただけ？？？自分で書きましょう！！！！</p>
+
+<h2>AngularJS使えば夢が広がるんじゃね？</h2>
+
+<p>というわけでOctopressで<a href="http://angularjs.org">AngularJS</a>使ってみよう的な話です。
+まあ別にjQueryでもいいんですけど、Octopressは静的ページですし、
+検索なんかもデフォルトはgoogleに飛ぶだけとか、結構貧相じゃないですか。
+結局のところ単純に使いたかったのが大きいんですが、
+データさえ埋め込んでおけば楽にいろいろ作れる感じがしたので、AngularJS使ってみることにしました。</p>
+
+<h2>そもそもシンタックスがぶつかるんですけど</h2>
+
+<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{{ hoge }}</code> というシンタックスがぶつかりますね。
+これは<a href="http://jekyllrb.com/">Jekyll</a>のプラグインにrawプラグインというのがあるのでそれを使うと解決できます。
+ただ、よくみたらOctopressには最初からrawプラグインがついていたので、ありがたくこれを使わせてもらいましょう。
+AngularJSの対象になるところは、(ネストできなくて外側でお茶を濁してるので\は外してくださいね)
+<code>
+{\% raw %}
+  {{ hoge.fuga }}
+{\% endraw %}
+</code>
+とか書けばよいです。簡単ですね。</p>
+
+<h2>AngularJSを読みこむ</h2>
+
+<p>問題も解決できましたし、とりあえずAngularJSを読み込みましょうか。
+<code>source/custom/head.html</code> をいじります。
+適当な場所で
+```html</p>
+
+<script src="http://code.angularjs.org/angular-1.0.1.min.js"></script>
+
+
+<p><code>
+とかいて、AngularJSを読み込みます、あとはhtmlにng-appを付けましょう。
+</code>html</p>
+
+<!--[if IEMobile 7 ]><html class="no-js iem7" ng-app><![endif]-->
+
+
+<!--[if lt IE 9]><html class="no-js lte-ie8" ng-app><![endif]-->
+
+
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!-->
+
+
+<p><html class="no-js" lang="en" ng-app><!--<![endif]-->
+```
+これでAngularJSを使う準備ができました！めっちゃ簡単ですね！: )</p>
+
+<h2>Githubのリポジトリを取ってみる</h2>
+
+<p>今作っているテンプレート(このテンプレートですね)では下の方にgithubのリポジトリが何個かでるので、これを作ってみましょう 。<code>_include/asides/github.html</code> をこんな感じにします。
+```html
+<div ng-controller="githubCtlr">
+  <ul class="repositories"></p>
+
+<pre><code>{\% raw %}
+  &lt;li ng-repeat="repo in repos" data-lang="{{ repo.language | lowercase }}"&gt;
+    &lt;a href="{{ repo.html_url }}"&gt;{{ repo.full_name }}&lt;/a&gt;
+  &lt;/li&gt;
+{\% endraw %}
+</code></pre>
+
+<p>  </ul>
+</div>
+<code>
+これにあわせたJSを書きます。
+</code>javascript</p>
+
+<script>
+  function githubCtlr($scope, $http) {
+    $scope.repos = [];
+    $http.jsonp("https://api.github.com/users/yaakaito/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+      var count = {{ site.github_repo_count }} || 5;
+      for(var i = 0; i < count; i++) {
+        $scope.repos.push(data.data[i]);
+      }
+    });
+  }
+</script>
+
+
+<p><code>``
+</code>_config.yml` はちゃんと生かしたいのでちょっと面倒くさい感じになってますね。
+まあ20件くらい取ってこれば大丈夫やろ、的なザツい感じになってます。
+ともかくこれでリポジトリを取ってくることができました！やりましたね！</p>
+
+<p>デモはページの下の方をみてください！</p>
+
+<h2>エントリ本文もAngularされちゃう！</h2>
+
+<p>で、ここまではいいんです。
+けどAngularJS弄ってみたりしたらまあそれをブログに書くのは当然だよねーみたいなところで少し困ったことになります。
+なんとブログ本文もAngularJSの実行対象になってしまいました！やりましたね！！！</p>
+
+<p>raw使って生の <code>{{ hoge }}</code> にしても、
+Angularでその表示はなかったことにされるので、何が起こったのか一瞬分からなくなります。
+これは困るので解決しましょう、AngularJSを使う場所をそもそも絞ってしまうのがよいですが、
+面倒なので <code>ng-non-bindable</code> を使いましょう。 <code>ng-non-bindable</code> で囲まれた中はAngularJSの対象外になるので、何が起こったのか分かるようになります。</p>
+
+<p><code>_include/article.html</code> なんかで <code>{{ content }}</code> の周りをガッツリ囲んでしまうのが楽です。
+<code>html
+&lt;section&gt;&lt;div ng-non-bindable&gt;{{ content }}&lt;/div&gt;&lt;/section&gt;
+</code>
+これでブログが書けるようになりました！やりましたね！
+Octopress自体のことを書くときも同じことなので気をつけましょう。</p>
+
+<p>デモはこのエントリです。</p>
+
+<h2>できた！</h2>
+
+<p>これで夢が広がりましたね！！！！</p>
+
+<h2>全然関係ないですが</h2>
+
+<p>githubAPIでリポジトリ引いてくるみたいなコードよく見ますけど、
+クエリーなしだと30件しか帰ってこなくて全部みれないし、ソートが単なる名前順で微妙なので、
+<code>page</code> + <code>per_page</code> と <code>sort</code> くらいは指定した方がいいと思いますよ。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Angular.jsでcoderwallのバッチ取得してみる]]></title>

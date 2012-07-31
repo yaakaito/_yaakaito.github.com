@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: JavaScript | yaakaito github bloh]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Octopress | yaakaito github bloh]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
   <updated>2012-08-01T04:32:15+09:00</updated>
   <id>http://yaakaito.github.com/</id>
@@ -138,108 +138,6 @@ Octopress自体のことを書くときも同じことなので気をつけま�
 <p>githubAPIでリポジトリ引いてくるみたいなコードよく見ますけど、
 クエリーなしだと30件しか帰ってこなくて全部みれないし、ソートが単なる名前順で微妙なので、
 <code>page</code> + <code>per_page</code> と <code>sort</code> くらいは指定した方がいいと思いますよ。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Angular.jsでcoderwallのバッチ取得してみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/30/angular-coderwall/"/>
-    <updated>2012-07-30T00:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/30/angular-coderwall</id>
-    <content type="html"><![CDATA[<h2>Coderwallのバッチ取得するのはよくみるけど</h2>
-
-<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
-といってもjQueryなんかでやるのとそんなに変わらないです。</p>
-
-<h2>バッチを表示させるHTMLを書く</h2>
-
-<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。
-```html</p>
-
-<div ng-controller="coderwallController">
-  <ul>
-    <li ng-repeat="badge in badges">
-      <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
-    </li>
-  </ul>
-</div>
-
-
-<p>```
-こんな感じでデータをバインディングします。</p>
-
-<h2>データを取得する</h2>
-
-<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。
-```javascript
-function coderwallController($scope, $http) {</p>
-
-<p>  $scope.badges = []; <br/>
-  $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){</p>
-
-<pre><code>$scope.badges = data.data.badges;
-console.log($scope.badges);
-</code></pre>
-
-<p>  });
-}
-```
-で、取得できました！やりましたね！</p>
-
-<p>全文はgistにあります。</p>
-
-<p><div><script src='https://gist.github.com/3199870.js?file='></script>
-<noscript><pre><code>&lt;!doctype html&gt;
-&lt;html ng-app&gt; 
-  &lt;head&gt;
-    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
-      &lt;ul&gt;
-        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
-          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-
-  &lt;script&gt;
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  &lt;/script&gt;
-&lt;/html&gt;</code></pre></noscript></div>
-</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[テストのページだよ]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/28/test-page/"/>
-    <updated>2012-07-28T23:06:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/28/test-page</id>
-    <content type="html"><![CDATA[<p>aaa
-aaa
-aaa
-aaa
-aa
-aa
-a
-a
-a
-a</p>
-
-<p>a
-a
-a
-aaaaaaaaa</p>
 ]]></content>
   </entry>
   

@@ -175,6 +175,10 @@ $ rake &hellip;">
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
         </li>
       
@@ -190,22 +194,36 @@ $ rake &hellip;">
           <a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a>
         </li>
       
-        <li class="post">
-          <a href="/blog/2012/07/16/tanomu/">tanomu</a>
-        </li>
-      
     </ul>
   </div>
   <p><a href="./archives/">Show All &raquo;</a></p>
 </section>
+
 <section id="github-repositories">
   <h3>Github Repositories</h3>
-  <div>
+  <div ng-controller="githubCtlr">
     <ul class="repositories">
+      
+        <li ng-repeat="repo in repos" data-lang="{{ repo.language | lowercase }}">
+          <a href="{{ repo.html_url }}">{{ repo.full_name }}</a>
+        </li>
+      
     </ul>
   </div> 
   <p><a href="http://github.com/">Show Github &raquo;</a></p>
+  <script>
+    function githubCtlr($scope, $http) {
+      $scope.repos = [];
+      $http.jsonp("https://api.github.com/users/yaakaito/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+        var count = 7 || 5;
+        for(var i = 0; i < count; i++) {
+          $scope.repos.push(data.data[i]);
+        }
+      });
+    }
+  </script>
 </section>
+
 
 <section id="coderwall-badges">
   <h3>Coderwall Badges</h3>
@@ -218,8 +236,6 @@ $ rake &hellip;">
       
     </ul>
   </div> 
-  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
-  </div>
   <script>
     function coderwallController($scope, $http) {
     
@@ -231,6 +247,8 @@ $ rake &hellip;">
     }
     
   </script> 
+
+  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
 </section>
 
 

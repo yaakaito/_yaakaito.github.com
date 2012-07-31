@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-01T02:35:10+09:00</updated>
+  <updated>2012-08-01T04:32:15+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,156 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OctopressでAngularJSを使う]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/08/01/octopress-angular/"/>
+    <updated>2012-08-01T02:54:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/08/01/octopress-angular</id>
+    <content type="html"><![CDATA[<p>こんにちは！<a href="http://octopress.org">Octopress</a>、カスタマイズしてますか？
+えっ、テンプレートを変えただけ？？？自分で書きましょう！！！！</p>
+
+<h2>AngularJS使えば夢が広がるんじゃね？</h2>
+
+<p>というわけでOctopressで<a href="http://angularjs.org">AngularJS</a>使ってみよう的な話です。
+まあ別にjQueryでもいいんですけど、Octopressは静的ページですし、
+検索なんかもデフォルトはgoogleに飛ぶだけとか、結構貧相じゃないですか。
+結局のところ単純に使いたかったのが大きいんですが、
+データさえ埋め込んでおけば楽にいろいろ作れる感じがしたので、AngularJS使ってみることにしました。</p>
+
+<h2>そもそもシンタックスがぶつかるんですけど</h2>
+
+<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{{ hoge }}</code> というシンタックスがぶつかりますね。
+これは<a href="http://jekyllrb.com/">Jekyll</a>のプラグインにrawプラグインというのがあるのでそれを使うと解決できます。
+ただ、よくみたらOctopressには最初からrawプラグインがついていたので、ありがたくこれを使わせてもらいましょう。
+AngularJSの対象になるところは、(ネストできなくて外側でお茶を濁してるので\は外してくださいね)</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{\% raw %}
+</span><span class='line'>  {{ hoge.fuga }}
+</span><span class='line'>{\% endraw %}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか書けばよいです。簡単ですね。</p>
+
+<h2>AngularJSを読みこむ</h2>
+
+<p>問題も解決できましたし、とりあえずAngularJSを読み込みましょうか。
+<code>source/custom/head.html</code> をいじります。
+適当な場所で</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とかいて、AngularJSを読み込みます、あとはhtmlにng-appを付けましょう。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="c">&lt;!--[if IEMobile 7 ]&gt;&lt;html class=&quot;no-js iem7&quot; ng-app&gt;&lt;![endif]--&gt;</span>
+</span><span class='line'><span class="c">&lt;!--[if lt IE 9]&gt;&lt;html class=&quot;no-js lte-ie8&quot; ng-app&gt;&lt;![endif]--&gt;</span>
+</span><span class='line'><span class="c">&lt;!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]&gt;&lt;!--&gt;</span><span class="nt">&lt;html</span> <span class="na">class=</span><span class="s">&quot;no-js&quot;</span> <span class="na">lang=</span><span class="s">&quot;en&quot;</span> <span class="na">ng-app</span><span class="nt">&gt;</span><span class="c">&lt;!--&lt;![endif]--&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでAngularJSを使う準備ができました！めっちゃ簡単ですね！: )</p>
+
+<h2>Githubのリポジトリを取ってみる</h2>
+
+<p>今作っているテンプレート(このテンプレートですね)では下の方にgithubのリポジトリが何個かでるので、これを作ってみましょう 。<code>_include/asides/github.html</code> をこんな感じにします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;githubCtlr&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;repositories&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    {\% raw %}
+</span><span class='line'>      <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;repo in repos&quot;</span> <span class="na">data-lang=</span><span class="s">&quot;{{ repo.language | lowercase }}&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;{{ repo.html_url }}&quot;</span><span class="nt">&gt;</span>{{ repo.full_name }}<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    {\% endraw %}
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これにあわせたJSを書きます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">githubCtlr</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">repos</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="nx">$http</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="s2">&quot;https://api.github.com/users/yaakaito/repos?page=1&amp;per_page=20&amp;sort=pushed&amp;callback=JSON_CALLBACK&quot;</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">,</span><span class="nx">header</span><span class="p">,</span><span class="nx">config</span><span class="p">){</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="p">{</span><span class="o">%</span> <span class="nx">raw</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="nx">endraw</span> <span class="o">%</span><span class="p">}</span> <span class="o">||</span> <span class="mi">5</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">count</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$scope</span><span class="p">.</span><span class="nx">repos</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>_config.yml</code> はちゃんと生かしたいのでちょっと面倒くさい感じになってますね。
+まあ20件くらい取ってこれば大丈夫やろ、的なザツい感じになってます。
+ともかくこれでリポジトリを取ってくることができました！やりましたね！</p>
+
+<p>デモはページの下の方をみてください！</p>
+
+<h2>エントリ本文もAngularされちゃう！</h2>
+
+<p>で、ここまではいいんです。
+けどAngularJS弄ってみたりしたらまあそれをブログに書くのは当然だよねーみたいなところで少し困ったことになります。
+なんとブログ本文もAngularJSの実行対象になってしまいました！やりましたね！！！</p>
+
+<p>raw使って生の <code>{{ hoge }}</code> にしても、
+Angularでその表示はなかったことにされるので、何が起こったのか一瞬分からなくなります。
+これは困るので解決しましょう、AngularJSを使う場所をそもそも絞ってしまうのがよいですが、
+面倒なので <code>ng-non-bindable</code> を使いましょう。 <code>ng-non-bindable</code> で囲まれた中はAngularJSの対象外になるので、何が起こったのか分かるようになります。</p>
+
+<p><code>_include/article.html</code> なんかで <code>{{ content }}</code> の周りをガッツリ囲んでしまうのが楽です。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;section&gt;&lt;div</span> <span class="na">ng-non-bindable</span><span class="nt">&gt;</span>{{ content }}<span class="nt">&lt;/div&gt;&lt;/section&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでブログが書けるようになりました！やりましたね！
+Octopress自体のことを書くときも同じことなので気をつけましょう。</p>
+
+<p>デモはこのエントリです。</p>
+
+<h2>できた！</h2>
+
+<p>これで夢が広がりましたね！！！！</p>
+
+<h2>全然関係ないですが</h2>
+
+<p>githubAPIでリポジトリ引いてくるみたいなコードよく見ますけど、
+クエリーなしだと30件しか帰ってこなくて全部みれないし、ソートが単なる名前順で微妙なので、
+<code>page</code> + <code>per_page</code> と <code>sort</code> くらいは指定した方がいいと思いますよ。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Angular.jsでcoderwallのバッチ取得してみる]]></title>
