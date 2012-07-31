@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-01T02:10:29+09:00</updated>
+  <updated>2012-08-01T02:35:10+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -26,8 +26,7 @@
 <h2>バッチを表示させるHTMLを書く</h2>
 
 <p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。
-```html
-</p>
+```html</p>
 
 <div ng-controller="coderwallController">
   <ul>
@@ -38,8 +37,7 @@
 </div>
 
 
-<p>
-```
+<p>```
 こんな感じでデータをバインディングします。</p>
 
 <h2>データを取得する</h2>
