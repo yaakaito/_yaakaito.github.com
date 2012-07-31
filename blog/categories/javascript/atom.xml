@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-01T02:08:16+09:00</updated>
+  <updated>2012-08-01T02:09:38+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -59,8 +59,6 @@ console.log($scope.badges);
 }
 ```
 で、取得できました！やりましたね！</p>
-
-<p><img src="http://yaakaito.github.com/images/angular-coderwall.png"></p>
 
 <p>全文はgistにあります。</p>
 
