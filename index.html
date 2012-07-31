@@ -1,27 +1,16 @@
 
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!--[if IEMobile 7 ]><html class="no-js iem7" ng-app><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8" ng-app><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <title>yaakaito github bloh</title>
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="テストのページだよ HTML JavaScript テスト aaa
-aaa
-aaa
-aaa
-aa
-aa
-a
-a
-a
-a a
-a
-a
-aaaaaaaaa Tweet Jul 28th, 2012 yaakaito.org 主にiOSとかJavaScriptのことを書いています。 Github &hellip;">
+  <meta name="description" content="Angular.jsでcoderwallのバッチ取得してみる AngularJS JavaScript Coderwallのバッチ取得するのはよくみるけど Angularでやってみた的なのはみないなーと思ったのでやってみた。
+といってもjQueryなんかでやるのとそんなに変わらないです。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -36,6 +25,7 @@ aaaaaaaaa Tweet Jul 28th, 2012 yaakaito.org 主にiOSとかJavaScriptのこと�
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="/javascripts/ender.js"></script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script src="http://code.angularjs.org/angular-1.0.1.min.js"></script>
   <link href="/atom.xml" rel="alternate" title="yaakaito github bloh" type="application/atom+xml">
   
 
@@ -59,7 +49,7 @@ aaaaaaaaa Tweet Jul 28th, 2012 yaakaito.org 主にiOSとかJavaScriptのこと�
    
     <article class="blog clear-fix separator" role="article">
       <h1 class="separator">
-        <a href="/blog/2012/07/28/test-page/">テストのページだよ</a>
+        <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
       </h1>
   
       <div class="clear-fix">
@@ -69,11 +59,9 @@ aaaaaaaaa Tweet Jul 28th, 2012 yaakaito.org 主にiOSとかJavaScriptのこと�
 <ul>
   
     
-      <li><a href="/blog/categories/HTML/">HTML</a></li>
+      <li><a href="/blog/categories/AngularJS/">AngularJS</a></li>
     
       <li><a href="/blog/categories/JavaScript/">JavaScript</a></li>
-    
-      <li><a href="/blog/categories/テスト/">テスト</a></li>
     
   
 </ul>
@@ -82,21 +70,94 @@ aaaaaaaaa Tweet Jul 28th, 2012 yaakaito.org 主にiOSとかJavaScriptのこと�
         </aside>
         <div class="clear-fix"> 
           
-  <section><p>aaa
-aaa
-aaa
-aaa
-aa
-aa
-a
-a
-a
-a</p>
+  <section><h2>Coderwallのバッチ取得するのはよくみるけど</h2>
 
-<p>a
-a
-a
-aaaaaaaaa</p>
+<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
+といってもjQueryなんかでやるのとそんなに変わらないです。</p>
+
+<h2>バッチを表示させるHTMLを書く</h2>
+
+<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;badge in badges&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;img</span> <span class="na">ng-src=</span><span class="s">&quot;&quot;</span> <span class="na">alt=</span><span class="s">&quot;&quot;</span> <span class="na">title=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じでデータをバインディングします。</p>
+
+<h2>データを取得する</h2>
+
+<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">coderwallController</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>  <span class="nx">$http</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="s2">&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">,</span><span class="nx">header</span><span class="p">,</span><span class="nx">config</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">badges</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で、取得できました！やりましたね！</p>
+
+<p>{ %img http://yaakaito.github.com/images/angular-coderwall.png %}</p>
+
+<p>全文はgistにあります。</p>
+
+<div><script src='https://gist.github.com/3199870.js?file='></script>
+<noscript><pre><code>&lt;!doctype html&gt;
+&lt;html ng-app&gt; 
+  &lt;head&gt;
+    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
+      &lt;ul&gt;
+        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
+          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+
+  &lt;script&gt;
+    function coderwallController($scope, $http) {
+    
+      $scope.badges = [];   
+      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
+        $scope.badges = data.data.badges;
+        console.log($scope.badges);
+});
+    }
+    
+  &lt;/script&gt;
+&lt;/html&gt;</code></pre></noscript></div>
+
+
+
 </section>
   
   
@@ -129,7 +190,7 @@ aaaaaaaaa</p>
   
 
 
-<time datetime="2012-07-28T23:06:00+09:00" pubdate data-updated="true">Jul 28<span>th</span>, 2012</time></p>
+<time datetime="2012-07-30T00:53:00+09:00" pubdate data-updated="true">Jul 30<span>th</span>, 2012</time></p>
           </footer>
         </div>
       </div>
@@ -165,6 +226,10 @@ aaaaaaaaa</p>
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/07/28/test-page/">テストのページだよ</a>
         </li>
       
@@ -180,10 +245,6 @@ aaaaaaaaa</p>
           <a href="/blog/2012/07/16/tanomu/">tanomu</a>
         </li>
       
-        <li class="post">
-          <a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a>
-        </li>
-      
     </ul>
   </div>
   <p><a href="./archives/">Show All &raquo;</a></p>
@@ -196,14 +257,33 @@ aaaaaaaaa</p>
   </div> 
   <p><a href="http://github.com/">Show Github &raquo;</a></p>
 </section>
+
 <section id="coderwall-badges">
   <h3>Coderwall Badges</h3>
-  <div>
+  <div ng-controller="coderwallController">
     <ul class="badges">
+      
+      <li ng-repeat="badge in badges">
+        <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
+      </li>
+      
     </ul>
   </div> 
   <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
+  </div>
+  <script>
+    function coderwallController($scope, $http) {
+    
+      $scope.badges = [];   
+      $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){
+        $scope.badges = data.data.badges;
+        console.log($scope.badges);
+});
+    }
+    
+  </script> 
 </section>
+
 
     </div>
   </aside>
