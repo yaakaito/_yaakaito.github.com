@@ -32,7 +32,7 @@
 
 <body   >
   <header role="banner" class="clear-fix">
-    <h1><a href="/"><span>yaakaito github bloh</span></a></h1>
+    <h1 class="separator"><a href="/"><span>yaakaito github bloh</span></a></h1>
 
 <nav role="navigation"><ul>
   <li><a href="/blog/archives">Archives</a></li>
@@ -44,13 +44,12 @@
   </header>
   <div role="main" class="separator">
     <div>
-<article role="article">
+<article class="page" role="article">
   
-  <header>
-    <h1 class="entry-title">Category: Github</h1>
+    <h1 class="separator">Category: Github</h1>
     
-  </header>
   
+
   <div id="blog-archives" class="category">
 
 
@@ -73,80 +72,9 @@
 </div>
 
   
+  
 </article>
-
 </div>
-
-<aside class="sidebar">
-  
-    <section id="recent-archives">
-  <h3>Recent Archives</h3>
-  <div>
-    <ul>
-      
-        <li class="post">
-          <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/28/test-page/">テストのページだよ</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/22/octopress-design-makefile/">Octopressのデザインを楽に開発するmakefile</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/16/doukana/">Octopressのsourceを共有してみる</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/16/tanomu/">tanomu</a>
-        </li>
-      
-    </ul>
-  </div>
-  <p><a href="./archives/">Show All &raquo;</a></p>
-</section>
-<section id="github-repositories">
-  <h3>Github Repositories</h3>
-  <div>
-    <ul class="repositories">
-    </ul>
-  </div> 
-  <p><a href="http://github.com/">Show Github &raquo;</a></p>
-</section>
-
-<section id="coderwall-badges">
-  <h3>Coderwall Badges</h3>
-  <div ng-controller="coderwallController">
-    <ul class="badges">
-      
-      <li ng-repeat="badge in badges">
-        <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
-      </li>
-      
-    </ul>
-  </div> 
-  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
-  </div>
-  <script>
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  </script> 
-</section>
-
-
-  
-</aside>
-
 
   </div>
   <aside role="complementary" class="others separator clear-fix">

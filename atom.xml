@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito github bloh]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-07-31T13:46:13+09:00</updated>
+  <updated>2012-08-01T02:08:16+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -34,13 +34,17 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>% raw %&gt;
+</span><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;badge in badges&quot;</span><span class="nt">&gt;</span>
 </span><span class='line'>      <span class="nt">&lt;img</span> <span class="na">ng-src=</span><span class="s">&quot;&quot;</span> <span class="na">alt=</span><span class="s">&quot;&quot;</span> <span class="na">title=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
 </span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
 </span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>% endraw %&gt;
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -71,7 +75,7 @@
 
 <p>で、取得できました！やりましたね！</p>
 
-<p>{ %img http://yaakaito.github.com/images/angular-coderwall.png %}</p>
+<p><img src="http://yaakaito.github.com/images/angular-coderwall.png"></p>
 
 <p>全文はgistにあります。</p>
 
