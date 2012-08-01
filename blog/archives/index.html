@@ -9,9 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Blog Archive 2012 OctopressでAngularJSを使う
-Aug 01 2012 posted in AngularJS, JavaScript, Octopress Angular.jsでcoderwallのバッチ取得してみる
-Jul 30 2012 posted in &hellip;">
+  <meta name="description" content="Blog Archive {{ yearArchives.year }} {{ archive.title}} Categories: {{ category }} function ArchiveCtrl($scope) { $scope.archives = []; var current &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -49,54 +47,74 @@ Jul 30 2012 posted in &hellip;">
     
   
 
-  <div id="blog-archives">
-
-
-
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a></h1>
-<time datetime="2012-08-01T02:54:00+09:00" pubdate><span class='month'>Aug</span> <span class='day'>01</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/octopress/'>Octopress</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a></h1>
-<time datetime="2012-07-30T00:53:00+09:00" pubdate><span class='month'>Jul</span> <span class='day'>30</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a></h1>
-<time datetime="2012-07-16T12:07:00+09:00" pubdate><span class='month'>Jul</span> <span class='day'>16</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/objective-c/'>Objective-C</a>, <a class='category' href='/blog/categories/github/'>github</a>, <a class='category' href='/blog/categories/ios/'>iOS</a></span>
-</footer>
-
-
-</article>
-
+  <div class="archives" ng-controller="ArchiveCtrl">
+  <input type="text" ng-model="query" placeholder="filter words: e.g. 'Angular'"/>
+  <div ng-repeat="yearArchives in archives">
+    <h2 class="separator">{{ yearArchives.year }}</h2>
+    <section ng-repeat="archive in yearArchives.archives | filter:query">
+      <h3><a href="{{ archive.url }}">{{ archive.title}}</a></h3>
+      <ul>
+        <li>Categories:<li>
+        <li ng-repeat="category in archive.categories">
+          <a href="/blog/categories/{{ category | lowercase }}/">
+            {{ category }}
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>  
 </div>
+<script>
+function ArchiveCtrl($scope) {
+  $scope.archives = [];
+  var current, current_archive;
+  
+  
+    
+      
+      current = {year : "2012", archives : [] }
+      $scope.archives.push(current);
+    
+    current_archive = {title: "OctopressでAngularJSを使う"
+                       , url : "/blog/2012/08/01/octopress-angular/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("AngularJS");
+    
+      current_archive.categories.push("JavaScript");
+    
+      current_archive.categories.push("Octopress");
+    
+    current.archives.push(current_archive);
+  
+  
+    
+    current_archive = {title: "Angular.jsでcoderwallのバッチ取得してみる"
+                       , url : "/blog/2012/07/30/angular-coderwall/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("AngularJS");
+    
+      current_archive.categories.push("JavaScript");
+    
+    current.archives.push(current_archive);
+  
+  
+    
+    current_archive = {title: "Objective-CからgithubAPI叩く"
+                       , url : "/blog/2012/07/16/objective-c-github-api/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("github");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+}
+</script>
 
   
   
