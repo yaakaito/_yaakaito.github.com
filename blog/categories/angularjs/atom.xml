@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: AngularJS | yaakaito github bloh]]></title>
+  <title><![CDATA[Category: AngularJS | yaakaito github blog]]></title>
   <link href="http://yaakaito.github.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-02T02:27:39+09:00</updated>
+  <updated>2012-08-02T02:29:16+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
