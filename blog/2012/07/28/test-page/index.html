@@ -9,19 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="テストのページだよ HTML JavaScript テスト aaa
-aaa
-aaa
-aaa
-aa
-aa
-a
-a
-a
-a a
-a
-a
-aaaaaaaaa Tweet Jul 28th, 2012 Comments Please enable JavaScript to view the &hellip;">
+  <meta name="description" content="テストのページだよ {{ category }} function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("HTML"); $scope.categories.push("JavaScript &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -63,17 +51,27 @@ aaaaaaaaa Tweet Jul 28th, 2012 Comments Please enable JavaScript to view the &he
     <aside class="categories" role="complementary">
        
 
-<ul>
-  
-    
-      <li><a href="/blog/categories/HTML/">HTML</a></li>
-    
-      <li><a href="/blog/categories/JavaScript/">JavaScript</a></li>
-    
-      <li><a href="/blog/categories/テスト/">テスト</a></li>
-    
-  
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
 </ul>
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("HTML");
+    
+      $scope.categories.push("JavaScript");
+    
+      $scope.categories.push("テスト");
+    
+  
+}
+</script>
 
     
     </aside>

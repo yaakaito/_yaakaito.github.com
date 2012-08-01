@@ -9,8 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Angular.jsでcoderwallのバッチ取得してみる AngularJS JavaScript Coderwallのバッチ取得するのはよくみるけど Angularでやってみた的なのはみないなーと思ったのでやってみた。
-といってもjQueryなんかでやるのとそんなに変わらないです。 &hellip;">
+  <meta name="description" content="Angular.jsでcoderwallのバッチ取得してみる {{ category }} function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AngularJS"); $scope. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -52,15 +51,25 @@
     <aside class="categories" role="complementary">
        
 
-<ul>
-  
-    
-      <li><a href="/blog/categories/AngularJS/">AngularJS</a></li>
-    
-      <li><a href="/blog/categories/JavaScript/">JavaScript</a></li>
-    
-  
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
 </ul>
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("AngularJS");
+    
+      $scope.categories.push("JavaScript");
+    
+  
+}
+</script>
 
     
     </aside>
