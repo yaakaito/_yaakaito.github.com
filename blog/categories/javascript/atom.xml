@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-04T04:09:59+09:00</updated>
+  <updated>2012-08-09T02:30:17+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,398 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ParseとAngularJSでユーザー毎にデータ同期してみる]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/08/09/parse-angular-sync-app/"/>
+    <updated>2012-08-09T02:29:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/08/09/parse-angular-sync-app</id>
+    <content type="html"><![CDATA[<p>こんにちは！
+最近<a href="http://parse.com">Parse</a>というバックエンドを肩代わりしてくれるサービスを知ったので、
+ちょっとAngularJSと組み合わせてユーザー毎の情報を同期する程度のアプリを作ってみました。
+どうやら小規模なサービスでユーザー情報の同期とかに使うといいよ、みたいな感じらしいので、
+利用用途としても今作っているものにあっていそうだったので、とりあえずテストで作ってみた感じです。</p>
+
+<h2>Parseに登録する</h2>
+
+<p><a href="http://parse.com">Parse</a>にいって、「Try it for free」します。
+無料版だとAPI利用回数制限とかが結構厳しそうに見えますが、個人で作るくらいなら全然余裕なくらいはありますね。
+ログインするとDashboradにいけるので適当な名前で新しいアプリを作ります。
+QuickStart的な画面になると思うので、JavaScript用のSDKで、「New Project」を選択します。
+そうすると、ここからSDKをダウンロードしてね！という画面が下の方に出ているので、SDKをダウンロードしましょう。
+SDKをダウンロードしたら、このキーを使ってね、というのが出ているはずなので、<code>index.html</code>を弄ってキーを書き換えて、開いてみましょう。
+失敗すると「おい違うぞ」みたいな分かりやすい感じになるので、そうならなければ成功です。ついでにQuickStartにある「Test the SDK」も試してみましょう。
+これでとりあえずセットアップは終わりです。</p>
+
+<h2>チュートリアルを見ながらちょっと書いてみよう</h2>
+
+<p><a href="https://www.parse.com/tutorials/todo-app-with-javascript">JavaScriptのチュートリアル</a>をみてみましょう。
+ありがたいことに、まさにやりたいことが書いてありそうなチュートリアル準備されているので、とりあえずこれをみてみます。
+<a href="https://www.parse.com/docs/js_guide">JavaScriptのガイド</a>も一緒にみると良さげなので、これも見てみることにします。
+どうもSDKは<a href="http://documentcloud.github.com/backbone/">Backbonejs</a>ベースみたいです。正確にはbackboneライクという感じですが。
+これってjQueryとprototype同居の悪夢じゃね的な感じがありますね。わかんないですけど。どうしましょうかね。
+普通に<a href="https://parse.com/docs/rest">REST API</a>もあるので素直にAngularResouce使った方がいいんじゃないですかね。感出てきました。</p>
+
+<p>まあ今回はどんなものか試してみるだけのものなので失敗込みで、ともかく進めていきましょう。
+方針としてはbackboneライクのモデルだけ使ってその他はAngularJSに持ってもらうイメージでいきます。
+チュートリアルのコードを追っているのでチュートリアルからの転載です。
+チュートリアルはどうやら<a href="http://addyosmani.github.com/todomvc/">TODOMVC</a>のbackbonejs版を拡張しているみたいです。
+<a href="https://github.com/ParsePlatform/Todo">コードはGithub</a>にあるようです。テンプレートとかは放っておいてコアっぽいところを見ていきます。
+まずログインしてるかしてないか、みたいなところは<code>Parse.User.current()</code>で判定できるみたいです。
+<code>javascript
+if (Parse.User.current()) {
+  new ManageTodosView();
+} else {
+  new LogInView();
+}
+</code>
+で、ログインしてなかったらLogInView表示してユーザー作れよってことっぽい。
+ユーザー作るあたりを見てみると、
+```javascript
+Parse.User.signUp(username, password, { ACL: new Parse.ACL() }, {
+  success: function(user) {</p>
+
+<pre><code>new ManageTodosView();
+self.undelegateEvents();
+delete self;
+</code></pre>
+
+<p>  },
+  error: function(user, error) {</p>
+
+<pre><code>self.$(".signup-form .error").html(error.message).show();
+this.$(".signup-form button").removeAttr("disabled");
+</code></pre>
+
+<p>  }
+});
+<code>
+ほほう、ACLってどういうオプションだろ、と見てみると、
+</code>
+This creates the account with the given username and password from the fields and also applies a blank ACL on the user. This prevents anyone from reading data from the User class unless they are the user who is logged in.
+<code>
+と書いてあるので、このユーザーから登録したデータはほかのユーザーからは取得できないものだよ、ということですかね。
+つづいてログインはこんなん
+</code>javascript
+Parse.User.logIn(username, password, {
+  success: function(user) {</p>
+
+<pre><code>new ManageTodosView();
+self.undelegateEvents();
+delete self;
+</code></pre>
+
+<p>  },
+  error: function(user, error) {</p>
+
+<pre><code>self.$(".login-form .error").html("Invalid username or password. Please try again.").show();
+this.$(".login-form button").removeAttr("disabled");
+</code></pre>
+
+<p>  }
+});
+<code>
+ほほう、で、モデルの管理はBackboneライクなわけですね！やりましたね！
+</code>javascript
+var Todo = Parse.Object.extend("Todo", {
+  // ...
+});
+var TodoList = Parse.Collection.extend({
+  // ...
+});
+<code>
+こんな感じでbackboneライクにモデルを作って`save`を呼ぶとサーバーへ遅れる感じですね。
+取得は
+</code>
+// Create our collection of Todos
+this.todos = new TodoList;</p>
+
+<p>// Setup the query for the collection to look for todos from the current user
+this.todos.query = new Parse.Query(Todo);
+this.todos.query.equalTo("user", Parse.User.current());</p>
+
+<p>// ...</p>
+
+<p>// Fetch all the todo items for this user from Parse
+this.todos.fetch();
+```
+という感じっぽいです。</p>
+
+<h2>Angularで書いてみよう</h2>
+
+<p>使い方も分かってきたのでAngularで書いてみましょう。どきどきですね。＞＜</p>
+
+<h3>とりあえず簡単なビューをつくる</h3>
+
+<p>コントローラーやイベントハンドリングとかの基本的な部分はすべてAngularで面倒をみるので、
+まずは普通にそれっぽいビューを作っていきます。ライブラリを読み込んで、
+```javascript</p>
+
+<pre><code>&lt;script type="text/javascript" src="http://code.angularjs.org/angular-1.0.1.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.0.14.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="./javascripts/app.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p><code>
+
+適当な感じにビューを作ります。
+</code>html</p>
+
+<div ng-controller="AppCtrl">
+  <section>
+    <h2>account</h2>
+    <div>
+      <input ng-model="naccount" type="text" />
+      <input ng-model="npass" type="password" />
+      <button ng-click="createAccount()">create</button>
+    </div>
+    <div>
+      <input ng-model="laccount" type="text" />
+      <input ng-model="lpass" type="password" />
+      <button ng-click="login()">login</button>
+    </div>
+  </section>
+  <section>
+    <h2>Objects</h2>
+    <button ng-click="syncItems()">sync</button>
+    <div>
+      <input ng-model="itemName" type="text" />
+      <input ng-model="itemDescription" type="text" />
+      <button ng-click="addItem()">add</button>
+    </div>
+    <ul>
+      <li ng-repeat="item in items">
+       {{ item.name }} / {{ item.description }}
+      </li>
+    </ul>
+  </section>
+</div>
+
+
+<p><code>
+コントローラーはとりあえずこんな感じで。
+</code>javascript
+function AppCtrl($scope) {
+  $scope.createAccount = function() {</p>
+
+<p>  };</p>
+
+<p>  $scope.login = function() {</p>
+
+<p>  };</p>
+
+<p>  $scope.addItem = function() {</p>
+
+<p>  };</p>
+
+<p>  $scope.syncItems = function() {</p>
+
+<p>  }</p>
+
+<p>}
+```</p>
+
+<h3>Parseを使ってみる</h3>
+
+<p>準備が整ったので、まずはParseを初期化します。
+コントローラーが読み込まれたあとに、
+<code>javascript
+Parse.initialize("hoge", "hoge");
+</code>
+とします。そうしたらモデルとそのコレクションを定義します、こんな感じかな。
+```javascript
+var SyncAppObject = Parse.Object.extend("SyncAppObject", {
+  default: {</p>
+
+<pre><code>description: "description";
+</code></pre>
+
+<p>  }
+});
+var SyncAppObjectList = Parse.Collection.extend({
+  model: SyncAppObject
+  , comparator : function(obj) {</p>
+
+<pre><code>return obj.get("name");
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>モデルの準備ができたので、addItemでオブジェクトを作ってみましょう。
+```javascript
+var objectList = new SyncAppObjectList();
+$scope.items = objectList.models;</p>
+
+<p>$scope.addItem = function() {
+  var item = new SyncAppObject({ name : $scope.itemName</p>
+
+<pre><code>                             , description : $scope.itemDescription});
+</code></pre>
+
+<p>  objectList.add(item);
+  $scope.items = objectList.models;
+};
+<code>
+コレクションのインスタンスを作って、`$scope.items`へ`models`を関連づけます。
+あとは`addItem`で新しいオブジェクトを作って追加してあげるだけです。
+が、Backbone的にはプロパティへのアクセスは`get()`を使ってね、ということなので、テンプレートの方も少し修正します。
+</code>javascript</p>
+
+<pre><code>  &lt;li ng-repeat="item in items"&gt;
+    {{ item.get("name") }} / {{ item.get("description") }}
+  &lt;/li&gt;
+</code></pre>
+
+<p><code>
+これで、addを押すと、BackboneライクなオブジェクトをAngularで表示できているはずです。予想に反して問題なさそうですね。
+次にこのモデルをParseへ送りつけましょう。`save`を呼ぶだけでokです。
+</code>javascript
+item.save();
+```
+うまくいけばParseのアプリケーションのマネージメニューから、「Data Browse」をすると、ちゃんとデータが追加されているはずです。</p>
+
+<h3>ユーザー作成とログイン</h3>
+
+<p>まずはユーザーを作りますしょう。<code>createAccount</code>でチュートリアルでもでてきたsignupするコードを書きます。
+```
+$scope.createAccount = function() {
+  Parse.User.signUp($scope.naccount</p>
+
+<pre><code>                , $scope.npass
+                , { ACL: new Parse.ACL() }
+                ,  
+</code></pre>
+
+<p>  {</p>
+
+<pre><code>success: function(user) {
+  alert("ユーザー登録に成功したよ。 o(*^▽^*)o");
+}
+, error: function(user, error) {
+  alert("ユーザー登録に失敗しちゃったよ。 (ﾉ_･｡)");
+}
+</code></pre>
+
+<p>  });
+};
+<code>
+フォームからアカウントを作ってみましょう。成功したメッセージが出たら、「Data Browse」から確認してみましょう。
+Userというテーブルが増えているはずです。やりましね！
+ユーザーを作ったらそれに関連するデータとして登録するようにしましょう。
+ユーザーに関連づけるには`user`と`ACL`を設定します。
+</code>javascript
+$scope.addItem = function() {
+  if(!Parse.User.current()) {</p>
+
+<pre><code>alert("ログインするかユーザーつくってね。ヾ(@~▽~@)ノ");
+return ;
+</code></pre>
+
+<p>  }
+  var item = new SyncAppObject({name : $scope.itemName</p>
+
+<pre><code>                            , description : $scope.itemDescription
+                            , user : Parse.User.current()
+                            , ACL : new Parse.ACL(Parse.User.current())});
+</code></pre>
+
+<p>  objectList.add(item);
+  item.save(); <br/>
+  $scope.items = objectList.models;
+};
+<code>
+これでデータを追加してみて、「Data Browse」から確認します。するとユーザーのobjectIdと関連づけられているはずです。
+カラムも自動で拡張されるみたいです。便利ですね。
+ところでここで作ったユーザーとか後でやるログインした状態とかはSDK側でローカルへキャッシュしてくれるみたいです。
+だいたいできてきました！(だんだん顔文字がうざくなってきましたね)次はログインを作りましょう。
+</code>
+$scope.login = function() {
+  Parse.User.logIn($scope.laccount, $scope.lpass, {</p>
+
+<pre><code>success: function(user) {
+  alert("ログインに成功したよ。 o(*^▽^*)o");
+},
+error: function(user, error) {
+  alert("ログインに失敗しちゃったよ。 (ﾉ_･｡)");
+}
+</code></pre>
+
+<p>  });
+};
+<code>
+こんな感じにして、作ったユーザーでログインできるか試してみましょう。
+ログインできたらユーザーを切り替えたりしてみて、「Data Browse」から確認してみましょう！どうですか？成功しましたか？やりましたね！
+ついでなのでユーザー名を表示するようにしておきましょう。
+</code>html
+ <p>Login User : {{ loginUser }}</p>
+<code>
+こんな感じにかいて、初期化時に、
+</code>javascript
+if(Parse.User.current()) {
+  $scope.loginUser = Parse.User.current().get("username");
+} else {
+  $scope.loginUser = "not login";
+}
+<code>
+とかして初期の表示を作ってあげて、さらにユーザー作成やログインにフックしてビューを更新してあげます。
+</code>javascript
+$scope.loginUser = Parse.User.current().get("username");
+$scope.$apply();
+```</p>
+
+<h3>同期を実装する</h3>
+
+<p>コレクションに対して<code>fetch</code>することで取得できるはずだったので、マージとか考えなければ案外楽にいけそうです。
+今回はマージとかは何も考えてなくて、とにかくサーバーからデータを拾ってくるだけです。
+条件なんかをちょこちょこ書いてビューへ反映しましょう。
+<code>javascript
+$scope.syncItems = function() {
+  objectList.query = new Parse.Query(SyncAppObject);
+  objectList.query.equalTo("user", Parse.User.current());
+  objectList.fetch();
+  $scope.items = objectList.models;
+}
+</code>
+これでsyncを押せばサーバーからログインしているユーザーにあわせたデータを拾ってこれま・・・したが、
+AngularJSのビューの更新との相性が悪いのか、1回目のsyncだとビューに反映されないですねっていう。
+このへんはちゃんと調べてないので分かんないですが、あんまりよくないですねー。が、今回はParseがどんなもんか試すだけなのでまあおけおけ。
+とりあえずこんな感じで実装はおしまいです。
+```
+</p>
+
+<h2>コードとか</h2>
+
+<p>コードはgithubにあります。</p>
+
+<p><a href="https://github.com/yaakaito/sync-app">yaakaito/sync-app</a></p>
+
+<p>またサンプルをgh-pagesへデプロイしてあるので、どんな感じかなーと気になる人がいれば見てみるとなにかよいかもしれません。</p>
+
+<p><a href="http://yaakaito.github.com/sync-app/">yaakaito.github.com/sync-app/</a></p>
+
+<p>関係ないですが、簡単なJavaScriptアプリケーションならgh-pagesへデプロイしてしまって使うの、割とありかなーという感じが最近しています。</p>
+
+<h2>デバッガの話</h2>
+
+<p>AngularJSを結構書くうちにデバッガがほしくなってきたんですが、(AngularJSのテンプレートのデバッグがむずい)メーリングリストとかみてみたら、
+<a href="https://github.com/btford/angularjs-batarang">Batarang</a>というChrome拡張があったので僕はこれを使っています。
+これ単体の記事もそのうち書くと思います。</p>
+
+<h2>まとめ</h2>
+
+<p>思いの他うまくいった。けどやっぱりプレーンなObject返すSDKを自分で作る方がよいような気がする・・・。
+Parse自体は使った感じそんなに悪くなくて、データビュアーとかもちゃんとあるので、個人で運用するようなサービスなら全然いけそうだなーという感じでした。
+割とサーバーサイド用意するのがだるくて作る気が起きなかったものとか結構あるので、これを気にいろいろ作ってみるかもしれません。
+とにかくクライアントサイド書いてるのがすきーな人にはかなり便利なサービスでした、おすすめです。</p>
+
+<h2>教訓</h2>
+
+<p>ずっとスティーブ・Objective-C・ジョブズしててJavaScript界隈についていけていないので遅れ取り戻さないとやばいですねー。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[OctopressでAngularJSを使う]]></title>
