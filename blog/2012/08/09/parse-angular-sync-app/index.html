@@ -570,8 +570,14 @@ Userというテーブルが増えているはずです。やりましね！
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">loginUser</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$apply</span><span class="p">();</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">loginUser</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">$apply</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ログインに成功したよ。 o(*^▽^*)o&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">},</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
