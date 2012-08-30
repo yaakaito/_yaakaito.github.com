@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CoffeeScript | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/coffeescript/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2012-08-31T08:20:29+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gruntのcoffeelintタスク作ってみた]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/"/>
+    <updated>2012-08-21T01:59:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+みなさん<a href="http://www.coffeelint.org/">CoffeeLint</a>使ってますか？
+僕はあんまりCoffeeは書かないんですが、ちょっと使ってみようかなーと思っているアプリがあるので、それの下準備をしています。
+coffeelintは便利ですがいちいち
+<code>
+$ coffeelint hoge.coffee
+</code>
+とかするのはだるいですよね！
+なので<a href="https://github.com/cowboy/grunt">grunt.js</a>を使いましょう！
+(grunt.jsの説明は別にしません)</p>
+
+<h2>使い方</h2>
+
+<p>ほぼ自分用でnpmとかには登録してないのでがんばってください！</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/grunt-coffeelint">grunt-coffeelint</a></li>
+</ul>
+
+
+<p>まずはCoffeelintを入れます。
+<code>
+$ npm install -g coffeelint
+</code></p>
+
+<p>取ってきます。
+<code>
+$ git clone git://github.com/yaakaito/grunt-coffeelint.git grunt-coffeelint
+</code></p>
+
+<p>タスクをコピーします。
+<code>
+cd grunt-coffeelint
+cp -rf tasks your/grunt/dir
+</code></p>
+
+<p>あとはロードしてconfigを埋めます。
+```javascript
+grunt.loadTasks('tasks');
+grunt.initConfig({
+  // ...
+  coffeelint : {</p>
+
+<pre><code>all : { 
+  files : [
+    'coffee/*.coffee'
+  ]
+}
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>いざ！
+```
+$ grunt coffeelint
+Running "coffeelint:all" (coffeelint) task
+[ 'coffee/*.coffee' ]</p>
+
+<p>  ✓ coffee/a.coffee
+  ✓ coffee/b.coffee</p>
+
+<p>  ✓ Ok! » 0 errors and 0 warnings in 2 files</p>
+
+<p>Done, without errors.
+```</p>
+
+<p>やりましたね！！！！</p>
+
+<h2>まとめ</h2>
+
+<p>grunt.js便利なので使いましょう。</p>
+]]></content>
+  </entry>
+  
+</feed>

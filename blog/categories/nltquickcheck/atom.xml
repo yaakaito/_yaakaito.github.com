@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: iOS | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
+  <title><![CDATA[Category: NLTQuickCheck | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/nltquickcheck/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
   <updated>2012-08-31T08:20:29+09:00</updated>
   <id>http://yaakaito.github.com/</id>
@@ -12,49 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[便利なライブラリHullToRefresh作った。]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/"/>
-    <updated>2012-08-31T06:31:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！みなさんPullToRefresh使ってますか？便利ですよね。
-けど、引っ張って更新、そろそろ飽きてきませんか？てゆーか、なんでわざわざ引っ張らなきゃいけないんですか？</p>
-
-<p>それを解決するために、HullToRefreshというライブラリを作りました。名前はギャグっぽいですがマジメです。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/HullToRefresh">HullToRefresh</a></li>
-</ul>
-
-
-<p>振るとRefreshはその名の通り、iPhoneを大きく振るとイベントが飛んでくるライブラリです、すごく、すごく便利ですね。
-なんてったって画面に触る必要がありません、指を動かす必要もありません。更新したいな、と思ったときにはiPhoneでフリフリシェイクすればいいのです、楽しいですね。
-電車に乗っているときは自動で揺れを検知し、空気を読んで更新をしてくれます。なんて便利なんでしょう、指による入力なんて、もはや時代遅れなのです。
-このすばらしいアイデアの使い方はすごく簡単で、initしてフルフルNotificationを登録するだけです！！！</p>
-
-<p>```objective-c
-[HullToRefresh sharedHullHull];
-[[NSNotificationCenter defaultCenter] addObserver:self</p>
-
-<pre><code>                                     selector:@selector(callback)
-                                         name:kDidHullHullNotification
-                                       object:nil];
-</code></pre>
-
-<p>```</p>
-
-<p>ね？簡単でしょう？サンプルについてくるアプリはこんな感じになります。</p>
-
-<p><img src="/images/hullhull.png"></p>
-
-<p>すばらしいライブラリなので、是非使ってみてください！使いどころとしては、空気を読まないアプリケーション作るときに便利です。</p>
-
-<h3>まとめ</h3>
-
-<p>完全にギャグです。タイポしたときとかに出るように割と悪意を持って作っていますが、ただのギャクです。</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[dequeueReusable~の実装とテスト]]></title>
@@ -369,29 +326,6 @@ return [view.lineNumberViews count] &lt; 8; // 3つくらいは許容できる
 <p>これで<code>dequeueReusable~</code>っぽいものが実装できました。
 ビューが多くなってしまうが、不可視なビューが存在する、という状況では実装しておいて損はない機能です。
 ただやってみて実装コストは少し高めだなーと感じたので、その辺は相談、という感じでしょうか。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Objective-CからgithubAPI叩く]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/16/objective-c-github-api/"/>
-    <updated>2012-07-16T12:07:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/16/objective-c-github-api</id>
-    <content type="html"><![CDATA[<p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
-
-<h1>UAGithubEngine</h1>
-
-<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
-GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
-特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
-pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
-per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
-
-<h1>他のgithubアプリとか</h1>
-
-<h2>iOctocat</h2>
-
-<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
 ]]></content>
   </entry>
   

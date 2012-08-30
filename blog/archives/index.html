@@ -76,6 +76,54 @@ function ArchiveCtrl($scope) {
       current = {year : "2012", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "便利なライブラリHullToRefresh作った。"
+                       , url : "/blog/2012/08/31/hull-to-refresh/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Joke");
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+  
+    
+    current_archive = {title: "gruntのcoffeelintタスク作ってみた"
+                       , url : "/blog/2012/08/21/grunt-coffeelint/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("CoffeeScript");
+    
+      current_archive.categories.push("JavaScript");
+    
+      current_archive.categories.push("Node.js");
+    
+      current_archive.categories.push("grunt");
+    
+    current.archives.push(current_archive);
+  
+  
+    
+    current_archive = {title: "dequeueReusable~の実装とテスト"
+                       , url : "/blog/2012/08/19/dequeue-reusable-making/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("NLTQuickCheck");
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("QuickCheck");
+    
+      current_archive.categories.push("Testing");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "ParseとAngularJSでユーザー毎にデータ同期してみる"
                        , url : "/blog/2012/08/09/parse-angular-sync-app/"
                        , categories: []}; 
@@ -149,19 +197,23 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/08/31/hull-to-refresh/">便利なライブラリHullToRefresh作った。</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/08/21/grunt-coffeelint/">gruntのcoffeelintタスク作ってみた</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/08/19/dequeue-reusable-making/">dequeueReusable~の実装とテスト</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/08/09/parse-angular-sync-app/">ParseとAngularJSでユーザー毎にデータ同期してみる</a>
         </li>
       
         <li class="post">
           <a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a>
         </li>
       
     </ul>
