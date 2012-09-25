@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="便利なライブラリHullToRefresh作った function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Joke"); $scope.categories.push("Objective-C &hellip;">
+  <meta name="description" content="iOS6のNSAttributedStringで色とか付ける function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories.push &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -46,7 +46,7 @@
    
     <article class="blog clear-fix separator" role="article">
       <h1 class="separator">
-        <a href="/blog/2012/08/31/hull-to-refresh/">便利なライブラリHullToRefresh作った</a>
+        <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
       </h1>
   
       <div class="clear-fix">
@@ -58,11 +58,11 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("Joke");
-    
       $scope.categories.push("Objective-C");
     
       $scope.categories.push("iOS");
+    
+      $scope.categories.push("iOS6");
     
   
 }
@@ -79,43 +79,94 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは！うきょーです！みなさんPullToRefresh使ってますか？便利ですよね。
-けど、引っ張って更新、そろそろ飽きてきませんか？てゆーか、なんでわざわざ引っ張らなきゃいけないんですか？</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
+便利なので使ってみましょう！！！！</p>
 
-<p>それを解決するために、HullToRefreshというライブラリを作りました。名前はギャグっぽいですがマジメです。</p>
+<h2>サンプル</h2>
+
+<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
+このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
+
+<p>コードはいつも通りgithubにあげてあります。</p>
 
 <ul>
-<li><a href="https://github.com/yaakaito/HullToRefresh">HullToRefresh</a></li>
+<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
 </ul>
 
 
-<p>振るとRefreshはその名の通り、iPhoneを大きく振るとイベントが飛んでくるライブラリです、すごく、すごく便利ですね。
-なんてったって画面に触る必要がありません、指を動かす必要もありません。更新したいな、と思ったときにはiPhoneでフリフリシェイクすればいいのです、楽しいですね。
-電車に乗っているときは自動で揺れを検知し、空気を読んで更新をしてくれます。なんて便利なんでしょう、指による入力なんて、もはや時代遅れなのです。
-このすばらしいアイデアの使い方はすごく簡単で、initしてフルフルNotificationを登録するだけです！！！</p>
+<h2>NSAttributedStringを作る</h2>
+
+<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
+
+<p>作り方は大きく分けて二通りあって、</p>
+
+<ul>
+<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
+<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
+</ul>
+
+
+<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
+
+<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
+
+<p>まず yaakaito の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito&quot;</span>
+</span><span class='line'>                                                           <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span><span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
+この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
+他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
+よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
+
+<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">repository</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito/Specs&quot;</span>
+</span><span class='line'>                                                                 <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span> <span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">],</span>
+</span><span class='line'>                                                                               <span class="n">NSFontAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">boldSystemFontOfSize:</span><span class="mi">16</span><span class="p">]}</span> <span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後に真ん中の部分を作って、連結します。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">HullToRefresh</span> <span class="n">sharedHullHull</span><span class="p">];</span>
-</span><span class='line'><span class="p">[[</span><span class="n">NSNotificationCenter</span> <span class="n">defaultCenter</span><span class="p">]</span> <span class="nl">addObserver:</span><span class="n">self</span>
-</span><span class='line'>                                         <span class="nl">selector:</span><span class="k">@selector</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-</span><span class='line'>                                             <span class="nl">name:</span><span class="n">kDidHullHullNotification</span>
-</span><span class='line'>                                           <span class="nl">object:</span><span class="nb">nil</span><span class="p">];</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">others</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot; pushed to master at &quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithAttributedString:</span><span class="n">name</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">others</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">repository</span><span class="p">];</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>ね？簡単でしょう？サンプルについてくるアプリはこんな感じになります。</p>
+<p>これで、NSAttributedStringの完成です。</p>
 
-<p><img src="/images/hullhull.png"></p>
+<h2>UILabelに表示する</h2>
 
-<p>すばらしいライブラリなので、是非使ってみてください！使いどころとしては、空気を読まないアプリケーション作るときに便利です。</p>
+<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
 
-<h3>まとめ</h3>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UILabel</span> <span class="o">*</span><span class="n">label</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">)];</span>
+</span><span class='line'><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview:</span><span class="n">label</span><span class="p">];</span>
+</span><span class='line'><span class="n">label</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>完全にギャグです。タイポしたときとかに出るように割と悪意を持って作っていますが、ただのギャクです。</p>
+
+<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
 </div></section>
   
   
@@ -146,7 +197,7 @@ function CategoryCtrl($scope) {
   
 
 
-<time datetime="2012-08-31T06:31:00+09:00" pubdate data-updated="true">Aug 31<span>st</span>, 2012</time></p>
+<time datetime="2012-09-25T13:53:00+09:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time></p>
           </footer>
         </div>
       </div>
@@ -182,23 +233,23 @@ function CategoryCtrl($scope) {
     <ul>
       
         <li class="post">
-          <a href="/blog/2012/08/31/hull-to-refresh/">便利なライブラリHullToRefresh作った</a>
+          <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
         </li>
       
         <li class="post">
-          <a href="/blog/2012/08/21/grunt-coffeelint/">gruntのcoffeelintタスク作ってみた</a>
+          <a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a>
         </li>
       
         <li class="post">
-          <a href="/blog/2012/08/19/dequeue-reusable-making/">dequeueReusable~の実装とテスト</a>
+          <a href="/blog/2012/09/03/wizard/">もしプログラマーが仮面ライダーウィザードだったら</a>
         </li>
       
         <li class="post">
-          <a href="/blog/2012/08/09/parse-angular-sync-app/">ParseとAngularJSでユーザー毎にデータ同期してみる</a>
+          <a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a>
         </li>
       
         <li class="post">
-          <a href="/blog/2012/08/01/octopress-angular/">OctopressでAngularJSを使う</a>
+          <a href="/blog/2012/09/01/github-oauth/">iOSアプリでGithubにOAuthする</a>
         </li>
       
     </ul>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: github | yaakaito.org]]></title>
+  <title><![CDATA[Category: Github | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/github/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-31T08:21:43+09:00</updated>
+  <updated>2012-09-25T14:23:35+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,25 +14,110 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Objective-CからgithubAPI叩く]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/16/objective-c-github-api/"/>
-    <updated>2012-07-16T12:07:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/16/objective-c-github-api</id>
-    <content type="html"><![CDATA[<p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
+    <title type="html"><![CDATA[iOSアプリからGithubOAuth使うの見直している]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/09/03/re-github-oauth/"/>
+    <updated>2012-09-03T04:53:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/09/03/re-github-oauth</id>
+    <content type="html"><![CDATA[<p>こんばんは！うきょーです、非常に眠いです。
+<a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
+<a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
+よくよく考えてみれば、起動スキーマ直接叩かれたらなんか起こりそうだよなーとかいろいろ気になってきたのでずっとOAuth2でググったりしてた。</p>
 
-<h1>UAGithubEngine</h1>
+<h2>そもそも</h2>
 
-<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
-GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
-特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
-pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
-per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
+<p>前回の感じになったのが単純に、メールとかパスワード入力するのがだるいしあんまりさせたくないなー、OAuthあったなーいけんじゃねー、という感じの理由。
+<a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a>を見てて、非Webアプリケーション向けの最初はBasic認証使って〜がやりたくなった感じですね。
+で、本来はBasic認証一回使ってーの方がいいと思うんですが、いろいろクライアントなライブラリを見ていると、<code>Client Secret</code>を引数に取ったりしてて、
+じゃあこっちでもいいのかなーとなった。</p>
 
-<h1>他のgithubアプリとか</h1>
+<h2>本当か？</h2>
 
-<h2>iOctocat</h2>
+<p>で、気になって何個かGithubOAuth使ってそうなアプリを探してみたんだけど、hojokiなんかは<code>UIWebView</code>使ってやってるっぽいしやっぱこっちでいいんかなーと。
+けど<code>UIWebView</code>の作り上URLとか自分で出さないといけない訳ですが、それすら偽装してかなりそれっぽく見せる事は可能なので、
+僕が使う側だったらあんまり使いたくないなーと思ってしまった。一緒に変なJSとか走らされてもやだなーと思ったり。(他の人がどう思ってるのかは知らないですが)
+それだったらSafariに飛ばせばいいじゃん、でcallbackにカスタムスキームでー、でできたわけ。で、そこに弱そうなところがあるなら一旦塞ぐかーという感じで作ったのを適当にアップデート。</p>
 
-<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
+<ul>
+<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
+</ul>
+
+
+<p>やったのは、（今回はダミーだけど）<code>state</code>の付加と、OAuthしている時以外は起動スキーマを無効化した。（今は単純にabortしてるだけ）
+あとは本番では起動スキーマが使える時間とかも短くしぼったり、もやろうかなと思っていて、
+これでよっぽどな感じじゃない限りはインジェクションとかは大丈夫そうな感じがする。
+起動スキーマ持って行かれたときもまあ<code>Client Secret</code>バレなきゃだいじょ・・・そもそも<code>Secret</code>持っていいの？
+一応すごいがんばりをすれば秘密じゃなくなる気がする。</p>
+
+<h2>ライブラリにみるOAuth</h2>
+
+<p>さっきも書いたけどOAuthClientと名を打ってるライブラリは<code>Client ID</code>と<code>Client Secret</code>を要求していることが多いし、
+プラスアルファでアカウントとパスワードも要求してたりする。
+クライアント仲間ってことでJSも何個か見てみたんですが、
+カジュアルにSecretむき出し・・・秘密とは・・・みたいな感じになってて何を信じればいいのか分からなくなってきた。（まあTitaniumとかで使ってねってことだとは思うんだけど・・・）</p>
+
+<h2>Implicit Flow</h2>
+
+<p>さまよってるうちに「<a href="http://www.sakimura.org/2012/02/1487/">単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる</a>」
+というのに出会った、関係ありそうなので読んでみたんだけど、アプリケーションの認証として使うから駄目なのであって、
+クライアントとして認可される場合にはまあ大丈夫か、ってことでいいのかな。
+一旦は置いておいて良さそうだけど、あとで自分で見直したときのメモ。</p>
+
+<h2>で</h2>
+
+<p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[iOSアプリでGithubにOAuthする]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/"/>
+    <updated>2012-09-01T19:12:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/09/01/github-oauth</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+Githubと連動したアプリを作りたくなったので、GithubのOAuthをiOSアプリでやってみました。</p>
+
+<ul>
+<li><a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a></li>
+<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
+</ul>
+
+
+<h2>アプリケーションを登録</h2>
+
+<p>[AccountSettings]-> [Applications] -> [Register new application]からアプリケーションを登録します。
+この時にCallback URLにカスタムスキームを入れる事ができるので、</p>
+
+<p><code>
+yourapp://oauth
+</code></p>
+
+<p>みたいなコールバックを指定します。そうするとIDがもらえるのでこれで登録は終わりです。</p>
+
+<h2>Githubへログインしてもらう</h2>
+
+<p>OAuthなので、Safariを開いてacceptしてもらいましょう。パスワード入力してもらってJS使って押すとか、やめましょうね。
+発行されたIDのうちClient IDをくっつけて</p>
+
+<p><code>
+NSString *scope = @"public_repo,gist";
+NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&amp;scope=%@",kClientId, scope]];
+[[UIApplication sharedApplication] openURL:url];
+</code></p>
+
+<p>みたいな具合で、Safariを起動します。
+別にUIWebViewでもいいと思いますが、専用のビュー作るのもめんどくさいし、ちゃんとGithubなことを証明するのもだるいので、Safariでいいと思います。</p>
+
+<h2>コールバックを拾ってアクセストークンをリクエスト</h2>
+
+<p>カスタムスキームからの起動で<code>code</code>がやってくるので、これを持って</p>
+
+<p><code>
+/login/oauth/access_token
+</code></p>
+
+<p>へPOSTします。</p>
+
+<p>あとはkey-value形式でトークンが返ってくるので、それを使うだけです。簡単ですね。トークンはちゃんとキーチェインとかに入れてあげましょう。</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Neta | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/neta/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2012-09-25T14:23:35+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[もしプログラマーが仮面ライダーウィザードだったら]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/09/03/wizard/"/>
+    <updated>2012-09-03T08:25:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/09/03/wizard</id>
+    <content type="html"><![CDATA[<h2>普段の開発</h2>
+
+<p>ﾙﾊﾟｯﾁ!ｺﾐｯﾄ!ｱｯﾄﾞｯｺﾞ!</p>
+
+<h2>ブランチをマージするとき</h2>
+
+<p>ﾘﾍﾞｪｰｽ!ﾌﾟﾘｰｽﾞ!</p>
+
+<h2>マージしたのでプッシュするとき</h2>
+
+<p>ﾌﾟｯｼｭｯｽﾄﾗｲｸ!ｻｲｰｺｰﾀﾞｾﾞｯ!(reject)</p>
+
+<h2>しかたなくpull rebaseしたとき</h2>
+
+<p>ｶﾓﾝ!ｺｯﾐﾄ!ﾏｧｰｼﾞﾊﾝﾄﾞ!ｶﾓﾝ!ｺｯﾐﾄ!ﾏｧｰｼﾞﾊﾝﾄﾞ!ﾋｰﾋｰﾋｰﾋｰﾋｰ!ｽﾗｯｼｭｽﾄﾗｲｸ!(rebase失敗)</p>
+
+<h2>がんばって直して、テストを走らせたとき</h2>
+
+<p>ﾇﾙｯﾁ!ﾏｼﾞｯｸ!ﾀｯﾁｺﾞｳ!ﾇﾙｯﾁ!ﾏｼﾞｯｸ!ﾀｯﾁｺﾞｳ!ﾒｯｾｰｼﾞ!ﾌﾟﾘｰｽﾞ!ﾁｮｰｲｲn (ｾｸﾞﾌｫ)</p>
+
+<h2>疲れたのでケータイ持って飯へ現実逃避</h2>
+
+<p>ｼｬﾊﾞﾄﾞｩﾋﾞﾀﾞｯﾁﾍﾝｼﾝ!ﾄﾞｺﾓ!ﾌﾟ,ﾘｰｽﾞ↑ﾄﾞﾝﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾝ↑↑↑ｷﾒﾙｾﾞｪ!!!ﾙﾊﾟｯﾁ!ｱｲﾌｫﾝ!ﾀｯﾁｺﾞｩ↑ｺ,ﾈｸﾄ!ﾌﾟ,ﾘｰｽﾞ↑ｴｰﾕ→ﾁｮ→ｲｲﾈｯ↑ﾌﾟﾗﾁﾅｯｽﾄﾗｲｸｯ!ﾄﾞﾛｲﾄﾞｻｰｲｺｰﾀﾞｾﾞｪ↑ｳｨｰ↑↑↑</p>
+]]></content>
+  </entry>
+  
+</feed>

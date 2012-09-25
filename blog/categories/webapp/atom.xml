@@ -4,7 +4,7 @@
   <title><![CDATA[Category: WebApp | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/webapp/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-08-31T08:21:43+09:00</updated>
+  <updated>2012-09-25T14:23:35+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -350,14 +350,11 @@ if(Parse.User.current()) {
 <code>
 とかして初期の表示を作ってあげて、さらにユーザー作成やログインにフックしてビューを更新してあげます。
 </code>javascript
-  success: function(user) {</p>
-
-<pre><code>$scope.loginUser = Parse.User.current().get("username");
-$scope.$apply();
-alert("ログインに成功したよ。 o(*^▽^*)o");
-</code></pre>
-
-<p>  },
+success: function(user) {
+  $scope.loginUser = Parse.User.current().get("username");
+  $scope.$apply();
+  alert("ログインに成功したよ。 o(*<sup>▽<sup>*)o");</sup></sup>
+},
 ```</p>
 
 <h3>同期を実装する</h3>

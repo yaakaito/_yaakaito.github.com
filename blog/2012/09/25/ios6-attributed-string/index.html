@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7" ng-app><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8" ng-app><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS6のNSAttributedStringで色とか付ける - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="iOS6のNSAttributedStringで色とか付ける function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories.push &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <!-- <meta name="MobileOptimized" content="320"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  
+  <link rel="canonical" href="http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <script type="text/javascript" src="/javascripts/libs/angular-1.0.1.min.js"></script>
+  
+
+
+</head>
+
+<body   >
+  <header role="banner" class="clear-fix">
+    <h1 class="separator"><a href="/"><span>yaakaito.org</span></a></h1>
+
+<nav role="navigation"><ul>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/resume">Resume</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+</nav>
+
+  </header>
+  <div role="main" class="separator">
+    <article class="blog clear-fix separator" role="article">
+  <h1 class="separator">
+    
+      iOS6のNSAttributedStringで色とか付ける
+    
+  </h1>
+  
+  <div class="clear-fix">
+    <aside class="categories" role="complementary">
+       
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("iOS");
+    
+      $scope.categories.push("iOS6");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+    </aside>
+    <div class="clear-fix"> 
+      
+<section><div ng-non-bindable><p>こんにちは！うきょーです！
+いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
+便利なので使ってみましょう！！！！</p>
+
+<h2>サンプル</h2>
+
+<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
+このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
+
+<p>コードはいつも通りgithubにあげてあります。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
+</ul>
+
+
+<h2>NSAttributedStringを作る</h2>
+
+<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
+
+<p>作り方は大きく分けて二通りあって、</p>
+
+<ul>
+<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
+<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
+</ul>
+
+
+<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
+
+<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
+
+<p>まず yaakaito の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito&quot;</span>
+</span><span class='line'>                                                           <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span><span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
+この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
+他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
+よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
+
+<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">repository</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito/Specs&quot;</span>
+</span><span class='line'>                                                                 <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span> <span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">],</span>
+</span><span class='line'>                                                                               <span class="n">NSFontAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">boldSystemFontOfSize:</span><span class="mi">16</span><span class="p">]}</span> <span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後に真ん中の部分を作って、連結します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">others</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot; pushed to master at &quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithAttributedString:</span><span class="n">name</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">others</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">repository</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、NSAttributedStringの完成です。</p>
+
+<h2>UILabelに表示する</h2>
+
+<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UILabel</span> <span class="o">*</span><span class="n">label</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">)];</span>
+</span><span class='line'><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview:</span><span class="n">label</span><span class="p">];</span>
+</span><span class='line'><span class="n">label</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
+</div></section>
+
+
+      <footer role="contentinfo">
+        
+          <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/" >Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+  
+  
+  
+</div>
+
+        
+        <p>
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-25T13:53:00+09:00" pubdate data-updated="true">Sep 25<span>th</span>, 2012</time></p>
+      </footer>
+    </div>
+  </div>
+
+  <article class="comments" class="clear-fix">
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </article>
+
+</article>
+
+<aside class="pagenation clear-fix" role="navigation">
+    
+      <p class="previous pagenation"><a href="/blog/2012/09/05/release-alert-ninja/" title="Previous Post: ビューテストで便利なAlertNinjaを作りました">&laquo; Previous Post</a></p>
+    
+    
+</aside>
+
+
+
+  </div>
+  <aside role="complementary" class="others separator clear-fix">
+    <div class="clear-fix">
+      <section id="recent-archives">
+  <h3>Recent Archives</h3>
+  <div>
+    <ul>
+      
+        <li class="post">
+          <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/09/03/wizard/">もしプログラマーが仮面ライダーウィザードだったら</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a>
+        </li>
+      
+        <li class="post">
+          <a href="/blog/2012/09/01/github-oauth/">iOSアプリでGithubにOAuthする</a>
+        </li>
+      
+    </ul>
+  </div>
+  <p><a href="./archives/">Show All &raquo;</a></p>
+</section>
+
+<section id="github-repositories">
+  <h3>Github Repositories</h3>
+  <div ng-controller="githubCtlr">
+    <ul class="repositories">
+      
+        <li ng-repeat="repo in repos" data-lang="{{ repo.language | lowercase }}">
+          <a href="{{ repo.html_url }}">{{ repo.full_name }}</a>
+        </li>
+      
+    </ul>
+  </div> 
+  <p><a href="http://github.com/">Show Github &raquo;</a></p>
+  <script>
+    function githubCtlr($scope, $http) {
+      $scope.repos = [];
+      $http.jsonp("https://api.github.com/users/yaakaito/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+        var count = 7 || 5;
+        for(var i = 0; i < count; i++) {
+          $scope.repos.push(data.data[i]);
+        }
+      });
+    }
+  </script>
+</section>
+
+
+<section id="coderwall-badges">
+  <h3>Coderwall Badges</h3>
+  <div ng-controller="coderwallController">
+    <ul class="badges">
+      
+      <li ng-repeat="badge in badges">
+        <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
+      </li>
+      
+    </ul>
+  </div> 
+  <script>
+    function coderwallController($scope, $http) {
+    
+      $scope.badges = [];   
+      $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){
+        $scope.badges = data.data.badges;
+        console.log($scope.badges);
+});
+    }
+    
+  </script> 
+
+  <p><a href="http://coderwall.com/">Show Coderwall &raquo;</a></p>
+</section>
+
+
+    </div>
+  </aside>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - yaakaito -
+  <span class="credit">
+  Powered by <a href="http://octopress.org">Octopress</a> ,
+  <a href="http://github.com">Github</a> &
+  <a href="http://https://github.com/yaakaito/Octopress-Theme-Blaze">Blaze</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/';
+        var disqus_url = 'http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/';
+        var disqus_script = 'embed.js?';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+  <script>
+  (function(doc) {
+    var addEvent = 'addEventListener',
+        type = 'gesturestart',
+        qsa = 'querySelectorAll',
+        scales = [1, 1],
+        meta = qsa in doc ? doc[qsa]('meta[name=viewport]') : [];
+    function fix() {
+      meta.content = 'width=device-width,minimum-scale=' + scales[0] + ',maximum-scale=' + scales[1];
+      doc.removeEventListener(type, fix, true);
+    }
+    if ((meta = meta[meta.length - 1]) && addEvent in doc) {
+      fix();
+      scales = [0.25, 1.6];
+      doc[addEvent](type, fix, true);
+    }
+  }(document));
+  </script>
+</html>
