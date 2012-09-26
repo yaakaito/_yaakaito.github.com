@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-09-25T14:23:35+09:00</updated>
+  <updated>2012-09-26T16:02:33+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[22歳になりました]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/09/26/22-birthday/"/>
+    <updated>2012-09-26T15:56:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/09/26/22-birthday</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！22歳になりました！！！！！！！！！</p>
+
+<p>今年もいろいろありました！！！！！！！！わけあって今仕事してません！！！！</p>
+
+<p>いろいろあったので今月末くらいに(もう末ですけど)いろいろなんかかくと思います！！！！</p>
+
+<p><a href="http://www.amazon.co.jp/registry/wishlist/CKH9SKYKNOT5">なんかください！！！！！！</a></p>
+
+<p>ところで「みいくんのちくわぶ」送ってくれた人が誰か分からないので名乗り出てください！！！！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS6のNSAttributedStringで色とか付ける]]></title>

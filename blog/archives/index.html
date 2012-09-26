@@ -76,6 +76,16 @@ function ArchiveCtrl($scope) {
       current = {year : "2012", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "22歳になりました"
+                       , url : "/blog/2012/09/26/22-birthday/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Kuzu");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "iOS6のNSAttributedStringで色とか付ける"
                        , url : "/blog/2012/09/25/ios6-attributed-string/"
                        , categories: []}; 
@@ -269,6 +279,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/09/26/22-birthday/">22歳になりました</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
         </li>
       
@@ -282,10 +296,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/01/github-oauth/">iOSアプリでGithubにOAuthする</a>
         </li>
       
     </ul>
