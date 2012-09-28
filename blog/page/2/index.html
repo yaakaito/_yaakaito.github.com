@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="OctopressでAngularJSを使う function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AngularJS"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="ParseとAngularJSでユーザー毎にデータ同期してみる function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AngularJS"); $scope.categories.push &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -43,6 +43,601 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/08/09/parse-angular-sync-app/">ParseとAngularJSでユーザー毎にデータ同期してみる</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("AngularJS");
+    
+      $scope.categories.push("Backbone.js");
+    
+      $scope.categories.push("JavaScript");
+    
+      $scope.categories.push("Parse");
+    
+      $scope.categories.push("WebApp");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！
+最近<a href="http://parse.com">Parse</a>というバックエンドを肩代わりしてくれるサービスを知ったので、
+ちょっとAngularJSと組み合わせてユーザー毎の情報を同期する程度のアプリを作ってみました。
+どうやら小規模なサービスでユーザー情報の同期とかに使うといいよ、みたいな感じらしいので、
+利用用途としても今作っているものにあっていそうだったので、とりあえずテストで作ってみた感じです。</p>
+
+<h2>Parseに登録する</h2>
+
+<p><a href="http://parse.com">Parse</a>にいって、「Try it for free」します。
+無料版だとAPI利用回数制限とかが結構厳しそうに見えますが、個人で作るくらいなら全然余裕なくらいはありますね。
+ログインするとDashboradにいけるので適当な名前で新しいアプリを作ります。
+QuickStart的な画面になると思うので、JavaScript用のSDKで、「New Project」を選択します。
+そうすると、ここからSDKをダウンロードしてね！という画面が下の方に出ているので、SDKをダウンロードしましょう。
+SDKをダウンロードしたら、このキーを使ってね、というのが出ているはずなので、<code>index.html</code>を弄ってキーを書き換えて、開いてみましょう。
+失敗すると「おい違うぞ」みたいな分かりやすい感じになるので、そうならなければ成功です。ついでにQuickStartにある「Test the SDK」も試してみましょう。
+これでとりあえずセットアップは終わりです。</p>
+
+<h2>チュートリアルを見ながらちょっと書いてみよう</h2>
+
+<p><a href="https://www.parse.com/tutorials/todo-app-with-javascript">JavaScriptのチュートリアル</a>をみてみましょう。
+ありがたいことに、まさにやりたいことが書いてありそうなチュートリアル準備されているので、とりあえずこれをみてみます。
+<a href="https://www.parse.com/docs/js_guide">JavaScriptのガイド</a>も一緒にみると良さげなので、これも見てみることにします。
+どうもSDKは<a href="http://documentcloud.github.com/backbone/">Backbonejs</a>ベースみたいです。正確にはbackboneライクという感じですが。
+これってjQueryとprototype同居の悪夢じゃね的な感じがありますね。わかんないですけど。どうしましょうかね。
+普通に<a href="https://parse.com/docs/rest">REST API</a>もあるので素直にAngularResouce使った方がいいんじゃないですかね。感出てきました。</p>
+
+<p>まあ今回はどんなものか試してみるだけのものなので失敗込みで、ともかく進めていきましょう。
+方針としてはbackboneライクのモデルだけ使ってその他はAngularJSに持ってもらうイメージでいきます。
+チュートリアルのコードを追っているのでチュートリアルからの転載です。
+チュートリアルはどうやら<a href="http://addyosmani.github.com/todomvc/">TODOMVC</a>のbackbonejs版を拡張しているみたいです。
+<a href="https://github.com/ParsePlatform/Todo">コードはGithub</a>にあるようです。テンプレートとかは放っておいてコアっぽいところを見ていきます。
+まずログインしてるかしてないか、みたいなところは<code>Parse.User.current()</code>で判定できるみたいです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">new</span> <span class="nx">ManageTodosView</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">new</span> <span class="nx">LogInView</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で、ログインしてなかったらLogInView表示してユーザー作れよってことっぽい。
+ユーザー作るあたりを見てみると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">signUp</span><span class="p">(</span><span class="nx">username</span><span class="p">,</span> <span class="nx">password</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ACL</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">ACL</span><span class="p">()</span> <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nx">ManageTodosView</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">self</span><span class="p">.</span><span class="nx">undelegateEvents</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">delete</span> <span class="nx">self</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">self</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.signup-form .error&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.signup-form button&quot;</span><span class="p">).</span><span class="nx">removeAttr</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ほほう、ACLってどういうオプションだろ、と見てみると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">This</span> <span class="nx">creates</span> <span class="nx">the</span> <span class="nx">account</span> <span class="kd">with</span> <span class="nx">the</span> <span class="nx">given</span> <span class="nx">username</span> <span class="nx">and</span> <span class="nx">password</span> <span class="nx">from</span> <span class="nx">the</span> <span class="nx">fields</span> <span class="nx">and</span> <span class="nx">also</span> <span class="nx">applies</span> <span class="nx">a</span> <span class="nx">blank</span> <span class="nx">ACL</span> <span class="nx">on</span> <span class="nx">the</span> <span class="nx">user</span><span class="p">.</span> <span class="nx">This</span> <span class="nx">prevents</span> <span class="nx">anyone</span> <span class="nx">from</span> <span class="nx">reading</span> <span class="nx">data</span> <span class="nx">from</span> <span class="nx">the</span> <span class="nx">User</span> <span class="kr">class</span> <span class="nx">unless</span> <span class="nx">they</span> <span class="nx">are</span> <span class="nx">the</span> <span class="nx">user</span> <span class="nx">who</span> <span class="nx">is</span> <span class="nx">logged</span> <span class="k">in</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>と書いてあるので、このユーザーから登録したデータはほかのユーザーからは取得できないものだよ、ということですかね。
+つづいてログインはこんなん</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">logIn</span><span class="p">(</span><span class="nx">username</span><span class="p">,</span> <span class="nx">password</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nx">ManageTodosView</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">self</span><span class="p">.</span><span class="nx">undelegateEvents</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">delete</span> <span class="nx">self</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">self</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.login-form .error&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">&quot;Invalid username or password. Please try again.&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.login-form button&quot;</span><span class="p">).</span><span class="nx">removeAttr</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ほほう、で、モデルの管理はBackboneライクなわけですね！やりましたね！</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Todo</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="s2">&quot;Todo&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">TodoList</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じでbackboneライクにモデルを作って<code>save</code>を呼ぶとサーバーへ遅れる感じですね。
+取得は</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Create our collection of Todos</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">todos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoList</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Setup the query for the collection to look for todos from the current user</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">Query</span><span class="p">(</span><span class="nx">Todo</span><span class="p">);</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">equalTo</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Fetch all the todo items for this user from Parse</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じっぽいです。</p>
+
+<h2>Angularで書いてみよう</h2>
+
+<p>使い方も分かってきたのでAngularで書いてみましょう。どきどきですね。＞＜</p>
+
+<h3>とりあえず簡単なビューをつくる</h3>
+
+<p>コントローラーやイベントハンドリングとかの基本的な部分はすべてAngularで面倒をみるので、
+まずは普通にそれっぽいビューを作っていきます。ライブラリを読み込んで、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;http://www.parsecdn.com/js/parse-1.0.14.min.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;./javascripts/app.js&quot;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>適当な感じにビューを作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;AppCtrl&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;h2&gt;</span>account<span class="nt">&lt;/h2&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;naccount&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;npass&quot;</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">&quot;createAccount()&quot;</span><span class="nt">&gt;</span>create<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;laccount&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;lpass&quot;</span> <span class="na">type=</span><span class="s">&quot;password&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">&quot;login()&quot;</span><span class="nt">&gt;</span>login<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;section&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;h2&gt;</span>Objects<span class="nt">&lt;/h2&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">&quot;syncItems()&quot;</span><span class="nt">&gt;</span>sync<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;itemName&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;itemDescription&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;button</span> <span class="na">ng-click=</span><span class="s">&quot;addItem()&quot;</span><span class="nt">&gt;</span>add<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;item in items&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>       {{ item.name }} / {{ item.description }}
+</span><span class='line'>      <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/section&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>コントローラーはとりあえずこんな感じで。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">AppCtrl</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">createAccount</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">login</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">addItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">syncItems</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Parseを使ってみる</h3>
+
+<p>準備が整ったので、まずはParseを初期化します。
+コントローラーが読み込まれたあとに、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Parse</span><span class="p">.</span><span class="nx">initialize</span><span class="p">(</span><span class="s2">&quot;hoge&quot;</span><span class="p">,</span> <span class="s2">&quot;hoge&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とします。そうしたらモデルとそのコレクションを定義します、こんな感じかな。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">SyncAppObject</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="s2">&quot;SyncAppObject&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">default</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">description</span><span class="o">:</span> <span class="s2">&quot;description&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">SyncAppObjectList</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="nx">SyncAppObject</span>
+</span><span class='line'>  <span class="p">,</span> <span class="nx">comparator</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>モデルの準備ができたので、addItemでオブジェクトを作ってみましょう。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">objectList</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SyncAppObjectList</span><span class="p">();</span>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">objectList</span><span class="p">.</span><span class="nx">models</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">addItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SyncAppObject</span><span class="p">({</span> <span class="nx">name</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">itemName</span>
+</span><span class='line'>                                 <span class="p">,</span> <span class="nx">description</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">itemDescription</span><span class="p">});</span>
+</span><span class='line'>  <span class="nx">objectList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">objectList</span><span class="p">.</span><span class="nx">models</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>コレクションのインスタンスを作って、<code>$scope.items</code>へ<code>models</code>を関連づけます。
+あとは<code>addItem</code>で新しいオブジェクトを作って追加してあげるだけです。
+が、Backbone的にはプロパティへのアクセスは<code>get()</code>を使ってね、ということなので、テンプレートの方も少し修正します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>  <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">repeat</span><span class="o">=</span><span class="s2">&quot;item in items&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="p">{{</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="p">}}</span> <span class="o">/</span> <span class="p">{{</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span> <span class="p">}}</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="err">/li&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、addを押すと、BackboneライクなオブジェクトをAngularで表示できているはずです。予想に反して問題なさそうですね。
+次にこのモデルをParseへ送りつけましょう。<code>save</code>を呼ぶだけでokです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">item</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>うまくいけばParseのアプリケーションのマネージメニューから、「Data Browse」をすると、ちゃんとデータが追加されているはずです。</p>
+
+<h3>ユーザー作成とログイン</h3>
+
+<p>まずはユーザーを作りますしょう。<code>createAccount</code>でチュートリアルでもでてきたsignupするコードを書きます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">createAccount</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">signUp</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">naccount</span>
+</span><span class='line'>                    <span class="p">,</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">npass</span>
+</span><span class='line'>                    <span class="p">,</span> <span class="p">{</span> <span class="nx">ACL</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">ACL</span><span class="p">()</span> <span class="p">}</span>
+</span><span class='line'>                    <span class="p">,</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ユーザー登録に成功したよ。 o(*^▽^*)o&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ユーザー登録に失敗しちゃったよ。 (ﾉ_･｡)&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>フォームからアカウントを作ってみましょう。成功したメッセージが出たら、「Data Browse」から確認してみましょう。
+Userというテーブルが増えているはずです。やりましね！
+ユーザーを作ったらそれに関連するデータとして登録するようにしましょう。
+ユーザーに関連づけるには<code>user</code>と<code>ACL</code>を設定します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">addItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ログインするかユーザーつくってね。ヾ(@~▽~@)ノ&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SyncAppObject</span><span class="p">({</span><span class="nx">name</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">itemName</span>
+</span><span class='line'>                                <span class="p">,</span> <span class="nx">description</span> <span class="o">:</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">itemDescription</span>
+</span><span class='line'>                                <span class="p">,</span> <span class="nx">user</span> <span class="o">:</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">()</span>
+</span><span class='line'>                                <span class="p">,</span> <span class="nx">ACL</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">ACL</span><span class="p">(</span><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">())});</span>
+</span><span class='line'>  <span class="nx">objectList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">item</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">objectList</span><span class="p">.</span><span class="nx">models</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでデータを追加してみて、「Data Browse」から確認します。するとユーザーのobjectIdと関連づけられているはずです。
+カラムも自動で拡張されるみたいです。便利ですね。
+ところでここで作ったユーザーとか後でやるログインした状態とかはSDK側でローカルへキャッシュしてくれるみたいです。
+だいたいできてきました！(だんだん顔文字がうざくなってきましたね)次はログインを作りましょう。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">login</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">logIn</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">laccount</span><span class="p">,</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">lpass</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ログインに成功したよ。 o(*^▽^*)o&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ログインに失敗しちゃったよ。 (ﾉ_･｡)&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じにして、作ったユーザーでログインできるか試してみましょう。
+ログインできたらユーザーを切り替えたりしてみて、「Data Browse」から確認してみましょう！どうですか？成功しましたか？やりましたね！
+ついでなのでユーザー名を表示するようにしておきましょう。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'> <span class="nt">&lt;p&gt;</span>Login User : {{ loginUser }}<span class="nt">&lt;/p&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じにかいて、初期化時に、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span><span class="p">(</span><span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">loginUser</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">loginUser</span> <span class="o">=</span> <span class="s2">&quot;not login&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とかして初期の表示を作ってあげて、さらにユーザー作成やログインにフックしてビューを更新してあげます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">loginUser</span> <span class="o">=</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">$apply</span><span class="p">();</span>
+</span><span class='line'>  <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;ログインに成功したよ。 o(*^▽^*)o&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>同期を実装する</h3>
+
+<p>コレクションに対して<code>fetch</code>することで取得できるはずだったので、マージとか考えなければ案外楽にいけそうです。
+今回はマージとかは何も考えてなくて、とにかくサーバーからデータを拾ってくるだけです。
+条件なんかをちょこちょこ書いてビューへ反映しましょう。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">syncItems</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">objectList</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">Query</span><span class="p">(</span><span class="nx">SyncAppObject</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">objectList</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">equalTo</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="nx">Parse</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">current</span><span class="p">());</span>
+</span><span class='line'>  <span class="nx">objectList</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">objectList</span><span class="p">.</span><span class="nx">models</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでsyncを押せばサーバーからログインしているユーザーにあわせたデータを拾ってこれま・・・したが、
+AngularJSのビューの更新との相性が悪いのか、1回目のsyncだとビューに反映されないですねっていう。
+このへんはちゃんと調べてないので分かんないですが、あんまりよくないですねー。が、今回はParseがどんなもんか試すだけなのでまあおけおけ。
+とりあえずこんな感じで実装はおしまいです。</p>
+
+<h2>コードとか</h2>
+
+<p>コードはgithubにあります。</p>
+
+<p><a href="https://github.com/yaakaito/sync-app">yaakaito/sync-app</a></p>
+
+<p>またサンプルをgh-pagesへデプロイしてあるので、どんな感じかなーと気になる人がいれば見てみるとなにかよいかもしれません。</p>
+
+<p><a href="http://yaakaito.github.com/sync-app/">yaakaito.github.com/sync-app/</a></p>
+
+<p>関係ないですが、簡単なJavaScriptアプリケーションならgh-pagesへデプロイしてしまって使うの、割とありかなーという感じが最近しています。</p>
+
+<h2>デバッガの話</h2>
+
+<p>AngularJSを結構書くうちにデバッガがほしくなってきたんですが、(AngularJSのテンプレートのデバッグがむずい)メーリングリストとかみてみたら、
+<a href="https://github.com/btford/angularjs-batarang">Batarang</a>というChrome拡張があったので僕はこれを使っています。
+これ単体の記事もそのうち書くと思います。</p>
+
+<h2>まとめ</h2>
+
+<p>思いの他うまくいった。けどやっぱりプレーンなObject返すSDKを自分で作る方がよいような気がする・・・。
+Parse自体は使った感じそんなに悪くなくて、データビュアーとかもちゃんとあるので、個人で運用するようなサービスなら全然いけそうだなーという感じでした。
+割とサーバーサイド用意するのがだるくて作る気が起きなかったものとか結構あるので、これを気にいろいろ作ってみるかもしれません。
+とにかくクライアントサイド書いてるのがすきーな人にはかなり便利なサービスでした、おすすめです。</p>
+
+<h2>教訓</h2>
+
+<p>ずっとスティーブ・Objective-C・ジョブズしててJavaScript界隈についていけていないので遅れ取り戻さないとやばいですねー。</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -417,6 +1012,10 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/09/28/dwango/">ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/09/26/22-birthday/">22歳になりました</a>
         </li>
       
@@ -430,10 +1029,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
       
         <li class="post">
           <a href="/blog/2012/09/03/wizard/">もしプログラマーが仮面ライダーウィザードだったら</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a>
         </li>
       
     </ul>
