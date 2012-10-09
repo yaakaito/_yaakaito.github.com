@@ -4,7 +4,7 @@
   <title><![CDATA[Category: grunt | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/grunt/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-09-28T11:35:12+09:00</updated>
+  <updated>2012-10-10T01:23:01+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,182 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CoffeeScriptでライトにBDDする]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/10/10/light-coffee-bdd/"/>
+    <updated>2012-10-10T00:54:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/10/10/light-coffee-bdd</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら作るとしたら、
+どんな感じにするのが楽かなーと思ったのでちょっとやってみた。</p>
+
+<p>選ぶ以前に、割と最初から何使うかなーってのは決めていて、
+grunt+grunt-jasmine-taskの組み合わせです。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/light-coffee-bdd">light-coffee-bdd</a></li>
+</ul>
+
+
+<h2>grunt-jasmine-task</h2>
+
+<p>grunt-jasmine-taskをnpmから引っ張ってきます。
+これはgruntに標準でついてくるtest-taskと同じでphantomjsを使ってテストを実行するタスクです。
+requirejs使うといい感じに書けるっぽいです。
+package.jsonを適当に作って取ってきます。ついでにcoffee-taskも取ってきます。</p>
+
+<p>```javascript
+{
+  "name": "project"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {</p>
+
+<pre><code>"grunt-coffee" : "*"
+, "grunt-jasmine-task" : "*"
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<h2>grunt.js</h2>
+
+<p>grunt.jsにcoffeeのコンパイルとjasmineのタスクを追加します。</p>
+
+<p>```javascript
+coffee : {
+  app : {</p>
+
+<pre><code>src : [
+  'lib/*.coffee'
+]
+, dest : 'build/'
+</code></pre>
+
+<p>  }</p>
+
+<p>  , spec : {</p>
+
+<pre><code>src : [
+  'specs/*.coffee'
+]
+, dest : 'spec_runner/spec/'
+</code></pre>
+
+<p>  }</p>
+
+<p>  , runner : {</p>
+
+<pre><code>src : [
+  'spec_runner/main.coffee'
+]
+, dest : 'spec_runner/' 
+</code></pre>
+
+<p>  }
+}
+, jasmine : {
+  all : {</p>
+
+<pre><code>src : ['spec_runner/index.html']
+, tasks : 'coffee:all'
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<h2>ランナー</h2>
+
+<p>spec_runner/にランナーを用意します
+libとかにjasmineとrequirejsを用意しておきます。
+htmlはjasmineをブラウザで実行するときと一緒です。</p>
+
+<p><code>html
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Jasmine Spec Runner&lt;/title&gt;
+  &lt;link rel="shortcut icon" type="image/png" href="lib/jasmine-1.2.0/jasmine_favicon.png"&gt;
+  &lt;link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css"&gt;
+  &lt;script type="text/javascript" data-main="main.js" src="lib/require-2.0.2.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></p>
+
+<p>こんな感じ。
+で、main.jsからspecを読み込んで実行してあげます。
+main.js自体はgruntでcoffeeからコンパイルします。</p>
+
+<p>```coffeescript
+config =
+  paths :</p>
+
+<pre><code>'jasmine':       'lib/jasmine-1.2.0/jasmine'
+'jasmine.html':   'lib/jasmine-1.2.0/jasmine-html'
+'jasmine.helper': 'lib/jasmine-1.2.0/jasmine-helper'
+</code></pre>
+
+<p>  shim :</p>
+
+<pre><code>'jasmine' :
+  'exports' : 'jasmine'
+'jasmine.html':   ['jasmine']
+'jasmine.helper': ['jasmine']
+</code></pre>
+
+<p>require.config config</p>
+
+<p>require ['jasmine', 'jasmine.html', 'jasmine.helper', 'spec/sample_spec'], (jasmine) ->
+  jasmineEnv = jasmine.getEnv()
+  jasmineEnv.updateInterval = 1000</p>
+
+<p>  htmlReporter = new jasmine.HtmlReporter()</p>
+
+<p>  jasmineEnv.addReporter htmlReporter</p>
+
+<p>  jasmineEnv.specFilter = (spec) -></p>
+
+<pre><code>htmlReporter.specFilter spec
+</code></pre>
+
+<p>  jasmineEnv.execute()
+```</p>
+
+<p>これで準備完了です。適当なspecを書いてみましょう。</p>
+
+<h2>sample_spec</h2>
+
+<p>gruntで一緒にコンパイルするので、specもcoffeeで書けばよかだと思います。今回は実装がないので何もdefineしてません。</p>
+
+<p>```coffeescript
+define [], ->
+  describe 'A suite', -></p>
+
+<pre><code>it 'sample spec', -&gt;
+  expect(true).toBe true
+</code></pre>
+
+<p>```</p>
+
+<p>あとはコンソールから</p>
+
+<p><code>
+$ grunt jasmine
+</code></p>
+
+<p>で動かします。watch-task書いて動かすのもよいと思います。</p>
+
+<h2>まとめ</h2>
+
+<p>jasmineの部分だけ抽出してますが、実際はこれ+coffeelint+cancat+minifyみたいな構成で書いています。
+gruntと使うと簡単なものなら早くセットアップできて、ブラウザもイチイチリロードしなくていいような環境になるので、楽チンですね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[gruntのcoffeelintタスク作ってみた]]></title>

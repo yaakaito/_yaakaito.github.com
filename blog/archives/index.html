@@ -76,6 +76,22 @@ function ArchiveCtrl($scope) {
       current = {year : "2012", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "CoffeeScriptでライトにBDDする"
+                       , url : "/blog/2012/10/10/light-coffee-bdd/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("CoffeeScript");
+    
+      current_archive.categories.push("Jasmine");
+    
+      current_archive.categories.push("Testing");
+    
+      current_archive.categories.push("grunt");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)"
                        , url : "/blog/2012/09/28/dwango/"
                        , categories: []}; 
@@ -289,6 +305,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/09/28/dwango/">ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)</a>
         </li>
       
@@ -302,10 +322,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/03/wizard/">もしプログラマーが仮面ライダーウィザードだったら</a>
         </li>
       
     </ul>
