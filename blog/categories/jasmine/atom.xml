@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Jasmine | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/jasmine/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-10-10T01:23:01+09:00</updated>
+  <updated>2012-10-10T01:24:24+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -19,7 +19,7 @@
     <updated>2012-10-10T00:54:00+09:00</updated>
     <id>http://yaakaito.github.com/blog/2012/10/10/light-coffee-bdd</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら作るとしたら、
+ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら書くとしたら、
 どんな感じにするのが楽かなーと思ったのでちょっとやってみた。</p>
 
 <p>選ぶ以前に、割と最初から何使うかなーってのは決めていて、
