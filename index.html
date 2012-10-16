@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="CoffeeScriptでライトにBDDする function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("CoffeeScript"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="Buster.JSについて少しLTした function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Buster.JS"); $scope.categories.push("JavaScript &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -46,7 +46,7 @@
    
     <article class="blog clear-fix separator" role="article">
       <h1 class="separator">
-        <a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a>
+        <a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a>
       </h1>
   
       <div class="clear-fix">
@@ -58,13 +58,11 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("CoffeeScript");
+      $scope.categories.push("Buster.JS");
     
-      $scope.categories.push("Jasmine");
+      $scope.categories.push("JavaScript");
     
       $scope.categories.push("Testing");
-    
-      $scope.categories.push("grunt");
     
   
 }
@@ -82,226 +80,35 @@ function CategoryCtrl($scope) {
         <div class="clear-fix"> 
           
   <section><div ng-non-bindable><p>こんにちは！うきょーです。
-ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら書くとしたら、
-どんな感じにするのが楽かなーと思ったのでちょっとやってみた。</p>
+突然LTすることになったので、最近気になってるBuster.JSネタで話してきました。
+LTなのであんまり内容は濃くないです。iPhoneシュミレーターとかでも楽に動くし便利だね！というくらいです。</p>
 
-<p>選ぶ以前に、割と最初から何使うかなーってのは決めていて、
-grunt+grunt-jasmine-taskの組み合わせです。</p>
+<script async class="speakerdeck-embed" data-id="507b79def901500002026b02" data-ratio="1.3333333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+<p>スライドにはほとんど情報がないので、どんな感じで話したかを箇条書きで。</p>
 
 <ul>
-<li><a href="https://github.com/yaakaito/light-coffee-bdd">light-coffee-bdd</a></li>
+<li>yaakaito.orgが変なところに飛ばされとる (今はなおったみたい)</li>
+<li>みんなJSかきますよね！テストやってますか？？？</li>
+<li>フレームワークいろいろありますが、最近はBuster.JSがアツい</li>
+<li>JSTestDriverのようにブラウザ上での自動実行と、ヘッドレスでの実行がサポートされている</li>
+<li>&#8220;Test-Driven JavaScript Development&#8221;でも言及されていますが、実際の環境で動かせることは大事</li>
+<li>ちなみにこの本書いた人がBuster.JSの作者で、Buster.JSはこの本に書いてある理想を実際に行おうとしている</li>
+<li>けど、ヘッドレスでも動くしNodeも扱えるので、使い分けがしやすくて便利</li>
+<li>ヘッドレスはまだサポートされてると思った？残念、ベータちゃんでした！</li>
+<li>ともあれ便利なので使ってみよう</li>
+<li>npmで簡単インストール</li>
+<li>buster.jsというコンフィグを書いて、テストを書く</li>
+<li>サーバーを立ち上げてテスト対象になるブラウザでアクセス、対象として登録</li>
+<li>ChromeやFirefoxはもちろんiOSシュミレーターなんかでもばっちり！(実機もいけるよ！)</li>
+<li>RSpecみたいなBDDstyleの書き方もできるよ</li>
+<li>sinon.jsとwhen.jsが内蔵されているのでこれ一つで結構いろいろできるよ！ (ちなみにsinon.jsも同じ作者だったはず)</li>
+<li>クライアントサイドJSもテスト書こうね！</li>
 </ul>
 
 
-<h2>grunt-jasmine-task</h2>
-
-<p>grunt-jasmine-taskをnpmから引っ張ってきます。
-これはgruntに標準でついてくるtest-taskと同じでphantomjsを使ってテストを実行するタスクです。
-requirejs使うといい感じに書けるっぽいです。
-package.jsonを適当に作って取ってきます。ついでにcoffee-taskも取ってきます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;project&quot;</span>
-</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.1&quot;</span>
-</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;private&quot;</span><span class="o">:</span> <span class="kc">true</span>
-</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="s2">&quot;grunt-coffee&quot;</span> <span class="o">:</span> <span class="s2">&quot;*&quot;</span>
-</span><span class='line'>    <span class="p">,</span> <span class="s2">&quot;grunt-jasmine-task&quot;</span> <span class="o">:</span> <span class="s2">&quot;*&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>grunt.js</h2>
-
-<p>grunt.jsにcoffeeのコンパイルとjasmineのタスクを追加します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">coffee</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">app</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>      <span class="s1">&#39;lib/*.coffee&#39;</span>
-</span><span class='line'>    <span class="p">]</span>
-</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;build/&#39;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">,</span> <span class="nx">spec</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>      <span class="s1">&#39;specs/*.coffee&#39;</span>
-</span><span class='line'>    <span class="p">]</span>
-</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;spec_runner/spec/&#39;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">,</span> <span class="nx">runner</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>      <span class="s1">&#39;spec_runner/main.coffee&#39;</span>
-</span><span class='line'>    <span class="p">]</span>
-</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;spec_runner/&#39;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="p">,</span> <span class="nx">jasmine</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">all</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span><span class="s1">&#39;spec_runner/index.html&#39;</span><span class="p">]</span>
-</span><span class='line'>    <span class="p">,</span> <span class="nx">tasks</span> <span class="o">:</span> <span class="s1">&#39;coffee:all&#39;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>ランナー</h2>
-
-<p>spec_runner/にランナーを用意します
-libとかにjasmineとrequirejsを用意しておきます。
-htmlはjasmineをブラウザで実行するときと一緒です。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!doctype html&gt;</span>
-</span><span class='line'><span class="nt">&lt;html&gt;</span>
-</span><span class='line'><span class="nt">&lt;head&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;title&gt;</span>Jasmine Spec Runner<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;shortcut icon&quot;</span> <span class="na">type=</span><span class="s">&quot;image/png&quot;</span> <span class="na">href=</span><span class="s">&quot;lib/jasmine-1.2.0/jasmine_favicon.png&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href=</span><span class="s">&quot;lib/jasmine-1.2.0/jasmine.css&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">data-main=</span><span class="s">&quot;main.js&quot;</span> <span class="na">src=</span><span class="s">&quot;lib/require-2.0.2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class='line'><span class="nt">&lt;/head&gt;</span>
-</span><span class='line'><span class="nt">&lt;body&gt;</span>
-</span><span class='line'><span class="nt">&lt;/body&gt;</span>
-</span><span class='line'><span class="nt">&lt;/html&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じ。
-で、main.jsからspecを読み込んで実行してあげます。
-main.js自体はgruntでcoffeeからコンパイルします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">config =</span>
-</span><span class='line'>  <span class="nv">paths :</span>
-</span><span class='line'>    <span class="s">&#39;jasmine&#39;</span><span class="o">:</span>       <span class="s">&#39;lib/jasmine-1.2.0/jasmine&#39;</span>
-</span><span class='line'>    <span class="s">&#39;jasmine.html&#39;</span><span class="o">:</span>   <span class="s">&#39;lib/jasmine-1.2.0/jasmine-html&#39;</span>
-</span><span class='line'>    <span class="s">&#39;jasmine.helper&#39;</span><span class="o">:</span> <span class="s">&#39;lib/jasmine-1.2.0/jasmine-helper&#39;</span>
-</span><span class='line'>  <span class="nv">shim :</span>
-</span><span class='line'>    <span class="s">&#39;jasmine&#39;</span> <span class="o">:</span>
-</span><span class='line'>      <span class="s">&#39;exports&#39;</span> <span class="o">:</span> <span class="s">&#39;jasmine&#39;</span>
-</span><span class='line'>    <span class="s">&#39;jasmine.html&#39;</span><span class="o">:</span>   <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">]</span>
-</span><span class='line'>    <span class="s">&#39;jasmine.helper&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">require</span><span class="p">.</span><span class="nx">config</span> <span class="nx">config</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">require</span> <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">,</span> <span class="s">&#39;jasmine.html&#39;</span><span class="p">,</span> <span class="s">&#39;jasmine.helper&#39;</span><span class="p">,</span> <span class="s">&#39;spec/sample_spec&#39;</span><span class="p">],</span> <span class="nf">(jasmine) -&gt;</span>
-</span><span class='line'>  <span class="nv">jasmineEnv = </span><span class="nx">jasmine</span><span class="p">.</span><span class="nx">getEnv</span><span class="p">()</span>
-</span><span class='line'>  <span class="nv">jasmineEnv.updateInterval = </span><span class="mi">1000</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">htmlReporter = </span><span class="k">new</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">HtmlReporter</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">jasmineEnv</span><span class="p">.</span><span class="nx">addReporter</span> <span class="nx">htmlReporter</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">jasmineEnv.specFilter = </span><span class="nf">(spec) -&gt;</span>
-</span><span class='line'>    <span class="nx">htmlReporter</span><span class="p">.</span><span class="nx">specFilter</span> <span class="nx">spec</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">jasmineEnv</span><span class="p">.</span><span class="nx">execute</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで準備完了です。適当なspecを書いてみましょう。</p>
-
-<h2>sample_spec</h2>
-
-<p>gruntで一緒にコンパイルするので、specもcoffeeで書けばよかだと思います。今回は実装がないので何もdefineしてません。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">define</span> <span class="p">[],</span> <span class="o">-&gt;</span>
-</span><span class='line'>  <span class="nx">describe</span> <span class="s">&#39;A suite&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nx">it</span> <span class="s">&#39;sample spec&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-</span><span class='line'>      <span class="nx">expect</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span><span class="nx">toBe</span> <span class="kc">true</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>あとはコンソールから</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">$</span> <span class="nx">grunt</span> <span class="nx">jasmine</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で動かします。watch-task書いて動かすのもよいと思います。</p>
-
-<h2>まとめ</h2>
-
-<p>jasmineの部分だけ抽出してますが、実際はこれ+coffeelint+cancat+minifyみたいな構成で書いています。
-gruntと使うと簡単なものなら早くセットアップできて、ブラウザもイチイチリロードしなくていいような環境になるので、楽チンですね。</p>
+<p>みたいな感じです！</p>
 </div></section>
   
   
@@ -332,7 +139,7 @@ gruntと使うと簡単なものなら早くセットアップできて、ブラ
   
 
 
-<time datetime="2012-10-10T00:54:00+09:00" pubdate data-updated="true">Oct 10<span>th</span>, 2012</time></p>
+<time datetime="2012-10-16T22:24:00+09:00" pubdate data-updated="true">Oct 16<span>th</span>, 2012</time></p>
           </footer>
         </div>
       </div>
@@ -368,6 +175,10 @@ gruntと使うと簡単なものなら早くセットアップできて、ブラ
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a>
         </li>
       
@@ -381,10 +192,6 @@ gruntと使うと簡単なものなら早くセットアップできて、ブラ
       
         <li class="post">
           <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a>
         </li>
       
     </ul>

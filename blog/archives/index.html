@@ -76,6 +76,20 @@ function ArchiveCtrl($scope) {
       current = {year : "2012", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "Buster.JSについて少しLTした"
+                       , url : "/blog/2012/10/16/busterjs-clientjs-testing/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Buster.JS");
+    
+      current_archive.categories.push("JavaScript");
+    
+      current_archive.categories.push("Testing");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "CoffeeScriptでライトにBDDする"
                        , url : "/blog/2012/10/10/light-coffee-bdd/"
                        , categories: []}; 
@@ -305,6 +319,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a>
         </li>
       
@@ -318,10 +336,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a>
         </li>
       
     </ul>
