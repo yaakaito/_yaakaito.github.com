@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-10-22T01:32:40+09:00</updated>
+  <updated>2012-10-22T01:38:45+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -73,7 +73,7 @@ Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジ�
 <h2>選ぶ基準</h2>
 
 <p>そもそもObjective-CでBDDフレームワーク使ったことないならKiwi使っとくのが無難です。
-元々GHUnitとかで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
+元々GHUnitで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
 
 <p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
 ]]></content>
