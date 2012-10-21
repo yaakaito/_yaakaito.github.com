@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-10-16T23:04:14+09:00</updated>
+  <updated>2012-10-22T01:32:40+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,72 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[KiwiとSpectaの比較]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/"/>
+    <updated>2012-10-22T00:48:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+前まではiOSのテストには主にKiwiを使っていたのですが、最近Spectaが良い感じなので使っています。
+結局のところ好みになってしまうのですが、簡単に比較というか感想を。(コードはそれぞれのREADMEみてください)
+どちらもRSpecに代表されるBDDスタイルの記述ができます。</p>
+
+<ul>
+<li><a href="https://github.com/allending/Kiwi">Kiwi</a></li>
+<li><a href="https://github.com/petejkim/specta">Specta</a></li>
+</ul>
+
+
+<h2>そもそもの違い</h2>
+
+<p>どちらも似た感じでテストを書くことができますが、そもそもとしてSpectaは自身がマッチャーなどは提供していません。
+主にExpectaを使うことになると思いますが、他のものを使うことができます。
+対してKiwiはモックから何からそろったフルセットのフレームワークです。</p>
+
+<p>Spectaの方がモジュール単位に分割されているので、ライブラリとして見たときは扱い易いです。
+ただ、好みのライブラリとか特にないって場合はKiwiを使った方がスムーズにいける印象です。</p>
+
+<h2>導入のしやすさ</h2>
+
+<p>SenTestingKitで動かすならどっちも同じくらい簡単にセットアップできます。
+ただしSpectaは分割している分、importとdefineが多くなってすこし見た目が悪いです。</p>
+
+<h2>アサーション</h2>
+
+<p>Sepcta使う最大の理由がほぼここにあって、Expectaががんばっているんですが、Objective-Cではありがちなプリミティブに対するラッパーが必要ないこと。
+Kiwiの場合は<code>theValue</code>マクロが用意されていて、これを使わなきゃいけないのでちょっとだるい。</p>
+
+<p><code>
+expect(1).to.equal(1); // Specta
+[[theValue(1) should] equal:theValue(1)]; // Kiwi
+</code></p>
+
+<p>あとはObjective-Cっぽく書くか、マクロで書くかの違いくらい。僕はKiwiっぽい記述の方が好きなんですが、どうしても<code>theValue</code>書きたくないでござる症候群が・・・。
+マッチャーの豊富さはどちらも同じくらいです。beNonZeroとかが分かりやすく書けるのはちょっとKiwiの方がいいかな。
+あとはBooleanがExpectaは<code>beTruthy</code> <code>beFalsy</code>ですが、Kiwiが<code>beTrue</code> <code>beFalse</code> なので気をつけましょう。</p>
+
+<h2>モックとか</h2>
+
+<p>Kiwiは組み込みのモック、SpectaはOCMockやLRMockyが推奨されているようです。
+メソッドをモックしたりとか基本的なところは一緒ですが、ちょっとずつ特徴があります。</p>
+
+<p>Kiwiの組み込みとLRMockyは、メッセージエクスペクテーションとして<code>recieve</code>がちゃんと使えるのがよいところ。
+OCMockはこのあたりがちょっとめんどくさくて、mockしてverifyしてね、という形式。notはない。</p>
+
+<p>逆にOCMockのいいところは<code>andDo:block</code>と<code>andCall:selector</code>が非常に使いやすいところ。
+Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジェクトに頼ったりする場面があるけど、OCMockはそれがほとんど必要ないのが良い。</p>
+
+<p>個人的にはBlocksを結構使うので、OCMockが使いやすいですね。</p>
+
+<h2>選ぶ基準</h2>
+
+<p>そもそもObjective-CでBDDフレームワーク使ったことないならKiwi使っとくのが無難です。
+元々GHUnitとかで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
+
+<p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Buster.JSについて少しLTした]]></title>

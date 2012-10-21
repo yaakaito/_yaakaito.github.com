@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Buster.JSについて少しLTした function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Buster.JS"); $scope.categories.push("JavaScript &hellip;">
+  <meta name="description" content="KiwiとSpectaの比較 function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("BDD"); $scope.categories.push("Kiwi"); $scope. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -46,7 +46,7 @@
    
     <article class="blog clear-fix separator" role="article">
       <h1 class="separator">
-        <a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a>
+        <a href="/blog/2012/10/22/kiwi-vs-specta/">KiwiとSpectaの比較</a>
       </h1>
   
       <div class="clear-fix">
@@ -58,11 +58,17 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("Buster.JS");
+      $scope.categories.push("BDD");
     
-      $scope.categories.push("JavaScript");
+      $scope.categories.push("Kiwi");
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("Specta");
     
       $scope.categories.push("Testing");
+    
+      $scope.categories.push("iOS");
     
   
 }
@@ -79,36 +85,65 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは！うきょーです。
-突然LTすることになったので、最近気になってるBuster.JSネタで話してきました。
-LTなのであんまり内容は濃くないです。iPhoneシュミレーターとかでも楽に動くし便利だね！というくらいです。</p>
-
-<script async class="speakerdeck-embed" data-id="507b79def901500002026b02" data-ratio="1.3333333333333333" src="//speakerdeck.com/assets/embed.js"></script>
-
-
-<p>スライドにはほとんど情報がないので、どんな感じで話したかを箇条書きで。</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+前まではiOSのテストには主にKiwiを使っていたのですが、最近Spectaが良い感じなので使っています。
+結局のところ好みになってしまうのですが、簡単に比較というか感想を。(コードはそれぞれのREADMEみてください)
+どちらもRSpecに代表されるBDDスタイルの記述ができます。</p>
 
 <ul>
-<li>yaakaito.orgが変なところに飛ばされとる (今はなおったみたい)</li>
-<li>みんなJSかきますよね！テストやってますか？？？</li>
-<li>フレームワークいろいろありますが、最近はBuster.JSがアツい</li>
-<li>JSTestDriverのようにブラウザ上での自動実行と、ヘッドレスでの実行がサポートされている</li>
-<li>&#8220;Test-Driven JavaScript Development&#8221;でも言及されていますが、実際の環境で動かせることは大事</li>
-<li>ちなみにこの本書いた人がBuster.JSの作者で、Buster.JSはこの本に書いてある理想を実際に行おうとしている</li>
-<li>けど、ヘッドレスでも動くしNodeも扱えるので、使い分けがしやすくて便利</li>
-<li>ヘッドレスはまだサポートされてると思った？残念、ベータちゃんでした！</li>
-<li>ともあれ便利なので使ってみよう</li>
-<li>npmで簡単インストール</li>
-<li>buster.jsというコンフィグを書いて、テストを書く</li>
-<li>サーバーを立ち上げてテスト対象になるブラウザでアクセス、対象として登録</li>
-<li>ChromeやFirefoxはもちろんiOSシュミレーターなんかでもばっちり！(実機もいけるよ！)</li>
-<li>RSpecみたいなBDDstyleの書き方もできるよ</li>
-<li>sinon.jsとwhen.jsが内蔵されているのでこれ一つで結構いろいろできるよ！ (ちなみにsinon.jsも同じ作者だったはず)</li>
-<li>クライアントサイドJSもテスト書こうね！</li>
+<li><a href="https://github.com/allending/Kiwi">Kiwi</a></li>
+<li><a href="https://github.com/petejkim/specta">Specta</a></li>
 </ul>
 
 
-<p>みたいな感じです！</p>
+<h2>そもそもの違い</h2>
+
+<p>どちらも似た感じでテストを書くことができますが、そもそもとしてSpectaは自身がマッチャーなどは提供していません。
+主にExpectaを使うことになると思いますが、他のものを使うことができます。
+対してKiwiはモックから何からそろったフルセットのフレームワークです。</p>
+
+<p>Spectaの方がモジュール単位に分割されているので、ライブラリとして見たときは扱い易いです。
+ただ、好みのライブラリとか特にないって場合はKiwiを使った方がスムーズにいける印象です。</p>
+
+<h2>導入のしやすさ</h2>
+
+<p>SenTestingKitで動かすならどっちも同じくらい簡単にセットアップできます。
+ただしSpectaは分割している分、importとdefineが多くなってすこし見た目が悪いです。</p>
+
+<h2>アサーション</h2>
+
+<p>Sepcta使う最大の理由がほぼここにあって、Expectaががんばっているんですが、Objective-Cではありがちなプリミティブに対するラッパーが必要ないこと。
+Kiwiの場合は<code>theValue</code>マクロが用意されていて、これを使わなきゃいけないのでちょっとだるい。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>expect(1).to.equal(1); // Specta
+</span><span class='line'>[[theValue(1) should] equal:theValue(1)]; // Kiwi</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとはObjective-Cっぽく書くか、マクロで書くかの違いくらい。僕はKiwiっぽい記述の方が好きなんですが、どうしても<code>theValue</code>書きたくないでござる症候群が・・・。
+マッチャーの豊富さはどちらも同じくらいです。beNonZeroとかが分かりやすく書けるのはちょっとKiwiの方がいいかな。
+あとはBooleanがExpectaは<code>beTruthy</code> <code>beFalsy</code>ですが、Kiwiが<code>beTrue</code> <code>beFalse</code> なので気をつけましょう。</p>
+
+<h2>モックとか</h2>
+
+<p>Kiwiは組み込みのモック、SpectaはOCMockやLRMockyが推奨されているようです。
+メソッドをモックしたりとか基本的なところは一緒ですが、ちょっとずつ特徴があります。</p>
+
+<p>Kiwiの組み込みとLRMockyは、メッセージエクスペクテーションとして<code>recieve</code>がちゃんと使えるのがよいところ。
+OCMockはこのあたりがちょっとめんどくさくて、mockしてverifyしてね、という形式。notはない。</p>
+
+<p>逆にOCMockのいいところは<code>andDo:block</code>と<code>andCall:selector</code>が非常に使いやすいところ。
+Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジェクトに頼ったりする場面があるけど、OCMockはそれがほとんど必要ないのが良い。</p>
+
+<p>個人的にはBlocksを結構使うので、OCMockが使いやすいですね。</p>
+
+<h2>選ぶ基準</h2>
+
+<p>そもそもObjective-CでBDDフレームワーク使ったことないならKiwi使っとくのが無難です。
+元々GHUnitとかで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
+
+<p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
 </div></section>
   
   
@@ -139,7 +174,7 @@ LTなのであんまり内容は濃くないです。iPhoneシュミレーター
   
 
 
-<time datetime="2012-10-16T22:24:00+09:00" pubdate data-updated="true">Oct 16<span>th</span>, 2012</time></p>
+<time datetime="2012-10-22T00:48:00+09:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time></p>
           </footer>
         </div>
       </div>
@@ -175,6 +210,10 @@ LTなのであんまり内容は濃くないです。iPhoneシュミレーター
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/10/22/kiwi-vs-specta/">KiwiとSpectaの比較</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a>
         </li>
       
@@ -188,10 +227,6 @@ LTなのであんまり内容は濃くないです。iPhoneシュミレーター
       
         <li class="post">
           <a href="/blog/2012/09/26/22-birthday/">22歳になりました</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a>
         </li>
       
     </ul>

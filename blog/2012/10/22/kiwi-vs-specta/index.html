@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>便利なライブラリHullToRefresh作った - yaakaito.org</title>
+  <title>KiwiとSpectaの比較 - yaakaito.org</title>
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="便利なライブラリHullToRefresh作った function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Joke"); $scope.categories.push("Objective-C &hellip;">
+  <meta name="description" content="KiwiとSpectaの比較 function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("BDD"); $scope.categories.push("Kiwi"); $scope. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   
-  <link rel="canonical" href="http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/">
+  <link rel="canonical" href="http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
@@ -44,7 +44,7 @@
     <article class="blog clear-fix separator" role="article">
   <h1 class="separator">
     
-      便利なライブラリHullToRefresh作った
+      KiwiとSpectaの比較
     
   </h1>
   
@@ -57,9 +57,15 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("Joke");
+      $scope.categories.push("BDD");
+    
+      $scope.categories.push("Kiwi");
     
       $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("Specta");
+    
+      $scope.categories.push("Testing");
     
       $scope.categories.push("iOS");
     
@@ -78,43 +84,65 @@ function CategoryCtrl($scope) {
     </aside>
     <div class="clear-fix"> 
       
-<section><div ng-non-bindable><p>こんにちは！うきょーです！みなさんPullToRefresh使ってますか？便利ですよね。
-けど、引っ張って更新、そろそろ飽きてきませんか？てゆーか、なんでわざわざ引っ張らなきゃいけないんですか？</p>
-
-<p>それを解決するために、HullToRefreshというライブラリを作りました。名前はギャグっぽいですがマジメです。</p>
+<section><div ng-non-bindable><p>こんにちは！うきょーです！
+前まではiOSのテストには主にKiwiを使っていたのですが、最近Spectaが良い感じなので使っています。
+結局のところ好みになってしまうのですが、簡単に比較というか感想を。(コードはそれぞれのREADMEみてください)
+どちらもRSpecに代表されるBDDスタイルの記述ができます。</p>
 
 <ul>
-<li><a href="https://github.com/yaakaito/HullToRefresh">HullToRefresh</a></li>
+<li><a href="https://github.com/allending/Kiwi">Kiwi</a></li>
+<li><a href="https://github.com/petejkim/specta">Specta</a></li>
 </ul>
 
 
-<p>振るとRefreshはその名の通り、iPhoneを大きく振るとイベントが飛んでくるライブラリです、すごく、すごく便利ですね。
-なんてったって画面に触る必要がありません、指を動かす必要もありません。更新したいな、と思ったときにはiPhoneでフリフリシェイクすればいいのです、楽しいですね。
-電車に乗っているときは自動で揺れを検知し、空気を読んで更新をしてくれます。なんて便利なんでしょう、指による入力なんて、もはや時代遅れなのです。
-このすばらしいアイデアの使い方はすごく簡単で、initしてフルフルNotificationを登録するだけです！！！</p>
+<h2>そもそもの違い</h2>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>どちらも似た感じでテストを書くことができますが、そもそもとしてSpectaは自身がマッチャーなどは提供していません。
+主にExpectaを使うことになると思いますが、他のものを使うことができます。
+対してKiwiはモックから何からそろったフルセットのフレームワークです。</p>
+
+<p>Spectaの方がモジュール単位に分割されているので、ライブラリとして見たときは扱い易いです。
+ただ、好みのライブラリとか特にないって場合はKiwiを使った方がスムーズにいける印象です。</p>
+
+<h2>導入のしやすさ</h2>
+
+<p>SenTestingKitで動かすならどっちも同じくらい簡単にセットアップできます。
+ただしSpectaは分割している分、importとdefineが多くなってすこし見た目が悪いです。</p>
+
+<h2>アサーション</h2>
+
+<p>Sepcta使う最大の理由がほぼここにあって、Expectaががんばっているんですが、Objective-Cではありがちなプリミティブに対するラッパーが必要ないこと。
+Kiwiの場合は<code>theValue</code>マクロが用意されていて、これを使わなきゃいけないのでちょっとだるい。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">HullToRefresh</span> <span class="n">sharedHullHull</span><span class="p">];</span>
-</span><span class='line'><span class="p">[[</span><span class="n">NSNotificationCenter</span> <span class="n">defaultCenter</span><span class="p">]</span> <span class="nl">addObserver:</span><span class="n">self</span>
-</span><span class='line'>                                         <span class="nl">selector:</span><span class="k">@selector</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-</span><span class='line'>                                             <span class="nl">name:</span><span class="n">kDidHullHullNotification</span>
-</span><span class='line'>                                           <span class="nl">object:</span><span class="nb">nil</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>expect(1).to.equal(1); // Specta
+</span><span class='line'>[[theValue(1) should] equal:theValue(1)]; // Kiwi</span></code></pre></td></tr></table></div></figure>
 
 
-<p>ね？簡単でしょう？サンプルについてくるアプリはこんな感じになります。</p>
+<p>あとはObjective-Cっぽく書くか、マクロで書くかの違いくらい。僕はKiwiっぽい記述の方が好きなんですが、どうしても<code>theValue</code>書きたくないでござる症候群が・・・。
+マッチャーの豊富さはどちらも同じくらいです。beNonZeroとかが分かりやすく書けるのはちょっとKiwiの方がいいかな。
+あとはBooleanがExpectaは<code>beTruthy</code> <code>beFalsy</code>ですが、Kiwiが<code>beTrue</code> <code>beFalse</code> なので気をつけましょう。</p>
 
-<p><img src="/images/hullhull.png"></p>
+<h2>モックとか</h2>
 
-<p>すばらしいライブラリなので、是非使ってみてください！使いどころとしては、空気を読まないアプリケーション作るときに便利です。</p>
+<p>Kiwiは組み込みのモック、SpectaはOCMockやLRMockyが推奨されているようです。
+メソッドをモックしたりとか基本的なところは一緒ですが、ちょっとずつ特徴があります。</p>
 
-<h3>まとめ</h3>
+<p>Kiwiの組み込みとLRMockyは、メッセージエクスペクテーションとして<code>recieve</code>がちゃんと使えるのがよいところ。
+OCMockはこのあたりがちょっとめんどくさくて、mockしてverifyしてね、という形式。notはない。</p>
 
-<p>完全にギャグです。タイポしたときとかに出るように割と悪意を持って作っていますが、ただのギャクです。</p>
+<p>逆にOCMockのいいところは<code>andDo:block</code>と<code>andCall:selector</code>が非常に使いやすいところ。
+Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジェクトに頼ったりする場面があるけど、OCMockはそれがほとんど必要ないのが良い。</p>
+
+<p>個人的にはBlocksを結構使うので、OCMockが使いやすいですね。</p>
+
+<h2>選ぶ基準</h2>
+
+<p>そもそもObjective-CでBDDフレームワーク使ったことないならKiwi使っとくのが無難です。
+元々GHUnitとかで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
+
+<p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
 </div></section>
 
 
@@ -122,7 +150,7 @@ function CategoryCtrl($scope) {
         
           <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/" >Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
   
@@ -143,7 +171,7 @@ function CategoryCtrl($scope) {
   
 
 
-<time datetime="2012-08-31T06:31:00+09:00" pubdate data-updated="true">Aug 31<span>st</span>, 2012</time></p>
+<time datetime="2012-10-22T00:48:00+09:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time></p>
       </footer>
     </div>
   </div>
@@ -158,10 +186,8 @@ function CategoryCtrl($scope) {
 
 <aside class="pagenation clear-fix" role="navigation">
     
-      <p class="previous pagenation"><a href="/blog/2012/08/21/grunt-coffeelint/" title="Previous Post: gruntのcoffeelintタスク作ってみた">&laquo; Previous Post</a></p>
+      <p class="previous pagenation"><a href="/blog/2012/10/16/busterjs-clientjs-testing/" title="Previous Post: Buster.JSについて少しLTした">&laquo; Previous Post</a></p>
     
-    
-      <p class="next pagenation"><a href="/blog/2012/09/01/github-oauth/" title="Next Post: iOSアプリでGithubにOAuthする">Next Post &raquo;</a></p>
     
 </aside>
 
@@ -271,8 +297,8 @@ function CategoryCtrl($scope) {
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/';
-        var disqus_url = 'http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/';
+        var disqus_identifier = 'http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/';
+        var disqus_url = 'http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/';
         var disqus_script = 'embed.js?';
       
     (function () {
