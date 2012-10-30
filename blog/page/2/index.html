@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="便利なライブラリHullToRefresh作った function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Joke"); $scope.categories.push("Objective-C &hellip;">
+  <meta name="description" content="iOSアプリでGithubにOAuthする function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Github"); $scope.categories.push("Objective-C &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -34,8 +34,6 @@
 
 <nav role="navigation"><ul>
   <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/resume">Resume</a></li>
-  <li><a href="/contact">Contact</a></li>
 </ul>
 </nav>
 
@@ -43,6 +41,91 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/09/01/github-oauth/">iOSアプリでGithubにOAuthする</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Github");
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("iOS");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです。
+Githubと連動したアプリを作りたくなったので、GithubのOAuthをiOSアプリでやってみました。</p>
+
+<ul>
+<li><a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a></li>
+<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
+</ul>
+
+
+<h2>アプリケーションを登録</h2>
+
+<p>[AccountSettings]-> [Applications] -> [Register new application]からアプリケーションを登録します。
+この時にCallback URLにカスタムスキームを入れる事ができるので、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>yourapp://oauth</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいなコールバックを指定します。そうするとIDがもらえるのでこれで登録は終わりです。</p>
+
+<h2>Githubへログインしてもらう</h2>
+
+<p>OAuthなので、Safariを開いてacceptしてもらいましょう。パスワード入力してもらってJS使って押すとか、やめましょうね。
+発行されたIDのうちClient IDをくっつけて</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>NSString *scope = @"public_repo,gist";
+</span><span class='line'>NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&scope=%@",kClientId, scope]];
+</span><span class='line'>[[UIApplication sharedApplication] openURL:url];</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいな具合で、Safariを起動します。
+別にUIWebViewでもいいと思いますが、専用のビュー作るのもめんどくさいし、ちゃんとGithubなことを証明するのもだるいので、Safariでいいと思います。</p>
+
+<h2>コールバックを拾ってアクセストークンをリクエスト</h2>
+
+<p>カスタムスキームからの起動で<code>code</code>がやってくるので、これを持って</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/login/oauth/access_token</span></code></pre></td></tr></table></div></figure>
+
+
+<p>へPOSTします。</p>
+
+<p>あとはkey-value形式でトークンが返ってくるので、それを使うだけです。簡単ですね。トークンはちゃんとキーチェインとかに入れてあげましょう。</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1677,6 +1760,10 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/10/31/zurui/">ズルいデザインが流行っていたので</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/10/22/kiwi-vs-specta/">KiwiとSpectaの比較</a>
         </li>
       
@@ -1690,10 +1777,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
       
         <li class="post">
           <a href="/blog/2012/09/28/dwango/">ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/26/22-birthday/">22歳になりました</a>
         </li>
       
     </ul>

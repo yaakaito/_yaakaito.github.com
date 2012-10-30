@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Zurui | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/zurui/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2012-10-31T01:57:49+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ズルいデザインが流行っていたので]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/10/31/zurui/"/>
+    <updated>2012-10-31T01:51:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/10/31/zurui</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！！！
+ズルいデザインが流行っているので、僕もずるいデザインにしてみました！！！</p>
+
+<p>ズルい線とかは元々使っていたので、さらにズルい要素を足して背景をカッチョヨクしてみました！！
+あとは微妙に文字がでかくなったりしています！ズルいですね！！！！</p>
+]]></content>
+  </entry>
+  
+</feed>
