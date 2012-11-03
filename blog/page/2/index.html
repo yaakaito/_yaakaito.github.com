@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="iOSアプリでGithubにOAuthする function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Github"); $scope.categories.push("Objective-C &hellip;">
+  <meta name="description" content="iOSアプリからGithubOAuth使うの見直している function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Github"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,91 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Github");
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("iOS");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんばんは！うきょーです、非常に眠いです。
+<a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
+<a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
+よくよく考えてみれば、起動スキーマ直接叩かれたらなんか起こりそうだよなーとかいろいろ気になってきたのでずっとOAuth2でググったりしてた。</p>
+
+<h2>そもそも</h2>
+
+<p>前回の感じになったのが単純に、メールとかパスワード入力するのがだるいしあんまりさせたくないなー、OAuthあったなーいけんじゃねー、という感じの理由。
+<a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a>を見てて、非Webアプリケーション向けの最初はBasic認証使って〜がやりたくなった感じですね。
+で、本来はBasic認証一回使ってーの方がいいと思うんですが、いろいろクライアントなライブラリを見ていると、<code>Client Secret</code>を引数に取ったりしてて、
+じゃあこっちでもいいのかなーとなった。</p>
+
+<h2>本当か？</h2>
+
+<p>で、気になって何個かGithubOAuth使ってそうなアプリを探してみたんだけど、hojokiなんかは<code>UIWebView</code>使ってやってるっぽいしやっぱこっちでいいんかなーと。
+けど<code>UIWebView</code>の作り上URLとか自分で出さないといけない訳ですが、それすら偽装してかなりそれっぽく見せる事は可能なので、
+僕が使う側だったらあんまり使いたくないなーと思ってしまった。一緒に変なJSとか走らされてもやだなーと思ったり。(他の人がどう思ってるのかは知らないですが)
+それだったらSafariに飛ばせばいいじゃん、でcallbackにカスタムスキームでー、でできたわけ。で、そこに弱そうなところがあるなら一旦塞ぐかーという感じで作ったのを適当にアップデート。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
+</ul>
+
+
+<p>やったのは、（今回はダミーだけど）<code>state</code>の付加と、OAuthしている時以外は起動スキーマを無効化した。（今は単純にabortしてるだけ）
+あとは本番では起動スキーマが使える時間とかも短くしぼったり、もやろうかなと思っていて、
+これでよっぽどな感じじゃない限りはインジェクションとかは大丈夫そうな感じがする。
+起動スキーマ持って行かれたときもまあ<code>Client Secret</code>バレなきゃだいじょ・・・そもそも<code>Secret</code>持っていいの？
+一応すごいがんばりをすれば秘密じゃなくなる気がする。</p>
+
+<h2>ライブラリにみるOAuth</h2>
+
+<p>さっきも書いたけどOAuthClientと名を打ってるライブラリは<code>Client ID</code>と<code>Client Secret</code>を要求していることが多いし、
+プラスアルファでアカウントとパスワードも要求してたりする。
+クライアント仲間ってことでJSも何個か見てみたんですが、
+カジュアルにSecretむき出し・・・秘密とは・・・みたいな感じになってて何を信じればいいのか分からなくなってきた。（まあTitaniumとかで使ってねってことだとは思うんだけど・・・）</p>
+
+<h2>Implicit Flow</h2>
+
+<p>さまよってるうちに「<a href="http://www.sakimura.org/2012/02/1487/">単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる</a>」
+というのに出会った、関係ありそうなので読んでみたんだけど、アプリケーションの認証として使うから駄目なのであって、
+クライアントとして認可される場合にはまあ大丈夫か、ってことでいいのかな。
+一旦は置いておいて良さそうだけど、あとで自分で見直したときのメモ。</p>
+
+<h2>で</h2>
+
+<p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1760,6 +1845,10 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/11/03/vows-coffee-testing/">小さいCoffeeのテストにはVowsが便利</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/10/31/zurui/">ズルいデザインが流行っていたので</a>
         </li>
       
@@ -1773,10 +1862,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
       
         <li class="post">
           <a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/09/28/dwango/">ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)</a>
         </li>
       
     </ul>
