@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Joke | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/joke/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-11-03T16:35:02+09:00</updated>
+  <updated>2012-11-14T01:22:00+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -46,7 +46,7 @@
 
 <p>ね？簡単でしょう？サンプルについてくるアプリはこんな感じになります。</p>
 
-<p><img src="/images/hullhull.png"></p>
+<p>{% img /images/hullhull.png %}</p>
 
 <p>すばらしいライブラリなので、是非使ってみてください！使いどころとしては、空気を読まないアプリケーション作るときに便利です。</p>
 
