@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-12-06T23:55:37+09:00</updated>
+  <updated>2012-12-06T23:58:32+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -19,7 +19,7 @@
     <updated>2012-12-06T22:01:00+09:00</updated>
     <id>http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a>6日目の記事です。
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 6日目の記事です。
 AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
 サンプルも書いていたのですが、アドベントにカレンダーできなさそうなので、今回は紹介だけです。</p>
 
@@ -60,7 +60,7 @@ text-shadow-offset: 1,1;
 <p>}
 ```</p>
 
-<p><img src="/images/adv_nui.png" width="320"></p>
+<p>{% img /images/adv_nui.png 320 %}</p>
 
 <p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
 
