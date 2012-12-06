@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-11-14T01:22:00+09:00</updated>
+  <updated>2012-12-06T23:55:37+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,96 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit/"/>
+    <updated>2012-12-06T22:01:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a>6日目の記事です。
+AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
+サンプルも書いていたのですが、アドベントにカレンダーできなさそうなので、今回は紹介だけです。</p>
+
+<h2>NUIって何</h2>
+
+<p>NUIはCSSライクにUIKitのスタイルを指定できるライブラリです。
+READMEからの引用ですが、こんな感じに定義することができます。</p>
+
+<p>```objective-c
+@primaryFontName: HelveticaNeue;
+@secondaryFontName: HelveticaNeue-Light;
+@primaryFontColor: #333333;
+@primaryBackgroundColor: #E6E6E6;</p>
+
+<p>Button {</p>
+
+<pre><code>background-color: @primaryBackgroundColor;
+border-color: #A2A2A2;
+border-width: @primaryBorderWidth;
+font-color: @primaryFontColor;
+font-color-highlighted: #999999;
+font-name: @primaryFontName;
+font-size: 18;
+corner-radius: 7;
+</code></pre>
+
+<p>}
+NavigationBar {</p>
+
+<pre><code>background-tint-color: @primaryBackgroundColor;
+font-name: @secondaryFontName;
+font-size: 20;
+font-color: @primaryFontColor;
+text-shadow-color: #666666;
+text-shadow-offset: 1,1;
+</code></pre>
+
+<p>}
+```</p>
+
+<p><img src="/images/adv_nui.png" width="320"></p>
+
+<p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
+
+<p>実際にCSSが書けるわけではなくて、あくまでUIKitに対応するプロパティをCSSライクに設定できるライブラリです。
+昔CSSをそのまま使えたら幸せじゃね、と考えてみたことはあったのですが、さすがにしんどくて挫折しました。
+そういう意味では NUI みたいな感じになっていても、十分良さそうに思えますね。</p>
+
+<h2>簡単な使い方</h2>
+
+<p>僕自身もまだちゃんと使えている訳ではないのですが、起動後にNUIを有効にしてあげて、</p>
+
+<p><code>objective-c
+[NUIAppearance init];
+</code></p>
+
+<p>で、NUIをセットアップします。</p>
+
+<p>あとは適用したいUIクラスをNUIButtonなどのサブクラスで定義して、</p>
+
+<p>```objective-c
+- (void)initNUI {</p>
+
+<pre><code>[super initNUI];
+self.nuiClass = @"Button:MyButton";
+</code></pre>
+
+<p>}
+```</p>
+
+<p>とかしてあげると、プロジェクトに含まれいる<code>NUIStyle.nss</code>を元にスタイリングしてくれるようです。
+自信はそんなにないですが。</p>
+
+<h2>設定できるプロパティとか</h2>
+
+<p><a href="https://github.com/tombenner/nui/blob/master/README.md#style-classes">READMEのStyleClasses</a>に書いてありますが、一通りは設定できる様子。</p>
+
+<h2>楽しみですね</h2>
+
+<p>ログをみたらまだできたばかりのプロダクトでした。今後どうなるか楽しみですね！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOSアプリのテストを１週してみて思ったこと]]></title>
@@ -561,61 +651,6 @@ STAssertEqualObjects(@"Kunoichi", viewController.result, @"result is 'Kunoichi'"
 <li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOSアプリからGithubOAuth使うの見直している]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/03/re-github-oauth/"/>
-    <updated>2012-09-03T04:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/03/re-github-oauth</id>
-    <content type="html"><![CDATA[<p>こんばんは！うきょーです、非常に眠いです。
-<a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
-<a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
-よくよく考えてみれば、起動スキーマ直接叩かれたらなんか起こりそうだよなーとかいろいろ気になってきたのでずっとOAuth2でググったりしてた。</p>
-
-<h2>そもそも</h2>
-
-<p>前回の感じになったのが単純に、メールとかパスワード入力するのがだるいしあんまりさせたくないなー、OAuthあったなーいけんじゃねー、という感じの理由。
-<a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a>を見てて、非Webアプリケーション向けの最初はBasic認証使って〜がやりたくなった感じですね。
-で、本来はBasic認証一回使ってーの方がいいと思うんですが、いろいろクライアントなライブラリを見ていると、<code>Client Secret</code>を引数に取ったりしてて、
-じゃあこっちでもいいのかなーとなった。</p>
-
-<h2>本当か？</h2>
-
-<p>で、気になって何個かGithubOAuth使ってそうなアプリを探してみたんだけど、hojokiなんかは<code>UIWebView</code>使ってやってるっぽいしやっぱこっちでいいんかなーと。
-けど<code>UIWebView</code>の作り上URLとか自分で出さないといけない訳ですが、それすら偽装してかなりそれっぽく見せる事は可能なので、
-僕が使う側だったらあんまり使いたくないなーと思ってしまった。一緒に変なJSとか走らされてもやだなーと思ったり。(他の人がどう思ってるのかは知らないですが)
-それだったらSafariに飛ばせばいいじゃん、でcallbackにカスタムスキームでー、でできたわけ。で、そこに弱そうなところがあるなら一旦塞ぐかーという感じで作ったのを適当にアップデート。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
-</ul>
-
-
-<p>やったのは、（今回はダミーだけど）<code>state</code>の付加と、OAuthしている時以外は起動スキーマを無効化した。（今は単純にabortしてるだけ）
-あとは本番では起動スキーマが使える時間とかも短くしぼったり、もやろうかなと思っていて、
-これでよっぽどな感じじゃない限りはインジェクションとかは大丈夫そうな感じがする。
-起動スキーマ持って行かれたときもまあ<code>Client Secret</code>バレなきゃだいじょ・・・そもそも<code>Secret</code>持っていいの？
-一応すごいがんばりをすれば秘密じゃなくなる気がする。</p>
-
-<h2>ライブラリにみるOAuth</h2>
-
-<p>さっきも書いたけどOAuthClientと名を打ってるライブラリは<code>Client ID</code>と<code>Client Secret</code>を要求していることが多いし、
-プラスアルファでアカウントとパスワードも要求してたりする。
-クライアント仲間ってことでJSも何個か見てみたんですが、
-カジュアルにSecretむき出し・・・秘密とは・・・みたいな感じになってて何を信じればいいのか分からなくなってきた。（まあTitaniumとかで使ってねってことだとは思うんだけど・・・）</p>
-
-<h2>Implicit Flow</h2>
-
-<p>さまよってるうちに「<a href="http://www.sakimura.org/2012/02/1487/">単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる</a>」
-というのに出会った、関係ありそうなので読んでみたんだけど、アプリケーションの認証として使うから駄目なのであって、
-クライアントとして認可される場合にはまあ大丈夫か、ってことでいいのかな。
-一旦は置いておいて良さそうだけど、あとで自分で見直したときのメモ。</p>
-
-<h2>で</h2>
-
-<p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
 ]]></content>
   </entry>
   
