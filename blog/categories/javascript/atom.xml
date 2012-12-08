@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-12-06T23:58:32+09:00</updated>
+  <updated>2012-12-09T00:29:55+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -264,7 +264,7 @@ this.todos.fetch();
 </code></pre>
 
 <p><code>
-{% raw %}
+
 適当な感じにビューを作ります。
 </code>html</p>
 
@@ -494,7 +494,7 @@ AngularJSのビューの更新との相性が悪いのか、1回目のsyncだと
 このへんはちゃんと調べてないので分かんないですが、あんまりよくないですねー。が、今回はParseがどんなもんか試すだけなのでまあおけおけ。
 とりあえずこんな感じで実装はおしまいです。</p>
 
-<p>{% endraw %}</p>
+<p></p>
 
 <h2>コードとか</h2>
 
@@ -545,13 +545,13 @@ Parse自体は使った感じそんなに悪くなくて、データビュアー
 
 <h2>そもそもシンタックスがぶつかるんですけど</h2>
 
-<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{% raw %}{{ hoge }}{% endraw %}</code> というシンタックスがぶつかりますね。
+<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{{ hoge }}</code> というシンタックスがぶつかりますね。
 これは<a href="http://jekyllrb.com/">Jekyll</a>のプラグインにrawプラグインというのがあるのでそれを使うと解決できます。
 ただ、よくみたらOctopressには最初からrawプラグインがついていたので、ありがたくこれを使わせてもらいましょう。
 AngularJSの対象になるところは、(ネストできなくて外側でお茶を濁してるので\は外してくださいね)
 <code>
 {\% raw %}
-  {% raw %}{{ hoge.fuga }}{% endraw %}
+  {{ hoge.fuga }}
 {\% endraw %}
 </code>
 とか書けばよいです。簡単ですね。</p>
@@ -587,7 +587,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 
 <p>今作っているテンプレート(このテンプレートですね)では下の方にgithubのリポジトリが何個かでるので、これを作ってみましょう 。<code>_include/asides/github.html</code> をこんな感じにします。
 ```html
-{% raw %}<div ng-controller="githubCtlr">
+<div ng-controller="githubCtlr">
   <ul class="repositories"></p>
 
 <pre><code>{\% raw %}
@@ -598,7 +598,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 </code></pre>
 
 <p>  </ul>
-</div>{% endraw %}
+</div>
 <code>
 これにあわせたJSを書きます。
 </code>javascript</p>
@@ -606,7 +606,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 <script>
   function githubCtlr($scope, $http) {
     $scope.repos = [];
-    $http.jsonp("https://api.github.com/users/{% raw %}{{ site.github_user }}{% endraw %}/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+    $http.jsonp("https://api.github.com/users/{{ site.github_user }}/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
       var count = {\{ site.github_repo_count }} || 5;
       for(var i = 0; i < count; i++) {
         $scope.repos.push(data.data[i]);
@@ -629,14 +629,14 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 けどAngularJS弄ってみたりしたらまあそれをブログに書くのは当然だよねーみたいなところで少し困ったことになります。
 なんとブログ本文もAngularJSの実行対象になってしまいました！やりましたね！！！</p>
 
-<p>raw使って生の <code>{% raw %}{{ hoge }}{% endraw %}</code> にしても、
+<p>raw使って生の <code>{{ hoge }}</code> にしても、
 Angularでその表示はなかったことにされるので、何が起こったのか一瞬分からなくなります。
 これは困るので解決しましょう、AngularJSを使う場所をそもそも絞ってしまうのがよいですが、
 面倒なので <code>ng-non-bindable</code> を使いましょう。 <code>ng-non-bindable</code> で囲まれた中はAngularJSの対象外になるので、何が起こったのか分かるようになります。</p>
 
-<p><code>_include/article.html</code> なんかで <code>{% raw %}{{ content }}{% endraw %}</code> の周りをガッツリ囲んでしまうのが楽です。
+<p><code>_include/article.html</code> なんかで <code>{{ content }}</code> の周りをガッツリ囲んでしまうのが楽です。
 <code>html
-&lt;section&gt;&lt;div ng-non-bindable&gt;{% raw %}{{ content }}{% endraw %}&lt;/div&gt;&lt;/section&gt;
+&lt;section&gt;&lt;div ng-non-bindable&gt;{{ content }}&lt;/div&gt;&lt;/section&gt;
 </code>
 これでブログが書けるようになりました！やりましたね！
 Octopress自体のことを書くときも同じことなので気をつけましょう。</p>
@@ -673,7 +673,7 @@ Octopress自体のことを書くときも同じことなので気をつけま�
 <div ng-controller="coderwallController">
   <ul>
     <li ng-repeat="badge in badges">
-      <img ng-src="{% raw %}{{badge.badge}}{% endraw %}" alt="{% raw %}{{badge.description}}{% endraw %}" title="{% raw %}{{badge.name}}{% endraw %}" />
+      <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
     </li>
   </ul>
 </div>
@@ -702,7 +702,35 @@ console.log($scope.badges);
 
 <p>全文はgistにあります。</p>
 
-<p>{% gist 3199870 %}</p>
+<p><div><script src='https://gist.github.com/3199870.js?file='></script>
+<noscript><pre><code>&lt;!doctype html&gt;
+&lt;html ng-app&gt; 
+  &lt;head&gt;
+    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
+      &lt;ul&gt;
+        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
+          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+
+  &lt;script&gt;
+    function coderwallController($scope, $http) {
+    
+      $scope.badges = [];   
+      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
+        $scope.badges = data.data.badges;
+        console.log($scope.badges);
+});
+    }
+    
+  &lt;/script&gt;
+&lt;/html&gt;</code></pre></noscript></div>
+</p>
 ]]></content>
   </entry>
   

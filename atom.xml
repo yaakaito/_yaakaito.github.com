@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-12-06T23:55:37+09:00</updated>
+  <updated>2012-12-09T00:29:55+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,12 +14,54 @@
 
   
   <entry>
+    <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing/"/>
+    <updated>2012-12-09T00:02:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！！
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
+みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、
+XcodeだとManageShemesからチェックを外して・・・とか、できるんですが、非常に面倒ですよね！！！
+そんなあなたにAppCodeがおすすめです！</p>
+
+<h2>テストメソッド単位で実行をキメよう！</h2>
+
+<p>とりあえずキメてみましょう！テストフレームワークはSenTestingKitです。</p>
+
+<p>普通にテストを書いていって・・・</p>
+
+<p><img src="http://yaakaito.github.com/images/adv-testing-test-case.png" width="420"></p>
+
+<p>この<code>testMappedArrayUsingBlock</code>だけを実行して確かめてみたいなーと思っずたら、
+キーバインドを弄っていない場合は<code>Command + Option + R</code>(多分あってるはず)なんかで、Run > Run&#8230; を呼び出します。
+そうするとこんな感じのメニューが現れて・・・</p>
+
+<p><img src="http://yaakaito.github.com/images/adv-testing-select.png" width="420"></p>
+
+<p><code>2</code>を押すと、このコンテキストのみを実行してくれます。
+すると・・・</p>
+
+<p><img src="http://yaakaito.github.com/images/adv-testing-result.png" width="420"></p>
+
+<p>こういう感じに<code>testMappedArrayUsingBlock</code>だけ実行してくれます！便利ですね！！！</p>
+
+<p>あとはガンガンテストをかいてガンガン実行してカイラクを得ましょう！！！</p>
+
+<h2>ちなみにこれをXcodeで開いてみると・・・</h2>
+
+<p><img src="http://yaakaito.github.com/images/adv-testing-xcode.png" width="320"></p>
+
+<p>こんな感じになっています。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
     <link href="http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit/"/>
     <updated>2012-12-06T22:01:00+09:00</updated>
     <id>http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a>6日目の記事です。
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 6日目の記事です。
 AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
 サンプルも書いていたのですが、アドベントにカレンダーできなさそうなので、今回は紹介だけです。</p>
 
@@ -2625,100 +2667,6 @@ Octopress自体のことを書くときも同じことなので気をつけま�
 <p>githubAPIでリポジトリ引いてくるみたいなコードよく見ますけど、
 クエリーなしだと30件しか帰ってこなくて全部みれないし、ソートが単なる名前順で微妙なので、
 <code>page</code> + <code>per_page</code> と <code>sort</code> くらいは指定した方がいいと思いますよ。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Angular.jsでcoderwallのバッチ取得してみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/30/angular-coderwall/"/>
-    <updated>2012-07-30T00:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/30/angular-coderwall</id>
-    <content type="html"><![CDATA[<h2>Coderwallのバッチ取得するのはよくみるけど</h2>
-
-<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
-といってもjQueryなんかでやるのとそんなに変わらないです。</p>
-
-<h2>バッチを表示させるHTMLを書く</h2>
-
-<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;badge in badges&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;img</span> <span class="na">ng-src=</span><span class="s">&quot;{{badge.badge}}&quot;</span> <span class="na">alt=</span><span class="s">&quot;{{badge.description}}&quot;</span> <span class="na">title=</span><span class="s">&quot;{{badge.name}}&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
-</span><span class='line'><span class="nt">&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じでデータをバインディングします。</p>
-
-<h2>データを取得する</h2>
-
-<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">coderwallController</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class='line'>  <span class="nx">$http</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="s2">&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">,</span><span class="nx">header</span><span class="p">,</span><span class="nx">config</span><span class="p">){</span>
-</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">badges</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で、取得できました！やりましたね！</p>
-
-<p>全文はgistにあります。</p>
-
-<div><script src='https://gist.github.com/3199870.js?file='></script>
-<noscript><pre><code>&lt;!doctype html&gt;
-&lt;html ng-app&gt; 
-  &lt;head&gt;
-    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
-      &lt;ul&gt;
-        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
-          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-
-  &lt;script&gt;
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  &lt;/script&gt;
-&lt;/html&gt;</code></pre></noscript></div>
-
-
-
 ]]></content>
   </entry>
   

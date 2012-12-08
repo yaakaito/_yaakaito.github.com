@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="ビューテストで便利なAlertNinjaを作りました function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AlertNinja"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="iOS6のNSAttributedStringで色とか付ける function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories.push &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,132 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("iOS");
+    
+      $scope.categories.push("iOS6");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
+便利なので使ってみましょう！！！！</p>
+
+<h2>サンプル</h2>
+
+<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
+このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
+
+<p>コードはいつも通りgithubにあげてあります。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
+</ul>
+
+
+<h2>NSAttributedStringを作る</h2>
+
+<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
+
+<p>作り方は大きく分けて二通りあって、</p>
+
+<ul>
+<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
+<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
+</ul>
+
+
+<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
+
+<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
+
+<p>まず yaakaito の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito&quot;</span>
+</span><span class='line'>                                                           <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span><span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
+この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
+他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
+よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
+
+<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">repository</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito/Specs&quot;</span>
+</span><span class='line'>                                                                 <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span> <span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">],</span>
+</span><span class='line'>                                                                               <span class="n">NSFontAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">boldSystemFontOfSize:</span><span class="mi">16</span><span class="p">]}</span> <span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後に真ん中の部分を作って、連結します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">others</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot; pushed to master at &quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithAttributedString:</span><span class="n">name</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">others</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">repository</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、NSAttributedStringの完成です。</p>
+
+<h2>UILabelに表示する</h2>
+
+<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UILabel</span> <span class="o">*</span><span class="n">label</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">)];</span>
+</span><span class='line'><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview:</span><span class="n">label</span><span class="p">];</span>
+</span><span class='line'><span class="n">label</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -2032,128 +2158,6 @@ Octopress自体のことを書くときも同じことなので気をつけま�
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("AngularJS");
-    
-      $scope.categories.push("JavaScript");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><h2>Coderwallのバッチ取得するのはよくみるけど</h2>
-
-<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
-といってもjQueryなんかでやるのとそんなに変わらないです。</p>
-
-<h2>バッチを表示させるHTMLを書く</h2>
-
-<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;badge in badges&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>      <span class="nt">&lt;img</span> <span class="na">ng-src=</span><span class="s">&quot;{{badge.badge}}&quot;</span> <span class="na">alt=</span><span class="s">&quot;{{badge.description}}&quot;</span> <span class="na">title=</span><span class="s">&quot;{{badge.name}}&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
-</span><span class='line'><span class="nt">&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じでデータをバインディングします。</p>
-
-<h2>データを取得する</h2>
-
-<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">coderwallController</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class='line'>  <span class="nx">$http</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="s2">&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">,</span><span class="nx">header</span><span class="p">,</span><span class="nx">config</span><span class="p">){</span>
-</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">badges</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で、取得できました！やりましたね！</p>
-
-<p>全文はgistにあります。</p>
-
-<div><script src='https://gist.github.com/3199870.js?file='></script>
-<noscript><pre><code>&lt;!doctype html&gt;
-&lt;html ng-app&gt; 
-  &lt;head&gt;
-    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
-      &lt;ul&gt;
-        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
-          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-
-  &lt;script&gt;
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  &lt;/script&gt;
-&lt;/html&gt;</code></pre></noscript></div>
-
-
-
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -2174,6 +2178,10 @@ function CategoryCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
         </li>
       
@@ -2187,10 +2195,6 @@ function CategoryCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/10/31/zurui/">ズルいデザインが流行っていたので</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/10/22/kiwi-vs-specta/">KiwiとSpectaの比較</a>
         </li>
       
     </ul>

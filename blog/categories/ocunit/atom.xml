@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: OCUnit | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/ocunit/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2012-12-09T00:29:55+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
+    <link href="http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing/"/>
+    <updated>2012-12-09T00:02:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！！
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
+みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、
+XcodeだとManageShemesからチェックを外して・・・とか、できるんですが、非常に面倒ですよね！！！
+そんなあなたにAppCodeがおすすめです！</p>
+
+<h2>テストメソッド単位で実行をキメよう！</h2>
+
+<p>とりあえずキメてみましょう！テストフレームワークはSenTestingKitです。</p>
+
+<p>普通にテストを書いていって・・・</p>
+
+<p><img src="/images/adv-testing-test-case.png" width="420"></p>
+
+<p>この<code>testMappedArrayUsingBlock</code>だけを実行して確かめてみたいなーと思っずたら、
+キーバインドを弄っていない場合は<code>Command + Option + R</code>(多分あってるはず)なんかで、Run > Run... を呼び出します。
+そうするとこんな感じのメニューが現れて・・・</p>
+
+<p><img src="/images/adv-testing-select.png" width="420"></p>
+
+<p><code>2</code>を押すと、このコンテキストのみを実行してくれます。
+すると・・・</p>
+
+<p><img src="/images/adv-testing-result.png" width="420"></p>
+
+<p>こういう感じに<code>testMappedArrayUsingBlock</code>だけ実行してくれます！便利ですね！！！</p>
+
+<p>あとはガンガンテストをかいてガンガン実行してカイラクを得ましょう！！！</p>
+
+<h2>ちなみにこれをXcodeで開いてみると・・・</h2>
+
+<p><img src="/images/adv-testing-xcode.png" width="320"></p>
+
+<p>こんな感じになっています。</p>
+]]></content>
+  </entry>
+  
+</feed>

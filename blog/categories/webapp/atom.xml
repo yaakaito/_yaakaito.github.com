@@ -4,7 +4,7 @@
   <title><![CDATA[Category: WebApp | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/webapp/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2012-12-06T23:58:32+09:00</updated>
+  <updated>2012-12-09T00:29:55+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -145,7 +145,7 @@ this.todos.fetch();
 </code></pre>
 
 <p><code>
-{% raw %}
+
 適当な感じにビューを作ります。
 </code>html</p>
 
@@ -375,7 +375,7 @@ AngularJSのビューの更新との相性が悪いのか、1回目のsyncだと
 このへんはちゃんと調べてないので分かんないですが、あんまりよくないですねー。が、今回はParseがどんなもんか試すだけなのでまあおけおけ。
 とりあえずこんな感じで実装はおしまいです。</p>
 
-<p>{% endraw %}</p>
+<p></p>
 
 <h2>コードとか</h2>
 

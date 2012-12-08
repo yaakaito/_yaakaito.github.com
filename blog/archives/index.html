@@ -74,6 +74,24 @@ function ArchiveCtrl($scope) {
       current = {year : "2012", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "AppCodeで華麗にテストをキメる！"
+                       , url : "/blog/2012/12/09/adv-appcode-splendid-testing/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("AppCode");
+    
+      current_archive.categories.push("OCUnit");
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("SenTestingKit");
+    
+      current_archive.categories.push("Testing");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "CSSライクにUIKitをスタイルできるNUIがおもしろい！"
                        , url : "/blog/2012/12/06/adv-nui-css-like-uikit/"
                        , categories: []}; 
@@ -403,6 +421,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
         </li>
       
@@ -416,10 +438,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/10/31/zurui/">ズルいデザインが流行っていたので</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/10/22/kiwi-vs-specta/">KiwiとSpectaの比較</a>
         </li>
       
     </ul>
