@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-01-04T01:47:00+09:00</updated>
+  <updated>2013-01-06T13:22:36+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,103 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/01/06/overline-010-release/"/>
+    <updated>2013-01-06T13:45:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/01/06/overline-010-release</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。寒いですね。
+Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
+バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
+
+<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
+
+<p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
+基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。</p>
+
+<p>主に僕がだるいなーと思ったベースで追加しています。
+なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
+
+<p>underscoreなんかと違うところは、underscoreとかってがんばってJSっぽく書こうとしてる感じが伝わってくるんですが、
+僕はJavaScriptみたいに書くのが綺麗だなとか書きやすいとかまったく思ってないので、Objective-Cらしく書けるようにしてあります。
+好みのレベルかなーくらいのショートハンドは用意しています。</p>
+
+<h2>使い方</h2>
+
+<p>Cocoapodsでやるのが楽です。</p>
+
+<p><code>ruby
+pod 'Overline'
+</code></p>
+
+<p><code>
+pod install
+</code></p>
+
+<p>して</p>
+
+<p>```objective-c</p>
+
+<h1>import "Overline.h"</h1>
+
+<p>```</p>
+
+<p>簡単ですね。</p>
+
+<p>必要なところだけ使いたかったり、自分でプロジェクトに追加する場合は、<code>/Overline</code>の下から好きなファイルをプロジェクトに追加してください。
+READMEに書いてある通りに分割してあるので、それなどを参考に。</p>
+
+<h2>出来る事</h2>
+
+<p>一覧はREADMEに書いてありますが、一例をだすと<code>map</code>とか</p>
+
+<p>```objective-c
+NSArray *mapped = [@[@1,@2,@3,@4,@5,@6] mappedArrayUsingBlock:<sup>id(id</sup> obj, NSUInteger idx) {</p>
+
+<pre><code>if ([obj integerValue] % 2 == 0) {
+    return obj;
+}
+return nil;
+</code></pre>
+
+<p>}];
+// @[@2,@4,@6]
+```</p>
+
+<p>こういう感じで正規表現でマッチングできたりとか (正規表現オブジェクトとしてちゃんと表記できないので、ちょっと微妙だけども)</p>
+
+<p><code>objective-c
+[@"https?" testInString:urlString];
+</code></p>
+
+<p>たまにしか使わないけど毎回引き出してくるのだるいーみたいな</p>
+
+<p><code>objective-c
+[@"hoge" md5];
+[@"hoge" stringByHashingSha256];
+[@"YQ==" decodeBase64];
+</code></p>
+
+<p>とか、<a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
+
+<p>```
+NSDictionary *dic = @{</p>
+
+<pre><code>    @"null-key" : [NSNull null]
+</code></pre>
+
+<p>};
+[[dic objectForKey:@"null-key"] objectForKey:@"fuck"]; // nil
+```</p>
+
+<p>できたりします。</p>
+
+<h3>よろしくね！</h3>
+
+<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
@@ -376,95 +473,6 @@ Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジ�
 元々GHUnitで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
 
 <p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOS6のNSAttributedStringで色とか付ける]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/"/>
-    <updated>2012-09-25T13:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
-便利なので使ってみましょう！！！！</p>
-
-<h2>サンプル</h2>
-
-<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
-このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
-
-<p>コードはいつも通りgithubにあげてあります。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
-</ul>
-
-
-<h2>NSAttributedStringを作る</h2>
-
-<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
-
-<p>作り方は大きく分けて二通りあって、</p>
-
-<ul>
-<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
-<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
-</ul>
-
-
-<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
-
-<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
-
-<p>まず yaakaito の部分を作ります。</p>
-
-<p>```objective-c
-NSAttributedString *name = [[NSAttributedString alloc] initWithString:@"yaakaito"</p>
-
-<pre><code>                                                       attributes:@{NSForegroundColorAttributeName : [UIColor blueColor]}];
-</code></pre>
-
-<p>```</p>
-
-<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
-この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
-他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
-よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
-
-<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
-
-<p>```objective-c
-NSAttributedString *repository = [[NSAttributedString alloc] initWithString:@"yaakaito/Specs"</p>
-
-<pre><code>                                                             attributes:@{ NSForegroundColorAttributeName : [UIColor blueColor],
-                                                                           NSFontAttributeName : [UIFont boldSystemFontOfSize:16]} ];
-</code></pre>
-
-<p>```</p>
-
-<p>最後に真ん中の部分を作って、連結します。</p>
-
-<p>```objective-c
-NSAttributedString *others = [[NSAttributedString alloc] initWithString:@" pushed to master at "];</p>
-
-<p>NSMutableAttributedString *message = [[NSMutableAttributedString alloc] initWithAttributedString:name];
-[message appendAttributedString:others];
-[message appendAttributedString:repository];
-```</p>
-
-<p>これで、NSAttributedStringの完成です。</p>
-
-<h2>UILabelに表示する</h2>
-
-<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
-
-<p><code>objective-c
-UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-[self.view addSubview:label];
-label.attributedText = message;
-</code></p>
-
-<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
 ]]></content>
   </entry>
   
