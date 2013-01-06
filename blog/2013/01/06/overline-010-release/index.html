@@ -81,7 +81,7 @@ Objective-C(主にiOS開発)向けのユーティリティライブラリを公�
 <p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
 
 <p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
-基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。</p>
+基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。ひかえめです。</p>
 
 <p>主に僕がだるいなーと思ったベースで追加しています。
 なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
@@ -157,7 +157,14 @@ READMEに書いてある通りに分割してあるので、それなどを参�
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>とか、<a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
+<p>なんでだよと突っ込みたくなる<code>insertObjects:atIndexes</code>とか</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">marray</span> <span class="nl">insertObjects:</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">atIndex:</span><span class="mi">1</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
