@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: confWD | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/confwd/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-01-26T18:19:28+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/01/26/confwd/"/>
+    <updated>2013-01-26T14:56:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/01/26/confwd</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。</p>
+
+<p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
+
+<p><img src="/images/confwd.png" width="660"></p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>今現在、決定しているスピーカーとして、
+「iPhone Core Audioプログラミング」    で有名なクックパッドの永野さん、
+「ビートロボ」でiOSのリードエンジニアを務める菅宮さん。
+まだWebの更新がおいついていませんが、
+「Dynamic Objective-C」や「iOS開発におけるパターンによるオートマティズム」を執筆された木下さんをはじめとする、
+豪華なゲストでお送りする予定です！
+講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！</p>
+
+<p>またLT参加者も募集しています！
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしておおります。
+LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！</p>
+
+<p>より詳しい情報は<a href="http://conference-with-developers.info/">公式サイト</a>をご覧ください！</p>
+
+<p>みなさんのご来場をお待ちしております！！</p>
+
+<iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
+  
+</feed>

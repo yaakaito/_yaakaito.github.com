@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-01-06T13:35:05+09:00</updated>
+  <updated>2013-01-26T18:19:28+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,44 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/01/26/confwd/"/>
+    <updated>2013-01-26T14:56:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/01/26/confwd</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。</p>
+
+<p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
+
+<p><img src="http://yaakaito.github.com/images/confwd.png" width="660"></p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>今現在、決定しているスピーカーとして、
+「iPhone Core Audioプログラミング」    で有名なクックパッドの永野さん、
+「ビートロボ」でiOSのリードエンジニアを務める菅宮さん。
+まだWebの更新がおいついていませんが、
+「Dynamic Objective-C」や「iOS開発におけるパターンによるオートマティズム」を執筆された木下さんをはじめとする、
+豪華なゲストでお送りする予定です！
+講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！</p>
+
+<p>またLT参加者も募集しています！
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしておおります。
+LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！</p>
+
+<p>より詳しい情報は<a href="http://conference-with-developers.info/">公式サイト</a>をご覧ください！</p>
+
+<p>みなさんのご来場をお待ちしております！！</p>
+
+<iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
@@ -1677,421 +1715,6 @@ coffeelintは便利ですがいちいち</p>
 <h2>まとめ</h2>
 
 <p>grunt.js便利なので使いましょう。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[dequeueReusable~の実装とテスト]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/"/>
-    <updated>2012-08-19T02:35:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。UITableViewに実装されている<code>dequeueReusableCellWithIdentifier</code>と同等の機能を持ったものを開発したいんだけど的な話です。
-dataSourceに似たのインターフェイスを持ってビューを実装するときに、不特定個数のものに対してインスタンスをすべて生成するわけにも行かないので、ある程度制御してあげる必要があります。
-今回はUIScrollView上に構築していく前提になっています。シンタックスハイライターを作ろうとしているので、使い回して描画される対象になるのは、行数表示とコード一行分の表示です。</p>
-
-<p>コードはいつも通りgithubにあります。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/BGSyntaxHighlighter">BGSyntaxHighlighter</a>
-
-<ul>
-<li>注)ライブラリとしては未完成です</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>実装方法を考える</h2>
-
-<p>さらっと思いつくところではリングバッファのようにしておけばよい気がしますね。
-ATPagingViewが似たような機能を実装していたのでコード読んでみたのですが、こちらはページング終了時にリサイクル用のSetに取っておいて、
-次の表示タイミングでそこから適当な物をもっていく、という方式でした。微妙にリングバッファと違う・・・。
-リングバッファっぽい感じでいけそう？と考えていたのですが、リングバッファにしてしまうと、画面の大きさに合わせてバッファの数を調整しなおさければいけなかったり、
-今回は中で簡潔している構造になっているのでよいのですが、APIを外に向けたときに、identifier関連でめんどくなりそうだなーという気がしたので、ATPagingViewがやっているような方法を採用しました。
-やることとしては、</p>
-
-<ul>
-<li>初回時に必要な分のビューを作る</li>
-<li>スクロールにあわせて必要なビューの差分を取って作る</li>
-<li>必要なビューを使い回す対象にする</li>
-</ul>
-
-
-<p>案外、簡単そうに見えますね。</p>
-
-<h2>UIScrollViewベースで実装するときの注意点</h2>
-
-<p>UIScrollViewで実装する場合には、UITableViewほど正確にスクロールの位置がとれる訳ではないのがポイントというか、気をつけるところです。
-今回はめんどくさいのでやらなかったのですが、ある程度余裕を持って描画してあげないと、下の方のビューが欠けてしまったりします。
-適当な余裕をもって描画してあげるといい感じになると思います。</p>
-
-<h2>実装していこう！</h2>
-
-<p>というわけで実装していきましょう。</p>
-
-<h4>下準備</h4>
-
-<p>まずはdequeueReusableのインターフェイスを作ります。今回は行数表示とコード一行分の表示を分けているので、2つ分必要です。
-が、実装としては両方同じなので、行数表示だけの例を出していきます。全文を確認したい方はgithubからどうぞ！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">BGSyntaxHighlightLineNumberView</span><span class="o">*</span><span class="p">)</span><span class="nf">dequeueReusableLineNumberView</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="o">&amp;&amp;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="n">count</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">view</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="n">anyObject</span><span class="p">];</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="nl">removeObject:</span><span class="n">view</span><span class="p">];</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">view</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>recycleLineNumberViews</code>は<code>NSMutableSet</code>で、ここに再利用可能なビューを入れて行きます。
-このメソッドは利用可能なビューが存在すれば、そこから適当なビューを抜き出してきて返す、という具合です。
-実際にビューに対しての描画処理をここでやってしまうと残念な感じになってしまうので、依存しないように気をつけましょう。
-次のここからビューの取得を試みて、なければ新しいものを作って、描画を行うメソッドです。
-UITableViewで言えば、<code>cellForRowAtIndexPath:</code>にあたる部分で、iOSエンジニアなら見覚えのある感じだと思います。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">BGSyntaxHighlightLineNumberView</span><span class="o">*</span><span class="p">)</span><span class="nf">lineNumberViewAtRow:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">view</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="n">dequeueReusableLineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">view</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">view</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGSyntaxHighlightLineNumberView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectZero</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">lineNumber</span> <span class="o">=</span> <span class="n">row</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">view</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで大体の準備ができました。<code>BGSyntaxHighlightLineNumberView</code>が必要なときは、このメソッド経由で取得すれば、
-再利用できるときは再利用を、ビューが足りずに新しく作る必要があるときは新しくビューを作ってくれます。</p>
-
-<h3>UIScrollViewへ表示する</h3>
-
-<p>では、これを使って実際に<code>UIScrollView</code>へ行数を表示してみましょう。
-初回のタイミングというか、最初に必要なものが決まるタイミングで必要な分だけビューを作ります。
-(今回は<code>layoutSubViews</code>なんですが、レイアウト以外をここでやるの微妙な感じがするので、こっちの方がよくね？というのがあれば教えてください。)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...     </span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">for</span><span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">codeObject</span> <span class="n">numberOfCodeLines</span><span class="p">];</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">makeAndLayoutLineAtRow:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">kLineHeight</span> <span class="o">&gt;=</span> <span class="n">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">self</span><span class="p">.</span><span class="n">viewingLinesRange</span> <span class="o">=</span> <span class="n">NSMakeRange</span><span class="p">(</span><span class="mi">0</span><span class="n">U</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
-</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>必要な分だけビューを作って、初期表示に必要ない部分になったらどこまで描画したかを記録しbreakします。
-<code>makeAndLayoutLineAtRow:</code>は指定した行のビューを生成してくれるメソッドで、中身はこんな感じです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">makeAndLayoutLineAtRow:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="n">row</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">lineNumberView</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">lineNumberViewAtRow:</span><span class="n">row</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="nl">addObject:</span><span class="n">lineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">addSubview:</span><span class="n">lineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">lineNumberView</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">kLineHeight</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">kLineNumberWidth</span><span class="p">,</span> <span class="n">kLineHeight</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ここまでで、とりあえず最初の表示が作れました、スクロールにあわせて必要な分を生成するようにしましょう。
-<code>UIScrollViewDelegate</code>の<code>scrollViewDidScroll:</code>で、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">scrollViewDidScroll:</span><span class="p">(</span><span class="n">UIScrollView</span> <span class="o">*</span><span class="p">)</span><span class="nv">scrollView</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">CGFloat</span> <span class="n">y</span> <span class="o">=</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">y</span> <span class="o">+</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">&gt;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">codeObject</span> <span class="n">numberOfCodeLines</span><span class="p">]</span> <span class="o">*</span> <span class="n">kLineHeight</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// いらないビューを再利用対象にする</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">recycleLinesOfOutsideFromRangeY:</span><span class="n">NSMakeRange</span><span class="p">(</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">)];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="cm">/*</span>
-</span><span class='line'><span class="cm">      差分を計算して必要なビューをmakeAndLayoutLineAtRow:で描画</span>
-</span><span class='line'><span class="cm">    */</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>差分の計算ロジックなんかは長くなってしまうので、省略しています。表示範囲内にはいっているけれど、まだ表示されてないビューがある場合に表示するロジックです。
-<code>recycleLinesOfOutsideFromRangeY:</code>は、名前がよくわからなかったので微妙なのですが、スクロール後に必要なくなったものを<code>removeFromSuperView</code>して、再利用対象にするメソッドです。
-一見作ってから削除、でもそんなに変わらない気がしますが、先に削除しておくと、削除されたものをそのまま使い回すことができるので、少しメモリが節約できます。
-<code>recycleLinesOfOutsideFromRangeY:</code>を省略して簡単に乗せておくと、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">recycleLinesOfOutsideFromRangeY:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">addingRecycleLineNumberViews</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">NSUInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">];</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>       <span class="cm">/*</span>
-</span><span class='line'><span class="cm">          範囲外のものを抽出</span>
-</span><span class='line'><span class="cm">        */</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="nl">addObjectsFromArray:</span><span class="n">addingRecycleLineNumberViews</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="nl">removeObjectsInArray:</span><span class="n">addingRecycleLineNumberViews</span><span class="p">];</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という具合です。</p>
-
-<h3>実際どれくらいのビューを必要とするのか</h3>
-
-<p>ここまでで大体実装ができた訳ですが、実際にどれくらいのビューが必要になるのでしょうか。
-今回の例では一行の高さが20pxなので、縦を460px確保したとすると、初期状態で460/20で23個必要になります。
-スクロールにあわせて描画を行って行くと、初回で何個かallocされれ、あとは大抵24~27個程度のビューのみで構成することがきでています。</p>
-
-<h2>テストを書く</h2>
-
-<p>さて、次はテストを書きましょう。<code>dequeueReusable~</code>のテストとして必要な項目は、</p>
-
-<ul>
-<li>あるスクロール位置でのビューが想定した通りにレンダリングされているか</li>
-<li>適当なところにスクロールしたときにビューを使い回しているか</li>
-</ul>
-
-
-<p>の2つでしょうか。まずは1つ目の方からテストしてみましょう。
-説明を分かり易くするために、ここからビューの高さを100px(ぴったりの場合ビューは5個)で統一していきます。</p>
-
-<h3>想定したレンダリングになっているかテスト</h3>
-
-<p>キチンとレイアウトが出来ているかは別のテスト(<code>dequeueReusable~</code>を無視したテスト)に任せるとして、スクロールした位置によってビューの枚数がキチンとあっているかを確認しましょう。
-まずは、ぴったりと高さの倍数で移動したケース。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testRenderingViews</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;100/20=5で初期段階で5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;100/20=5で初期段階で5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;ぴったりで移動するのでやっぱり5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;ぴったりで移動するのでやっぱり5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こっちは簡単ですね。次に10pxくらいずれた場合、この場合は一番上と下に半分づつのビューが必要なので、全体で6個になります、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testMisalignRenderingVies</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">6</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;すこしずれて移動するので下に1個余分に追加されて6個になる&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">6</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;すこしずれて移動するので下に1個余分に追加されて6個になる&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じです。</p>
-
-<h3>適当なところにスクロールした場合でのビューの個数をテスト</h3>
-
-<p>どこにスクロールしたときも、ビューを使い回して一定以上の数のビューを生成しないのが今回の目的なので、これをテストします。
-自分でたくさんいろんなところにスクロールするテストケースを書いてもいいですが、こういう時はQuickCheckが適用できます。
-Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用ください。(宣伝)</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/NLTQuickCheck">NLTQuickCheck</a></li>
-</ul>
-
-
-<p>標準のdoubleArbitraryでは少し大きいので、doubleArbitaryの<code>quadraticGenWithA:B:C:</code>へ渡す数値を調整して、大体+-0~600pxくらいの範囲の値を作ってくれるArbitraryを定義します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">NSNumber</span> <span class="nl">(BGArbitrary)</span>
-</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">scrollYArbitrary</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">quadratic</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="nl">quadraticGenWithA:</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">16</span> <span class="nl">b:</span><span class="mi">1</span> <span class="nl">c:</span><span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">doubleGen</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="nl">genWithGenerateBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">double</span> <span class="n">progress</span><span class="p">,</span> <span class="kt">int</span> <span class="n">random</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">chooser</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="n">randomGen</span><span class="p">];</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">chooser</span> <span class="nl">resizeWithMinimumSeed:</span><span class="o">-</span><span class="n">random</span> <span class="nl">maximumSeed:</span><span class="o">+</span><span class="n">random</span><span class="p">];</span>
-</span><span class='line'>        <span class="n">random</span> <span class="o">=</span> <span class="p">[[</span><span class="n">chooser</span> <span class="nl">valueWithProgress:</span><span class="n">progress</span><span class="p">]</span> <span class="n">intValue</span><span class="p">];</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">place</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span><span class="n">random</span><span class="p">]</span> <span class="n">length</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NLTQStandardGen</span> <span class="nl">standardGenWithMinimumSeed:</span><span class="mi">2</span> <span class="nl">maximumSeed:</span><span class="n">place</span><span class="p">]</span> <span class="n">currentGeneratedValue</span><span class="p">];</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">base</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="p">[</span><span class="n">NSNumber</span> <span class="nl">numberWithDouble:</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">random</span><span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">base</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">}];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">doubleGen</span> <span class="nl">bindingGen:</span><span class="n">quadratic</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">doubleGen</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>このArbitraryを使って、さっきのテストと同じ要領で適当な場所へスクロールさせます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">propRecycleLogic:</span><span class="p">(</span><span class="n">NSNumber</span><span class="o">*</span><span class="p">)</span><span class="nv">y</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">view</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGSyntaxHighlightView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectZero</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">codeObject</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGCodeObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithCodeString:</span><span class="p">[</span><span class="n">NSBundle</span> <span class="nl">codeStringForResouce:</span><span class="s">@&quot;mockLongObjective-C&quot;</span> <span class="nl">ofType:</span><span class="s">@&quot;txt&quot;</span><span class="p">]];</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">codeObject</span> <span class="o">=</span> <span class="n">codeObject</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span> <span class="n">floatValue</span><span class="p">],</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHTestLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">]);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="c1">// 3つくらいは許容できる</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testRecycle</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">NLTQTestable</span> <span class="o">*</span><span class="n">testable</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQTestable</span> <span class="nl">testableWithPropertySelector:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">propRecycleLogic:</span><span class="p">)</span>
-</span><span class='line'>                                                                 <span class="nl">target:</span><span class="n">self</span>
-</span><span class='line'>                                                            <span class="nl">arbitraries:</span><span class="p">[</span><span class="n">NSNumber</span> <span class="n">scrollYArbitrary</span><span class="p">],</span> <span class="nb">nil</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">testable</span> <span class="n">verboseCheck</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertTrue</span><span class="p">([</span><span class="n">testable</span> <span class="n">success</span><span class="p">],</span> <span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">testable</span> <span class="n">prettyReport</span><span class="p">]);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>アサーションは<code>return [view.lineNumberViews count] &lt; 8;</code>で、ピッタリが5個なので大体8個あれば十分使い回しきれるだろう、という風に書きます。</p>
-
-<h2>まとめ</h2>
-
-<p>これで<code>dequeueReusable~</code>っぽいものが実装できました。
-ビューが多くなってしまうが、不可視なビューが存在する、という状況では実装しておいて損はない機能です。
-ただやってみて実装コストは少し高めだなーと感じたので、その辺は相談、という感じでしょうか。</p>
 ]]></content>
   </entry>
   

@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました) function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Kuzu"); } {{ category }} こんにちは！ &hellip;">
+  <meta name="description" content="CoffeeScriptでライトにBDDする function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("CoffeeScript"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,267 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/10/10/light-coffee-bdd/">CoffeeScriptでライトにBDDする</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("CoffeeScript");
+    
+      $scope.categories.push("Jasmine");
+    
+      $scope.categories.push("Testing");
+    
+      $scope.categories.push("grunt");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです。
+ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら書くとしたら、
+どんな感じにするのが楽かなーと思ったのでちょっとやってみた。</p>
+
+<p>選ぶ以前に、割と最初から何使うかなーってのは決めていて、
+grunt+grunt-jasmine-taskの組み合わせです。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/light-coffee-bdd">light-coffee-bdd</a></li>
+</ul>
+
+
+<h2>grunt-jasmine-task</h2>
+
+<p>grunt-jasmine-taskをnpmから引っ張ってきます。
+これはgruntに標準でついてくるtest-taskと同じでphantomjsを使ってテストを実行するタスクです。
+requirejs使うといい感じに書けるっぽいです。
+package.jsonを適当に作って取ってきます。ついでにcoffee-taskも取ってきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;project&quot;</span>
+</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;0.0.1&quot;</span>
+</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;private&quot;</span><span class="o">:</span> <span class="kc">true</span>
+</span><span class='line'>  <span class="p">,</span> <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;grunt-coffee&quot;</span> <span class="o">:</span> <span class="s2">&quot;*&quot;</span>
+</span><span class='line'>    <span class="p">,</span> <span class="s2">&quot;grunt-jasmine-task&quot;</span> <span class="o">:</span> <span class="s2">&quot;*&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>grunt.js</h2>
+
+<p>grunt.jsにcoffeeのコンパイルとjasmineのタスクを追加します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">coffee</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">app</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="s1">&#39;lib/*.coffee&#39;</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;build/&#39;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">,</span> <span class="nx">spec</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="s1">&#39;specs/*.coffee&#39;</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;spec_runner/spec/&#39;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">,</span> <span class="nx">runner</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="s1">&#39;spec_runner/main.coffee&#39;</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'>    <span class="p">,</span> <span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;spec_runner/&#39;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="p">,</span> <span class="nx">jasmine</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">all</span> <span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span><span class="s1">&#39;spec_runner/index.html&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">,</span> <span class="nx">tasks</span> <span class="o">:</span> <span class="s1">&#39;coffee:all&#39;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>ランナー</h2>
+
+<p>spec_runner/にランナーを用意します
+libとかにjasmineとrequirejsを用意しておきます。
+htmlはjasmineをブラウザで実行するときと一緒です。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!doctype html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;title&gt;</span>Jasmine Spec Runner<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;shortcut icon&quot;</span> <span class="na">type=</span><span class="s">&quot;image/png&quot;</span> <span class="na">href=</span><span class="s">&quot;lib/jasmine-1.2.0/jasmine_favicon.png&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href=</span><span class="s">&quot;lib/jasmine-1.2.0/jasmine.css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">data-main=</span><span class="s">&quot;main.js&quot;</span> <span class="na">src=</span><span class="s">&quot;lib/require-2.0.2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ。
+で、main.jsからspecを読み込んで実行してあげます。
+main.js自体はgruntでcoffeeからコンパイルします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">config =</span>
+</span><span class='line'>  <span class="nv">paths :</span>
+</span><span class='line'>    <span class="s">&#39;jasmine&#39;</span><span class="o">:</span>       <span class="s">&#39;lib/jasmine-1.2.0/jasmine&#39;</span>
+</span><span class='line'>    <span class="s">&#39;jasmine.html&#39;</span><span class="o">:</span>   <span class="s">&#39;lib/jasmine-1.2.0/jasmine-html&#39;</span>
+</span><span class='line'>    <span class="s">&#39;jasmine.helper&#39;</span><span class="o">:</span> <span class="s">&#39;lib/jasmine-1.2.0/jasmine-helper&#39;</span>
+</span><span class='line'>  <span class="nv">shim :</span>
+</span><span class='line'>    <span class="s">&#39;jasmine&#39;</span> <span class="o">:</span>
+</span><span class='line'>      <span class="s">&#39;exports&#39;</span> <span class="o">:</span> <span class="s">&#39;jasmine&#39;</span>
+</span><span class='line'>    <span class="s">&#39;jasmine.html&#39;</span><span class="o">:</span>   <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="s">&#39;jasmine.helper&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">require</span><span class="p">.</span><span class="nx">config</span> <span class="nx">config</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">require</span> <span class="p">[</span><span class="s">&#39;jasmine&#39;</span><span class="p">,</span> <span class="s">&#39;jasmine.html&#39;</span><span class="p">,</span> <span class="s">&#39;jasmine.helper&#39;</span><span class="p">,</span> <span class="s">&#39;spec/sample_spec&#39;</span><span class="p">],</span> <span class="nf">(jasmine) -&gt;</span>
+</span><span class='line'>  <span class="nv">jasmineEnv = </span><span class="nx">jasmine</span><span class="p">.</span><span class="nx">getEnv</span><span class="p">()</span>
+</span><span class='line'>  <span class="nv">jasmineEnv.updateInterval = </span><span class="mi">1000</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">htmlReporter = </span><span class="k">new</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">HtmlReporter</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">jasmineEnv</span><span class="p">.</span><span class="nx">addReporter</span> <span class="nx">htmlReporter</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">jasmineEnv.specFilter = </span><span class="nf">(spec) -&gt;</span>
+</span><span class='line'>    <span class="nx">htmlReporter</span><span class="p">.</span><span class="nx">specFilter</span> <span class="nx">spec</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">jasmineEnv</span><span class="p">.</span><span class="nx">execute</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで準備完了です。適当なspecを書いてみましょう。</p>
+
+<h2>sample_spec</h2>
+
+<p>gruntで一緒にコンパイルするので、specもcoffeeで書けばよかだと思います。今回は実装がないので何もdefineしてません。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">define</span> <span class="p">[],</span> <span class="o">-&gt;</span>
+</span><span class='line'>  <span class="nx">describe</span> <span class="s">&#39;A suite&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nx">it</span> <span class="s">&#39;sample spec&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>      <span class="nx">expect</span><span class="p">(</span><span class="kc">true</span><span class="p">).</span><span class="nx">toBe</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとはコンソールから</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">$</span> <span class="nx">grunt</span> <span class="nx">jasmine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で動かします。watch-task書いて動かすのもよいと思います。</p>
+
+<h2>まとめ</h2>
+
+<p>jasmineの部分だけ抽出してますが、実際はこれ+coffeelint+cancat+minifyみたいな構成で書いています。
+gruntと使うと簡単なものなら早くセットアップできて、ブラウザもイチイチリロードしなくていいような環境になるので、楽チンですね。</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1063,455 +1324,6 @@ coffeelintは便利ですがいちいち</p>
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/08/19/dequeue-reusable-making/">dequeueReusable~の実装とテスト</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("NLTQuickCheck");
-    
-      $scope.categories.push("Objective-C");
-    
-      $scope.categories.push("QuickCheck");
-    
-      $scope.categories.push("Testing");
-    
-      $scope.categories.push("iOS");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>こんにちは！うきょーです。UITableViewに実装されている<code>dequeueReusableCellWithIdentifier</code>と同等の機能を持ったものを開発したいんだけど的な話です。
-dataSourceに似たのインターフェイスを持ってビューを実装するときに、不特定個数のものに対してインスタンスをすべて生成するわけにも行かないので、ある程度制御してあげる必要があります。
-今回はUIScrollView上に構築していく前提になっています。シンタックスハイライターを作ろうとしているので、使い回して描画される対象になるのは、行数表示とコード一行分の表示です。</p>
-
-<p>コードはいつも通りgithubにあります。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/BGSyntaxHighlighter">BGSyntaxHighlighter</a>
-
-<ul>
-<li>注)ライブラリとしては未完成です</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>実装方法を考える</h2>
-
-<p>さらっと思いつくところではリングバッファのようにしておけばよい気がしますね。
-ATPagingViewが似たような機能を実装していたのでコード読んでみたのですが、こちらはページング終了時にリサイクル用のSetに取っておいて、
-次の表示タイミングでそこから適当な物をもっていく、という方式でした。微妙にリングバッファと違う・・・。
-リングバッファっぽい感じでいけそう？と考えていたのですが、リングバッファにしてしまうと、画面の大きさに合わせてバッファの数を調整しなおさければいけなかったり、
-今回は中で簡潔している構造になっているのでよいのですが、APIを外に向けたときに、identifier関連でめんどくなりそうだなーという気がしたので、ATPagingViewがやっているような方法を採用しました。
-やることとしては、</p>
-
-<ul>
-<li>初回時に必要な分のビューを作る</li>
-<li>スクロールにあわせて必要なビューの差分を取って作る</li>
-<li>必要なビューを使い回す対象にする</li>
-</ul>
-
-
-<p>案外、簡単そうに見えますね。</p>
-
-<h2>UIScrollViewベースで実装するときの注意点</h2>
-
-<p>UIScrollViewで実装する場合には、UITableViewほど正確にスクロールの位置がとれる訳ではないのがポイントというか、気をつけるところです。
-今回はめんどくさいのでやらなかったのですが、ある程度余裕を持って描画してあげないと、下の方のビューが欠けてしまったりします。
-適当な余裕をもって描画してあげるといい感じになると思います。</p>
-
-<h2>実装していこう！</h2>
-
-<p>というわけで実装していきましょう。</p>
-
-<h4>下準備</h4>
-
-<p>まずはdequeueReusableのインターフェイスを作ります。今回は行数表示とコード一行分の表示を分けているので、2つ分必要です。
-が、実装としては両方同じなので、行数表示だけの例を出していきます。全文を確認したい方はgithubからどうぞ！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">BGSyntaxHighlightLineNumberView</span><span class="o">*</span><span class="p">)</span><span class="nf">dequeueReusableLineNumberView</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="o">&amp;&amp;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="n">count</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">view</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="n">anyObject</span><span class="p">];</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="nl">removeObject:</span><span class="n">view</span><span class="p">];</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">view</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>recycleLineNumberViews</code>は<code>NSMutableSet</code>で、ここに再利用可能なビューを入れて行きます。
-このメソッドは利用可能なビューが存在すれば、そこから適当なビューを抜き出してきて返す、という具合です。
-実際にビューに対しての描画処理をここでやってしまうと残念な感じになってしまうので、依存しないように気をつけましょう。
-次のここからビューの取得を試みて、なければ新しいものを作って、描画を行うメソッドです。
-UITableViewで言えば、<code>cellForRowAtIndexPath:</code>にあたる部分で、iOSエンジニアなら見覚えのある感じだと思います。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">BGSyntaxHighlightLineNumberView</span><span class="o">*</span><span class="p">)</span><span class="nf">lineNumberViewAtRow:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">view</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="n">dequeueReusableLineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">view</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">view</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGSyntaxHighlightLineNumberView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectZero</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">lineNumber</span> <span class="o">=</span> <span class="n">row</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">view</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで大体の準備ができました。<code>BGSyntaxHighlightLineNumberView</code>が必要なときは、このメソッド経由で取得すれば、
-再利用できるときは再利用を、ビューが足りずに新しく作る必要があるときは新しくビューを作ってくれます。</p>
-
-<h3>UIScrollViewへ表示する</h3>
-
-<p>では、これを使って実際に<code>UIScrollView</code>へ行数を表示してみましょう。
-初回のタイミングというか、最初に必要なものが決まるタイミングで必要な分だけビューを作ります。
-(今回は<code>layoutSubViews</code>なんですが、レイアウト以外をここでやるの微妙な感じがするので、こっちの方がよくね？というのがあれば教えてください。)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...     </span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">for</span><span class="p">(</span><span class="n">NSInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">codeObject</span> <span class="n">numberOfCodeLines</span><span class="p">];</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">makeAndLayoutLineAtRow:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">kLineHeight</span> <span class="o">&gt;=</span> <span class="n">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">self</span><span class="p">.</span><span class="n">viewingLinesRange</span> <span class="o">=</span> <span class="n">NSMakeRange</span><span class="p">(</span><span class="mi">0</span><span class="n">U</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
-</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>必要な分だけビューを作って、初期表示に必要ない部分になったらどこまで描画したかを記録しbreakします。
-<code>makeAndLayoutLineAtRow:</code>は指定した行のビューを生成してくれるメソッドで、中身はこんな感じです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nl">makeAndLayoutLineAtRow:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="n">row</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">BGSyntaxHighlightLineNumberView</span> <span class="o">*</span><span class="n">lineNumberView</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span> <span class="nl">lineNumberViewAtRow:</span><span class="n">row</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="nl">addObject:</span><span class="n">lineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">addSubview:</span><span class="n">lineNumberView</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">lineNumberView</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">kLineHeight</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">kLineNumberWidth</span><span class="p">,</span> <span class="n">kLineHeight</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ここまでで、とりあえず最初の表示が作れました、スクロールにあわせて必要な分を生成するようにしましょう。
-<code>UIScrollViewDelegate</code>の<code>scrollViewDidScroll:</code>で、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">scrollViewDidScroll:</span><span class="p">(</span><span class="n">UIScrollView</span> <span class="o">*</span><span class="p">)</span><span class="nv">scrollView</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">CGFloat</span> <span class="n">y</span> <span class="o">=</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">y</span> <span class="o">+</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span> <span class="o">&gt;</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">codeObject</span> <span class="n">numberOfCodeLines</span><span class="p">]</span> <span class="o">*</span> <span class="n">kLineHeight</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">// いらないビューを再利用対象にする</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">recycleLinesOfOutsideFromRangeY:</span><span class="n">NSMakeRange</span><span class="p">(</span><span class="n">scrollView</span><span class="p">.</span><span class="n">contentOffset</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">scrollView</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">size</span><span class="p">.</span><span class="n">height</span><span class="p">)];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="cm">/*</span>
-</span><span class='line'><span class="cm">      差分を計算して必要なビューをmakeAndLayoutLineAtRow:で描画</span>
-</span><span class='line'><span class="cm">    */</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>差分の計算ロジックなんかは長くなってしまうので、省略しています。表示範囲内にはいっているけれど、まだ表示されてないビューがある場合に表示するロジックです。
-<code>recycleLinesOfOutsideFromRangeY:</code>は、名前がよくわからなかったので微妙なのですが、スクロール後に必要なくなったものを<code>removeFromSuperView</code>して、再利用対象にするメソッドです。
-一見作ってから削除、でもそんなに変わらない気がしますが、先に削除しておくと、削除されたものをそのまま使い回すことができるので、少しメモリが節約できます。
-<code>recycleLinesOfOutsideFromRangeY:</code>を省略して簡単に乗せておくと、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">recycleLinesOfOutsideFromRangeY:</span><span class="p">(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">addingRecycleLineNumberViews</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="n">array</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="n">NSUInteger</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">];</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>       <span class="cm">/*</span>
-</span><span class='line'><span class="cm">          範囲外のものを抽出</span>
-</span><span class='line'><span class="cm">        */</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">recycleLineNumberViews</span> <span class="nl">addObjectsFromArray:</span><span class="n">addingRecycleLineNumberViews</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="nl">removeObjectsInArray:</span><span class="n">addingRecycleLineNumberViews</span><span class="p">];</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という具合です。</p>
-
-<h3>実際どれくらいのビューを必要とするのか</h3>
-
-<p>ここまでで大体実装ができた訳ですが、実際にどれくらいのビューが必要になるのでしょうか。
-今回の例では一行の高さが20pxなので、縦を460px確保したとすると、初期状態で460/20で23個必要になります。
-スクロールにあわせて描画を行って行くと、初回で何個かallocされれ、あとは大抵24~27個程度のビューのみで構成することがきでています。</p>
-
-<h2>テストを書く</h2>
-
-<p>さて、次はテストを書きましょう。<code>dequeueReusable~</code>のテストとして必要な項目は、</p>
-
-<ul>
-<li>あるスクロール位置でのビューが想定した通りにレンダリングされているか</li>
-<li>適当なところにスクロールしたときにビューを使い回しているか</li>
-</ul>
-
-
-<p>の2つでしょうか。まずは1つ目の方からテストしてみましょう。
-説明を分かり易くするために、ここからビューの高さを100px(ぴったりの場合ビューは5個)で統一していきます。</p>
-
-<h3>想定したレンダリングになっているかテスト</h3>
-
-<p>キチンとレイアウトが出来ているかは別のテスト(<code>dequeueReusable~</code>を無視したテスト)に任せるとして、スクロールした位置によってビューの枚数がキチンとあっているかを確認しましょう。
-まずは、ぴったりと高さの倍数で移動したケース。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testRenderingViews</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;100/20=5で初期段階で5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;100/20=5で初期段階で5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;ぴったりで移動するのでやっぱり5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">5</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;ぴったりで移動するのでやっぱり5個ある&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こっちは簡単ですね。次に10pxくらいずれた場合、この場合は一番上と下に半分づつのビューが必要なので、全体で6個になります、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testMisalignRenderingVies</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">6</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;すこしずれて移動するので下に1個余分に追加されて6個になる&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">GHAssertEquals</span><span class="p">(</span><span class="mi">6</span><span class="n">U</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineViews</span> <span class="n">count</span><span class="p">],</span> <span class="s">@&quot;すこしずれて移動するので下に1個余分に追加されて6個になる&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じです。</p>
-
-<h3>適当なところにスクロールした場合でのビューの個数をテスト</h3>
-
-<p>どこにスクロールしたときも、ビューを使い回して一定以上の数のビューを生成しないのが今回の目的なので、これをテストします。
-自分でたくさんいろんなところにスクロールするテストケースを書いてもいいですが、こういう時はQuickCheckが適用できます。
-Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用ください。(宣伝)</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/NLTQuickCheck">NLTQuickCheck</a></li>
-</ul>
-
-
-<p>標準のdoubleArbitraryでは少し大きいので、doubleArbitaryの<code>quadraticGenWithA:B:C:</code>へ渡す数値を調整して、大体+-0~600pxくらいの範囲の値を作ってくれるArbitraryを定義します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">NSNumber</span> <span class="nl">(BGArbitrary)</span>
-</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">scrollYArbitrary</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">quadratic</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="nl">quadraticGenWithA:</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">16</span> <span class="nl">b:</span><span class="mi">1</span> <span class="nl">c:</span><span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">doubleGen</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="nl">genWithGenerateBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">double</span> <span class="n">progress</span><span class="p">,</span> <span class="kt">int</span> <span class="n">random</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">NLTQGen</span> <span class="o">*</span><span class="n">chooser</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQGen</span> <span class="n">randomGen</span><span class="p">];</span>
-</span><span class='line'>        <span class="p">[</span><span class="n">chooser</span> <span class="nl">resizeWithMinimumSeed:</span><span class="o">-</span><span class="n">random</span> <span class="nl">maximumSeed:</span><span class="o">+</span><span class="n">random</span><span class="p">];</span>
-</span><span class='line'>        <span class="n">random</span> <span class="o">=</span> <span class="p">[[</span><span class="n">chooser</span> <span class="nl">valueWithProgress:</span><span class="n">progress</span><span class="p">]</span> <span class="n">intValue</span><span class="p">];</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">place</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span><span class="n">random</span><span class="p">]</span> <span class="n">length</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NLTQStandardGen</span> <span class="nl">standardGenWithMinimumSeed:</span><span class="mi">2</span> <span class="nl">maximumSeed:</span><span class="n">place</span><span class="p">]</span> <span class="n">currentGeneratedValue</span><span class="p">];</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">base</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="p">[</span><span class="n">NSNumber</span> <span class="nl">numberWithDouble:</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">random</span><span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">base</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">}];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">doubleGen</span> <span class="nl">bindingGen:</span><span class="n">quadratic</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">doubleGen</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>このArbitraryを使って、さっきのテストと同じ要領で適当な場所へスクロールさせます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">propRecycleLogic:</span><span class="p">(</span><span class="n">NSNumber</span><span class="o">*</span><span class="p">)</span><span class="nv">y</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">view</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGSyntaxHighlightView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectZero</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">codeObject</span> <span class="o">=</span> <span class="p">[[</span><span class="n">BGCodeObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithCodeString:</span><span class="p">[</span><span class="n">NSBundle</span> <span class="nl">codeStringForResouce:</span><span class="s">@&quot;mockLongObjective-C&quot;</span> <span class="nl">ofType:</span><span class="s">@&quot;txt&quot;</span><span class="p">]];</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">codeObject</span> <span class="o">=</span> <span class="n">codeObject</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span> <span class="n">layoutSubviews</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberScrollView</span> <span class="nl">scrollRectToVisible:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span> <span class="n">floatValue</span><span class="p">],</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="nl">animated:</span><span class="n">NO</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHTestLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">]);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">lineNumberViews</span> <span class="n">count</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="c1">// 3つくらいは許容できる</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testRecycle</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">NLTQTestable</span> <span class="o">*</span><span class="n">testable</span> <span class="o">=</span> <span class="p">[</span><span class="n">NLTQTestable</span> <span class="nl">testableWithPropertySelector:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">propRecycleLogic:</span><span class="p">)</span>
-</span><span class='line'>                                                                 <span class="nl">target:</span><span class="n">self</span>
-</span><span class='line'>                                                            <span class="nl">arbitraries:</span><span class="p">[</span><span class="n">NSNumber</span> <span class="n">scrollYArbitrary</span><span class="p">],</span> <span class="nb">nil</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">testable</span> <span class="n">verboseCheck</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">GHAssertTrue</span><span class="p">([</span><span class="n">testable</span> <span class="n">success</span><span class="p">],</span> <span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">testable</span> <span class="n">prettyReport</span><span class="p">]);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>アサーションは<code>return [view.lineNumberViews count] &lt; 8;</code>で、ピッタリが5個なので大体8個あれば十分使い回しきれるだろう、という風に書きます。</p>
-
-<h2>まとめ</h2>
-
-<p>これで<code>dequeueReusable~</code>っぽいものが実装できました。
-ビューが多くなってしまうが、不可視なビューが存在する、という状況では実装しておいて損はない機能です。
-ただやってみて実装コストは少し高めだなーと感じたので、その辺は相談、という感じでしょうか。</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1532,6 +1344,10 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
         </li>
       
@@ -1545,10 +1361,6 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
       
         <li class="post">
           <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/11/12/ios-testing-cycle-1/">iOSアプリのテストを１週してみて思ったこと</a>
         </li>
       
     </ul>

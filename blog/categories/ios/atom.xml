@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-01-06T13:35:05+09:00</updated>
+  <updated>2013-01-26T18:19:28+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,44 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/01/26/confwd/"/>
+    <updated>2013-01-26T14:56:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/01/26/confwd</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。</p>
+
+<p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
+
+<p><img src="/images/confwd.png" width="660"></p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>今現在、決定しているスピーカーとして、
+「iPhone Core Audioプログラミング」    で有名なクックパッドの永野さん、
+「ビートロボ」でiOSのリードエンジニアを務める菅宮さん。
+まだWebの更新がおいついていませんが、
+「Dynamic Objective-C」や「iOS開発におけるパターンによるオートマティズム」を執筆された木下さんをはじめとする、
+豪華なゲストでお送りする予定です！
+講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！</p>
+
+<p>またLT参加者も募集しています！
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしておおります。
+LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！</p>
+
+<p>より詳しい情報は<a href="http://conference-with-developers.info/">公式サイト</a>をご覧ください！</p>
+
+<p>みなさんのご来場をお待ちしております！！</p>
+
+<iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
@@ -423,234 +461,6 @@ label.attributedText = message;
 </code></p>
 
 <p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ビューテストで便利なAlertNinjaを作りました]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/05/release-alert-ninja/"/>
-    <updated>2012-09-05T19:45:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/05/release-alert-ninja</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！前回ふざけてましたが、今回は真面目にライブラリを作りました。
-といっても、毎回書くのはめんどくさいのでまとめとくか程度です。</p>
-
-<p>みなさん！iOSのテスト書いてますか？？？
-ViewControllerなんかのテストを書いてるときに、例えばGHUnitなんかを使ってたりすると、
-UIAlertViewがカジュアルに飛び出てきてウザイですよね＾ー＾ー＾ー＾</p>
-
-<p>僕はUIAlertViewは、適当なラッパークラスを作って、そこを差し替えて出ないようにすることが多いんですが、
-テストの為のクラスを作ってる様なものになってしまう上に、毎回書くのがだるポヨ・・・。</p>
-
-<p>なのでついでだしテストも出来るようにしよう、ってことで、UIAlertViewを非表示にしつつ、スパイするライブラリを作りました。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
-</ul>
-
-
-<h2>AlertNinjaの機能</h2>
-
-<p>さっきも書きましたが、UIAlertViewを非表示にする、とスパイするの２つの機能を持っています。
-この二つの機能はほとんど同時に使う事が多くなると思います。</p>
-
-<p>使い方はこんな感じ、適当なViewControllerがこんな感じでshowDialogというメソッドを持っていたとすると、
-```objective-c
-- (void)showDialog {<br/>
-  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Ninja"</p>
-
-<pre><code>                                              message:@"doron"
-                                             delegate:nil
-                                    cancelButtonTitle:@"YES"
-                                    otherButtonTitles:nil];
-</code></pre>
-
-<p>  [alert show];
-}
-```</p>
-
-<p>テストを書くときにどこかからこれを読んでいると、アラートが表示されてしまいますね。
-なのでAlertNinjaを使って、アラートがでる可能性のあるところを囲みます。</p>
-
-<p>```objective-c
-- (void)testDialog
-{</p>
-
-<pre><code>[[UIAlertView ninja] spy];
-[viewController showDialog];
-[[UIAlertView ninja] complete];
-</code></pre>
-
-<p>}
-```</p>
-
-<p><code>spy</code>でスタートして、<code>complete</code>で終了です、なんか忍者っぽい感じにしたかったんです！！！
-こうすると、まずアラートの表示をなかった事にできます。</p>
-
-<p>次はどんなアラートか出たか知りたいですよね、出てないかもしれません。
-これは<code>report</code>というものを取得することで検証できます。</p>
-
-<p><code>objective-c
-UIAlertView *alert = [[[[UIAlertView ninja] report] showedAlerts] lastObject];
-STAssertEqualObjects(@"Ninja", alert.title, @"alert title is Ninja");
-</code></p>
-
-<p><code>showedAlerts</code>は<code>spy</code>されてから表示されたUIAlertViewのリストです。(今のところこの機能しかないです。)
-なので、これの<code>count</code>が0だったらアラートはなかったことになりますし、そうでなければ、その中身を検証できます。
-今回の例では<code>title</code>が<code>Ninja</code>なアラートが表示されるはず、というテストになっていますね。</p>
-
-<p>つなげるとこんな感じです。</p>
-
-<p>```objective-c
-- (void)testDialog
-{</p>
-
-<pre><code>[[UIAlertView ninja] spy];
-[viewController showDialog];
-UIAlertView *alert = [[[[UIAlertView ninja] report] showedAlerts] lastObject];
-STAssertEqualObjects(@"Ninja", alert.title, @"alert title is Ninja");
-[[UIAlertView ninja] complete];
-</code></pre>
-
-<p>}
-```</p>
-
-<h3>confirmもできるよ！</h3>
-
-<p>ボタンを何個か設定して、ここを押したい、みたいなテストにも対応できます。</p>
-
-<p>```objective-c
-- (void)showConfirm {</p>
-
-<pre><code>UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Ninja"
-                                                message:@"Are you Ninja ?"
-                                               delegate:self
-                                      cancelButtonTitle:@"NO"
-                                      otherButtonTitles:@"YES", @"I'm Kunoichi", nil];
-[alert show];
-</code></pre>
-
-<p>}</p>
-
-<ul>
-<li>(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-  self.calledClickedButtonAtIndex = YES;
-  if(buttonIndex == 0) {
-
-<pre><code>  self.result = @"NO";
-</code></pre>
-
-  }
-  else if(buttonIndex == 1) {
-
-<pre><code>  self.result = @"YES";
-</code></pre>
-
-  }
-  else if(buttonIndex == 2) {
-
-<pre><code>  self.result = @"Kunoichi";
-</code></pre>
-
-<p>  }
-}
-```</p></li>
-</ul>
-
-
-<p>こうなってるやつに・・・</p>
-
-<p>```objective-c
-- (void)testConfirm
-{</p>
-
-<pre><code>[[[UIAlertView ninja] spy] andSelectIndexAt:2];
-[viewController showConfirm];
-UIAlertView *alert = [[[[UIAlertView ninja] report] showedAlerts] lastObject];
-
-STAssertEqualObjects(@"Ninja", alert.title, @"alert title is Ninja");
-STAssertEqualObjects(@"Kunoichi", viewController.result, @"result is 'Kunoichi'");
-
-[[UIAlertView ninja] complete];
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こんな感じで、<code>spy</code>に続けて<code>andSelectIndexAt</code>でどのインデックスのボタンを押すかを指定することができます。何も設定しないとキャンセルボタン扱いになります。
-もちろんDelegateも呼ばれていて、さっきのViewControllerにはさらにこんなのが続いていて、</p>
-
-<p>```objective-c
-- (void)willPresentAlertView:(UIAlertView *)alertView {</p>
-
-<pre><code>self.calledWillPresent = YES;
-</code></pre>
-
-<p>}</p>
-
-<ul>
-<li><p>(void)didPresentAlertView:(UIAlertView *)alertView {
-  self.calledDidPresent = YES;
-}</p></li>
-<li><p>(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-  self.calledWillDismiss = YES;
-}</p></li>
-<li><p>(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-  self.calledDidDismiss = YES;
-}
-```</p></li>
-</ul>
-
-
-<p>全体でこんなテストが通るようになっています。
-```objective-c
-- (void)testConfirm
-{</p>
-
-<pre><code>[[[UIAlertView ninja] spy] andSelectIndexAt:2];
-[viewController showConfirm];
-UIAlertView *alert = [[[[UIAlertView ninja] report] showedAlerts] lastObject];
-
-STAssertEqualObjects(@"Ninja", alert.title, @"alert title is Ninja");
-STAssertTrue(viewController.calledWillPresent, @"called will present delegate method");
-STAssertTrue(viewController.calledDidPresent, @"called did present delegate method");
-STAssertTrue(viewController.calledWillDismiss, @"called will dismiss delegate method");
-STAssertTrue(viewController.calledDidDismiss, @"called did dismiss delegate method");
-STAssertTrue(viewController.calledClickedButtonAtIndex, @"called did clicked button at Index");
-STAssertEqualObjects(@"Kunoichi", viewController.result, @"result is 'Kunoichi'");
-
-[[UIAlertView ninja] complete];
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>流れがテストできる</h2>
-
-<p>UIAlertViewを含んだテストができるようになったので、全体としてフィーチャーのテストがし易くなりました。
-例えば <a href="https://github.com/yaakaito/NLTHTTPStubServer">NLTHTTPStubServer</a> と組み合わせると、
-「APIにアクセスしたけど、404だったから"そんなものはない"というアラートだす」みたいなテストを結構スマートに書く事ができますね！！！(宣伝)
-テストの為の何かをほとんどプロダクトコードに埋め込まなくとも良いのも特徴です。</p>
-
-<h2>TODO</h2>
-
-<p>今はこれだけで、以下には対応してない＆やろうと思っているので乞うご期待！</p>
-
-<ul>
-<li>UIActionSheetも使えるようになる</li>
-<li>UIAlertViewStyleのサポート</li>
-</ul>
-
-
-<p>他にもこれ必要じゃね、というのがあればIssueなどに投げてください！！！</p>
-
-<h2>というわけで</h2>
-
-<p>よろしくお願いします！</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
-</ul>
-
 ]]></content>
   </entry>
   

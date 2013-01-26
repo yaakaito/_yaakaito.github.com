@@ -74,6 +74,20 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "2/23に東京でiOSカンファレンスを開催します！"
+                       , url : "/blog/2013/01/26/confwd/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("confWD");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "Objective-C用ユーティリティOverlineを公開しました"
                        , url : "/blog/2013/01/06/overline-010-release/"
                        , categories: []}; 
@@ -445,6 +459,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
         </li>
       
@@ -458,10 +476,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/11/12/ios-testing-cycle-1/">iOSアプリのテストを１週してみて思ったこと</a>
         </li>
       
     </ul>

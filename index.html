@@ -11,7 +11,7 @@
   
   <meta name="description" content="yaakaito.org 主にiOSとかJavaScriptのことを書いています。 Github
 Twitter
-Old blog Objective-C用ユーティリティOverlineを公開しました function CategoryCtrl($scope) { $scope. &hellip;">
+Old blog 2/23に東京でiOSカンファレンスを開催します！ function CategoryCtrl($scope) { $scope.categories &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -59,7 +59,7 @@ Old blog Objective-C用ユーティリティOverlineを公開しました functi
   
     <article class="blog clear-fix" role="article">
       <h1 class="separator">
-        <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
+        <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
       </h1>
   
       <div class="clear-fix">
@@ -73,7 +73,9 @@ function CategoryCtrl($scope) {
     
       $scope.categories.push("Objective-C");
     
-      $scope.categories.push("Overline");
+      $scope.categories.push("confWD");
+    
+      $scope.categories.push("iOS");
     
   
 }
@@ -90,114 +92,36 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは！うきょーです。寒いですね。
-Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
-バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです。</p>
 
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
+<p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
 
-<p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
-基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。ひかえめです。</p>
+<p><img src="/images/confwd.png" width="660"></p>
 
-<p>主に僕がだるいなーと思ったベースで追加しています。
-なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
 
-<p>underscoreなんかと違うところは、underscoreとかってがんばってJSっぽく書こうとしてる感じが伝わってくるんですが、
-僕はJavaScriptみたいに書くのが綺麗だなとか書きやすいとかまったく思ってないので、Objective-Cらしく書けるようにしてあります。
-好みのレベルかなーくらいのショートハンドは用意しています。</p>
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
 
-<h2>使い方</h2>
+<p>無料です！</p>
 
-<p>Cocoapodsでやるのが楽です。</p>
+<p>今現在、決定しているスピーカーとして、
+「iPhone Core Audioプログラミング」    で有名なクックパッドの永野さん、
+「ビートロボ」でiOSのリードエンジニアを務める菅宮さん。
+まだWebの更新がおいついていませんが、
+「Dynamic Objective-C」や「iOS開発におけるパターンによるオートマティズム」を執筆された木下さんをはじめとする、
+豪華なゲストでお送りする予定です！
+講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="s1">&#39;Overline&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>またLT参加者も募集しています！
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしておおります。
+LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！</p>
 
+<p>より詳しい情報は<a href="http://conference-with-developers.info/">公式サイト</a>をご覧ください！</p>
 
+<p>みなさんのご来場をお待ちしております！！</p>
 
+<iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>して</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &quot;Overline.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>簡単ですね。</p>
-
-<p>必要なところだけ使いたかったり、自分でプロジェクトに追加する場合は、<code>/Overline</code>の下から好きなファイルをプロジェクトに追加してください。
-READMEに書いてある通りに分割してあるので、それなどを参考に。</p>
-
-<h2>出来る事</h2>
-
-<p>一覧はREADMEに書いてありますが、一例をだすと<code>map</code>とか</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">mapped</span> <span class="o">=</span> <span class="p">[</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">1</span><span class="p">,</span><span class="err">@</span><span class="mi">2</span><span class="p">,</span><span class="err">@</span><span class="mi">3</span><span class="p">,</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">mappedArrayUsingBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">obj</span> <span class="n">integerValue</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">obj</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span><span class='line'><span class="c1">// @[@2,@4,@6]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じで正規表現でマッチングできたりとか (正規表現オブジェクトとしてちゃんと表記できないので、ちょっと微妙だけども)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;https?&quot;</span> <span class="nl">testInString:</span><span class="n">urlString</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>たまにしか使わないけど毎回引き出してくるのだるいーみたいな</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">md5</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">stringByHashingSha256</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="s">@&quot;YQ==&quot;</span> <span class="n">decodeBase64</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>なんでだよと突っ込みたくなる<code>insertObjects:atIndexes</code>とか</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">marray</span> <span class="nl">insertObjects:</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">atIndex:</span><span class="mi">1</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="err">@</span><span class="p">{</span>
-</span><span class='line'>        <span class="s">@&quot;null-key&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="n">NSNull</span> <span class="n">null</span><span class="p">]</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'><span class="p">[[</span><span class="n">dic</span> <span class="nl">objectForKey:</span><span class="s">@&quot;null-key&quot;</span><span class="p">]</span> <span class="nl">objectForKey:</span><span class="s">@&quot;fuck&quot;</span><span class="p">];</span> <span class="c1">// nil</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>できたりします。</p>
-
-<h3>よろしくね！</h3>
-
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
 </div></section>
   
   
@@ -228,7 +152,7 @@ READMEに書いてある通りに分割してあるので、それなどを参�
   
 
 
-<time datetime="2013-01-06T13:45:00+09:00" pubdate data-updated="true">Jan 6<span>th</span>, 2013</time></p>
+<time datetime="2013-01-26T14:56:00+09:00" pubdate data-updated="true">Jan 26<span>th</span>, 2013</time></p>
           </footer>
         </div>
       </div>
@@ -251,6 +175,10 @@ READMEに書いてある通りに分割してあるので、それなどを参�
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
         </li>
       
@@ -264,10 +192,6 @@ READMEに書いてある通りに分割してあるので、それなどを参�
       
         <li class="post">
           <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/11/12/ios-testing-cycle-1/">iOSアプリのテストを１週してみて思ったこと</a>
         </li>
       
     </ul>
