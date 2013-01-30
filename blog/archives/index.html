@@ -74,6 +74,16 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "Objective-CでRoleやってみる"
+                       , url : "/blog/2013/01/31/objective-c-role/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Objective-C");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "2/23に東京でiOSカンファレンスを開催します！"
                        , url : "/blog/2013/01/26/confwd/"
                        , categories: []}; 
@@ -459,6 +469,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
         </li>
       
@@ -472,10 +486,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
         </li>
       
     </ul>

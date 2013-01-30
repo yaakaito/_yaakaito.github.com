@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="CoffeeScriptでライトにBDDする function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("CoffeeScript"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="Buster.JSについて少しLTした function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Buster.JS"); $scope.categories.push("JavaScript &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,74 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/10/16/busterjs-clientjs-testing/">Buster.JSについて少しLTした</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Buster.JS");
+    
+      $scope.categories.push("JavaScript");
+    
+      $scope.categories.push("Testing");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです。
+突然LTすることになったので、最近気になってるBuster.JSネタで話してきました。
+LTなのであんまり内容は濃くないです。iPhoneシュミレーターとかでも楽に動くし便利だね！というくらいです。</p>
+
+<script async class="speakerdeck-embed" data-id="507b79def901500002026b02" data-ratio="1.3333333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+<p>スライドにはほとんど情報がないので、どんな感じで話したかを箇条書きで。</p>
+
+<ul>
+<li>yaakaito.orgが変なところに飛ばされとる (今はなおったみたい)</li>
+<li>みんなJSかきますよね！テストやってますか？？？</li>
+<li>フレームワークいろいろありますが、最近はBuster.JSがアツい</li>
+<li>JSTestDriverのようにブラウザ上での自動実行と、ヘッドレスでの実行がサポートされている</li>
+<li>&#8220;Test-Driven JavaScript Development&#8221;でも言及されていますが、実際の環境で動かせることは大事</li>
+<li>ちなみにこの本書いた人がBuster.JSの作者で、Buster.JSはこの本に書いてある理想を実際に行おうとしている</li>
+<li>けど、ヘッドレスでも動くしNodeも扱えるので、使い分けがしやすくて便利</li>
+<li>ヘッドレスはまだサポートされてると思った？残念、ベータちゃんでした！</li>
+<li>ともあれ便利なので使ってみよう</li>
+<li>npmで簡単インストール</li>
+<li>buster.jsというコンフィグを書いて、テストを書く</li>
+<li>サーバーを立ち上げてテスト対象になるブラウザでアクセス、対象として登録</li>
+<li>ChromeやFirefoxはもちろんiOSシュミレーターなんかでもばっちり！(実機もいけるよ！)</li>
+<li>RSpecみたいなBDDstyleの書き方もできるよ</li>
+<li>sinon.jsとwhen.jsが内蔵されているのでこれ一つで結構いろいろできるよ！ (ちなみにsinon.jsも同じ作者だったはず)</li>
+<li>クライアントサイドJSもテスト書こうね！</li>
+</ul>
+
+
+<p>みたいな感じです！</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1183,147 +1251,6 @@ function CategoryCtrl($scope) {
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/08/21/grunt-coffeelint/">Gruntのcoffeelintタスク作ってみた</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("CoffeeScript");
-    
-      $scope.categories.push("JavaScript");
-    
-      $scope.categories.push("Node.js");
-    
-      $scope.categories.push("grunt");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>こんにちは！うきょーです！
-みなさん<a href="http://www.coffeelint.org/">CoffeeLint</a>使ってますか？
-僕はあんまりCoffeeは書かないんですが、ちょっと使ってみようかなーと思っているアプリがあるので、それの下準備をしています。
-coffeelintは便利ですがいちいち</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint hoge.coffee</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とかするのはだるいですよね！
-なので<a href="https://github.com/cowboy/grunt">grunt.js</a>を使いましょう！
-(grunt.jsの説明は別にしません)</p>
-
-<h2>使い方</h2>
-
-<p>ほぼ自分用でnpmとかには登録してないのでがんばってください！</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/grunt-coffeelint">grunt-coffeelint</a></li>
-</ul>
-
-
-<p>まずはCoffeelintを入れます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>取ってきます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/yaakaito/grunt-coffeelint.git grunt-coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>タスクをコピーします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd grunt-coffeelint
-</span><span class='line'>cp -rf tasks your/grunt/dir</span></code></pre></td></tr></table></div></figure>
-
-
-<p>あとはロードしてconfigを埋めます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">loadTasks</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>  <span class="nx">coffeelint</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">all</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">files</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>        <span class="s1">&#39;coffee/*.coffee&#39;</span>
-</span><span class='line'>      <span class="p">]</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>いざ！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">grunt</span> <span class="nx">coffeelint</span>
-</span><span class='line'><span class="nx">Running</span> <span class="s2">&quot;coffeelint:all&quot;</span> <span class="p">(</span><span class="nx">coffeelint</span><span class="p">)</span> <span class="nx">task</span>
-</span><span class='line'><span class="p">[</span> <span class="s1">&#39;coffee/*.coffee&#39;</span> <span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">a</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">b</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">Ok</span><span class="o">!</span> <span class="err">»</span> <span class="mi">0</span> <span class="nx">errors</span> <span class="nx">and</span> <span class="mi">0</span> <span class="nx">warnings</span> <span class="k">in</span> <span class="mi">2</span> <span class="nx">files</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Done</span><span class="p">,</span> <span class="nx">without</span> <span class="nx">errors</span><span class="p">.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>やりましたね！！！！</p>
-
-<h2>まとめ</h2>
-
-<p>grunt.js便利なので使いましょう。</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1344,6 +1271,10 @@ coffeelintは便利ですがいちいち</p>
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
         </li>
       
@@ -1357,10 +1288,6 @@ coffeelintは便利ですがいちいち</p>
       
         <li class="post">
           <a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/12/06/adv-nui-css-like-uikit/">CSSライクにUIKitをスタイルできるNUIがおもしろい！</a>
         </li>
       
     </ul>

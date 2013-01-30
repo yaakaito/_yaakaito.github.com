@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-01-26T18:19:28+09:00</updated>
+  <updated>2013-01-31T01:54:13+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,119 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Objective-CでRoleやってみる]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/01/31/objective-c-role/"/>
+    <updated>2013-01-31T01:38:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/01/31/objective-c-role</id>
+    <content type="html"><![CDATA[<p>こんにちは、うきょーです！
+Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
+
+<p>怪しいところもあるので、あんまり参考にならないかもですよと言っておく。</p>
+
+<h2>最終的にデータと振る舞いを合体させる</h2>
+
+<p>ってのができればいいと思うんだけど、Objective-Cならカテゴリで書いておけばよくね？と思ったり思わなかったり。
+まあカテゴリはインポートすれば使えるゴッド様なんで、今回はそういうのはやめとく。</p>
+
+<p>で、実装としては<code>NSProxy</code>使えばそれっぽいものは割と簡単に出来た。</p>
+
+<p><a href="https://github.com/yaakaito/ObjCRoleSample">ObjCRoleSample</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">Book</span> : <span class="nc">NSObject</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">title</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">price</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういうモデルに対して、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">BookPurchase</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">purchase</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">Book</span> <span class="o">*</span><span class="n">this</span> <span class="o">=</span> <span class="p">(</span><span class="n">Book</span> <span class="o">*</span><span class="p">)</span><span class="n">self</span><span class="p">.</span><span class="n">target</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Purchased! %@ %u&quot;</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">price</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じの振る舞いを、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">Book</span> <span class="o">*</span><span class="n">book</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Book</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;hoge&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">price</span> <span class="o">=</span> <span class="mi">420</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Book</span><span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">extended</span> <span class="o">=</span> <span class="p">[</span><span class="n">book</span> <span class="nl">roleExtended:</span><span class="n">BookPurchase</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">extended</span> <span class="n">purchase</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こう合成できるようにしてみた。</p>
+
+<p><code>Book&lt;BookPurchase&gt;</code>が気に入らないと人は、ちょっと微妙な感じがするんだけど、<code>Book</code>の定義の方に書いちゃえば省略はできる。</p>
+
+<p>実装としては基本的には<code>NSProxy</code>で自分にメッセージ送れなかったら流すようにしたものをベースクラスにしてあげて、<code>protocol</code>を使ってこんな感じでロールを定義する</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@protocol</span> <span class="nc">BookPurchase</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
+</span><span class='line'><span class="err">@</span><span class="n">optional</span>
+</span><span class='line'><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">purchase</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">BookPurchase</span> : <span class="nc">OCRole</span> <span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうやると<code>BookPurchase</code>ロールと<code>Book</code>モデルで同じメッセージが送れるような(正確にはXCodeでコンパイル出来るような)感じになる。
+見た目はあんまりよくない。し、あんまり実用的でもないような感じがする。マクロとかで書きやすくしてあげるとちょっとは変わるかなー。</p>
+
+<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
+
+<p>「conferenceWithDevelopers」というタイトルです。</p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
+
+<iframe frameborder="0" width="400" height="473" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
@@ -39,7 +152,7 @@
 講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！</p>
 
 <p>またLT参加者も募集しています！
-iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしておおります。
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしております。
 LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！</p>
 
 <p>より詳しい情報は<a href="http://conference-with-developers.info/">公式サイト</a>をご覧ください！</p>
@@ -1606,115 +1719,6 @@ Githubと連動したアプリを作りたくなったので、GithubのOAuthを
 <h3>まとめ</h3>
 
 <p>完全にギャグです。タイポしたときとかに出るように割と悪意を持って作っていますが、ただのギャクです。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[gruntのcoffeelintタスク作ってみた]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/"/>
-    <updated>2012-08-21T01:59:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-みなさん<a href="http://www.coffeelint.org/">CoffeeLint</a>使ってますか？
-僕はあんまりCoffeeは書かないんですが、ちょっと使ってみようかなーと思っているアプリがあるので、それの下準備をしています。
-coffeelintは便利ですがいちいち</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint hoge.coffee</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とかするのはだるいですよね！
-なので<a href="https://github.com/cowboy/grunt">grunt.js</a>を使いましょう！
-(grunt.jsの説明は別にしません)</p>
-
-<h2>使い方</h2>
-
-<p>ほぼ自分用でnpmとかには登録してないのでがんばってください！</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/grunt-coffeelint">grunt-coffeelint</a></li>
-</ul>
-
-
-<p>まずはCoffeelintを入れます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>取ってきます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/yaakaito/grunt-coffeelint.git grunt-coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>タスクをコピーします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd grunt-coffeelint
-</span><span class='line'>cp -rf tasks your/grunt/dir</span></code></pre></td></tr></table></div></figure>
-
-
-<p>あとはロードしてconfigを埋めます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">loadTasks</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>  <span class="nx">coffeelint</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">all</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">files</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>        <span class="s1">&#39;coffee/*.coffee&#39;</span>
-</span><span class='line'>      <span class="p">]</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>いざ！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">grunt</span> <span class="nx">coffeelint</span>
-</span><span class='line'><span class="nx">Running</span> <span class="s2">&quot;coffeelint:all&quot;</span> <span class="p">(</span><span class="nx">coffeelint</span><span class="p">)</span> <span class="nx">task</span>
-</span><span class='line'><span class="p">[</span> <span class="s1">&#39;coffee/*.coffee&#39;</span> <span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">a</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">b</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">Ok</span><span class="o">!</span> <span class="err">»</span> <span class="mi">0</span> <span class="nx">errors</span> <span class="nx">and</span> <span class="mi">0</span> <span class="nx">warnings</span> <span class="k">in</span> <span class="mi">2</span> <span class="nx">files</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Done</span><span class="p">,</span> <span class="nx">without</span> <span class="nx">errors</span><span class="p">.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>やりましたね！！！！</p>
-
-<h2>まとめ</h2>
-
-<p>grunt.js便利なので使いましょう。</p>
 ]]></content>
   </entry>
   
