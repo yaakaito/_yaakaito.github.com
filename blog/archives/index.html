@@ -74,6 +74,20 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "registerNibを使うとさらによいらしいです"
+                       , url : "/blog/2013/02/11/register-nib/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("UIKit");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "UINib知らずにCellが作れなくて人生半分くらい損した話"
                        , url : "/blog/2013/02/10/uinib-lost-jinsei/"
                        , categories: []}; 
@@ -483,6 +497,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
         </li>
       
@@ -496,10 +514,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/01/04/new-year-2013/">ことしの抱負</a>
         </li>
       
     </ul>

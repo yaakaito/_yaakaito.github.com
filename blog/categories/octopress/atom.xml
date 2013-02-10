@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-10T17:06:20+09:00</updated>
+  <updated>2013-02-11T02:59:16+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -31,13 +31,13 @@
 
 <h2>そもそもシンタックスがぶつかるんですけど</h2>
 
-<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{{ hoge }}</code> というシンタックスがぶつかりますね。
+<p><a href="http://handlebarsjs.com/">Handlebars.js</a>なんかでもそうですが <code>{% raw %}{{ hoge }}{% endraw %}</code> というシンタックスがぶつかりますね。
 これは<a href="http://jekyllrb.com/">Jekyll</a>のプラグインにrawプラグインというのがあるのでそれを使うと解決できます。
 ただ、よくみたらOctopressには最初からrawプラグインがついていたので、ありがたくこれを使わせてもらいましょう。
 AngularJSの対象になるところは、(ネストできなくて外側でお茶を濁してるので\は外してくださいね)
 <code>
 {\% raw %}
-  {{ hoge.fuga }}
+  {% raw %}{{ hoge.fuga }}{% endraw %}
 {\% endraw %}
 </code>
 とか書けばよいです。簡単ですね。</p>
@@ -73,7 +73,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 
 <p>今作っているテンプレート(このテンプレートですね)では下の方にgithubのリポジトリが何個かでるので、これを作ってみましょう 。<code>_include/asides/github.html</code> をこんな感じにします。
 ```html
-<div ng-controller="githubCtlr">
+{% raw %}<div ng-controller="githubCtlr">
   <ul class="repositories"></p>
 
 <pre><code>{\% raw %}
@@ -84,7 +84,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 </code></pre>
 
 <p>  </ul>
-</div>
+</div>{% endraw %}
 <code>
 これにあわせたJSを書きます。
 </code>javascript</p>
@@ -92,7 +92,7 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 <script>
   function githubCtlr($scope, $http) {
     $scope.repos = [];
-    $http.jsonp("https://api.github.com/users/{{ site.github_user }}/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
+    $http.jsonp("https://api.github.com/users/{% raw %}{{ site.github_user }}{% endraw %}/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
       var count = {\{ site.github_repo_count }} || 5;
       for(var i = 0; i < count; i++) {
         $scope.repos.push(data.data[i]);
@@ -115,14 +115,14 @@ AngularJSの対象になるところは、(ネストできなくて外側でお�
 けどAngularJS弄ってみたりしたらまあそれをブログに書くのは当然だよねーみたいなところで少し困ったことになります。
 なんとブログ本文もAngularJSの実行対象になってしまいました！やりましたね！！！</p>
 
-<p>raw使って生の <code>{{ hoge }}</code> にしても、
+<p>raw使って生の <code>{% raw %}{{ hoge }}{% endraw %}</code> にしても、
 Angularでその表示はなかったことにされるので、何が起こったのか一瞬分からなくなります。
 これは困るので解決しましょう、AngularJSを使う場所をそもそも絞ってしまうのがよいですが、
 面倒なので <code>ng-non-bindable</code> を使いましょう。 <code>ng-non-bindable</code> で囲まれた中はAngularJSの対象外になるので、何が起こったのか分かるようになります。</p>
 
-<p><code>_include/article.html</code> なんかで <code>{{ content }}</code> の周りをガッツリ囲んでしまうのが楽です。
+<p><code>_include/article.html</code> なんかで <code>{% raw %}{{ content }}{% endraw %}</code> の周りをガッツリ囲んでしまうのが楽です。
 <code>html
-&lt;section&gt;&lt;div ng-non-bindable&gt;{{ content }}&lt;/div&gt;&lt;/section&gt;
+&lt;section&gt;&lt;div ng-non-bindable&gt;{% raw %}{{ content }}{% endraw %}&lt;/div&gt;&lt;/section&gt;
 </code>
 これでブログが書けるようになりました！やりましたね！
 Octopress自体のことを書くときも同じことなので気をつけましょう。</p>

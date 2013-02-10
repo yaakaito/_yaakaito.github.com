@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-10T17:06:20+09:00</updated>
+  <updated>2013-02-11T02:59:06+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,6 +14,51 @@
 
   
   <entry>
+    <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/11/register-nib/"/>
+    <updated>2013-02-11T02:51:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/11/register-nib</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
+
+<p>UINibで楽チンに<code>UITableViewCell</code>をxibで作れることは分かったけど、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UINib</span> <span class="o">*</span><span class="n">nib</span> <span class="o">=</span> <span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'><span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">nib</span> <span class="nl">instantiateWithOwner:</span><span class="nb">nil</span> <span class="nl">options:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">objectAtIndex:</span><span class="mi">0</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このコードはぶっちゃけ微妙だよね。</p>
+
+<p>で、iOS5~だと<code>registerNib</code>というものがあるらしく</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerNib:</span><span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier:</span><span class="n">kHogeCellReuseIdentifier</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じに書いておくと、さっきの生成部分が</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">HogeCell</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithStyle:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier:</span><span class="n">kBGHogeCellReuseIdentifier</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにいける、こっちのがよさげ。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
     <link href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/"/>
     <updated>2013-02-10T16:32:00+09:00</updated>
@@ -21,6 +66,10 @@
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
 最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
+
+<h3>追記しました</h3>
+
+<p><a href="http://yaakaito.github.com/blog/2013/02/11/register-nib/">続き</a></p>
 
 <p>みなさん<code>UITableViewCell</code>のサブクラス作りますよね。
 そしてそのままコーディングしていくと非常にだるく、3秒でモチベーションがなくなるので、
@@ -1746,61 +1795,6 @@ UIAlertViewがカジュアルに飛び出てきてウザイですよね＾ー＾
 <h2>で</h2>
 
 <p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOSアプリでGithubにOAuthする]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/"/>
-    <updated>2012-09-01T19:12:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/01/github-oauth</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-Githubと連動したアプリを作りたくなったので、GithubのOAuthをiOSアプリでやってみました。</p>
-
-<ul>
-<li><a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a></li>
-<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
-</ul>
-
-
-<h2>アプリケーションを登録</h2>
-
-<p>[AccountSettings]-> [Applications] -> [Register new application]からアプリケーションを登録します。
-この時にCallback URLにカスタムスキームを入れる事ができるので、</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>yourapp://oauth</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいなコールバックを指定します。そうするとIDがもらえるのでこれで登録は終わりです。</p>
-
-<h2>Githubへログインしてもらう</h2>
-
-<p>OAuthなので、Safariを開いてacceptしてもらいましょう。パスワード入力してもらってJS使って押すとか、やめましょうね。
-発行されたIDのうちClient IDをくっつけて</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>NSString *scope = @"public_repo,gist";
-</span><span class='line'>NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&scope=%@",kClientId, scope]];
-</span><span class='line'>[[UIApplication sharedApplication] openURL:url];</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいな具合で、Safariを起動します。
-別にUIWebViewでもいいと思いますが、専用のビュー作るのもめんどくさいし、ちゃんとGithubなことを証明するのもだるいので、Safariでいいと思います。</p>
-
-<h2>コールバックを拾ってアクセストークンをリクエスト</h2>
-
-<p>カスタムスキームからの起動で<code>code</code>がやってくるので、これを持って</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/login/oauth/access_token</span></code></pre></td></tr></table></div></figure>
-
-
-<p>へPOSTします。</p>
-
-<p>あとはkey-value形式でトークンが返ってくるので、それを使うだけです。簡単ですね。トークンはちゃんとキーチェインとかに入れてあげましょう。</p>
 ]]></content>
   </entry>
   
