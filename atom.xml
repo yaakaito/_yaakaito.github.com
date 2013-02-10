@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-10T17:05:13+09:00</updated>
+  <updated>2013-02-10T17:06:20+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -107,8 +107,8 @@ FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>�
 <span class='line-number'>9</span>
 </pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setHoge:</span><span class="p">(</span><span class="n">Hoge</span> <span class="o">*</span><span class="p">)</span><span class="nv">hoge</span> <span class="p">{</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">_event</span> <span class="o">!=</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">_event</span> <span class="o">=</span> <span class="n">event</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">hoge</span> <span class="o">!=</span> <span class="n">hoge</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">_hoge</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">;</span>
 </span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">message</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">message</span><span class="p">;</span>

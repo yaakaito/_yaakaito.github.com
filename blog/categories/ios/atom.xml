@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-10T17:05:13+09:00</updated>
+  <updated>2013-02-10T17:06:20+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -89,8 +89,8 @@ if (!cell) {
 <p>```objective-c
 - (void)setHoge:(Hoge *)hoge {</p>
 
-<pre><code>if (_event != event) {
-    _event = event;
+<pre><code>if (hoge != hoge) {
+    _hoge = hoge;
 
     self.thumbnail.image = hoge.thumbnail;
     self.message.text = hoge.message;
