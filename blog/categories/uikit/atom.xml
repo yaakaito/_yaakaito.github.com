@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: UIKit | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/uikit/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-02-10T17:02:56+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/"/>
+    <updated>2013-02-10T16:32:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
+最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
+
+<p>みなさん<code>UITableViewCell</code>のサブクラス作りますよね。
+そしてそのままコーディングしていくと非常にだるく、3秒でモチベーションがなくなるので、
+Interface Builderを使いたい！と思うわけですが、<code>UITableViewCell</code>用のxibファイル作るのは30秒で心が折れる。
+(というかいつも忘れるしXcodeのバージョンあがると分からなくなる)</p>
+
+<h2>UINibを使う</h2>
+
+<p>おもむろにxibファイルを作ります。</p>
+
+<p><img src="/images/uinib_1.png" width="320"></p>
+
+<p>UIViewを消します。</p>
+
+<p><img src="/images/uinib_2.png" width="320"></p>
+
+<p>UITableViewCellをおきます。</p>
+
+<p><img src="/images/uinib_3.png" width="320"></p>
+
+<p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
+FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
+
+<p>あとはこれをdatasource側で</p>
+
+<p>```objective-c</p>
+
+<pre><code>HogeCell *cell = [tableView dequeueReusableCellWithIdentifier:kHogeCellReuseIdentifier];
+if (!cell) {
+    UINib *nib = [UINib nibWithNibName:@"HogeCell" bundle:nil];
+    cell = [[nib instantiateWithOwner:nil options:nil] objectAtIndex:0];
+}
+
+[self updateCell:cell indexPath:indexPath];
+</code></pre>
+
+<p>```</p>
+
+<p>とかすれば使えた、泣いた。いままでのよくわからん！はなんだったのか。</p>
+
+<h2>細かいところはコードで制御したい</h2>
+
+<p>ざっくりとしたレイアウトとかを決めるのはxibで大分楽できるんですが、
+もっと細かいところとか、同じようなのだし、まとめて処理してほしい(背景とか)ってときに、毎回xibいじるのはだるいですね。</p>
+
+<p>まあなんだかんだでいろいろコードで弄りたいこととか、コードから追加したい要素とかもあると思うんですが、
+これをビューコントローラーからやったりするとゴミみたいなコードになるので、あまりやりたくないわけです。</p>
+
+<p>が、しかしこれは<code>willMoveToSuperview:</code>あたりをうまく使えば解決できることに気づいて</p>
+
+<p>```objective-c
+- (void)willMoveToSuperview:(UIView *)newSuperview {</p>
+
+<pre><code>[super willMoveToSuperview:newSuperview];
+
+// 共通のスタイルとかコードでやりたい処理書く
+</code></pre>
+
+<p>}
+```</p>
+
+<p>ってやればあっさりできた、全俺が号泣した。</p>
+
+<h2>次にだるいのが</h2>
+
+<p>```objective-c
+- (void)setHoge:(Hoge *)hoge {</p>
+
+<pre><code>if (_event != event) {
+    _event = event;
+
+    self.thumbnail.image = hoge.thumbnail;
+    self.message.text = hoge.message;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こういうの、あると思います。(updateCellとか)</p>
+
+<p>Model-View-Binder使えばうまくいけそうですが、メジャーなの知らないので教えてください。</p>
+
+<p>けど多分ないような気がするので作ります。</p>
+]]></content>
+  </entry>
+  
+</feed>

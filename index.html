@@ -11,7 +11,7 @@
   
   <meta name="description" content="yaakaito.org 主にiOSとかJavaScriptのことを書いています。 Github
 Twitter
-Old blog Objective-CでRoleやってみる function CategoryCtrl($scope) { $scope.categories = []; $ &hellip;">
+Old blog UINib知らずにCellが作れなくて人生半分くらい損した話 function CategoryCtrl($scope) { $scope.categories &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -59,7 +59,7 @@ Old blog Objective-CでRoleやってみる function CategoryCtrl($scope) { $scop
   
     <article class="blog clear-fix" role="article">
       <h1 class="separator">
-        <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
+        <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
       </h1>
   
       <div class="clear-fix">
@@ -72,6 +72,10 @@ function CategoryCtrl($scope) {
   
     
       $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("UIKit");
+    
+      $scope.categories.push("iOS");
     
   
 }
@@ -88,32 +92,83 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは、うきょーです！
-Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
+最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
 
-<p>怪しいところもあるので、あんまり参考にならないかもですよと言っておく。</p>
+<p>みなさん<code>UITableViewCell</code>のサブクラス作りますよね。
+そしてそのままコーディングしていくと非常にだるく、3秒でモチベーションがなくなるので、
+Interface Builderを使いたい！と思うわけですが、<code>UITableViewCell</code>用のxibファイル作るのは30秒で心が折れる。
+(というかいつも忘れるしXcodeのバージョンあがると分からなくなる)</p>
 
-<h2>最終的にデータと振る舞いを合体させる</h2>
+<h2>UINibを使う</h2>
 
-<p>ってのができればいいと思うんだけど、Objective-Cならカテゴリで書いておけばよくね？と思ったり思わなかったり。
-けどちょっと違うよねーってことで、今回はそういうのはやめとく。</p>
+<p>おもむろにxibファイルを作ります。</p>
 
-<p>で、実装としては<code>NSProxy</code>使えばそれっぽいものは割と簡単に出来た。</p>
+<p><img src="/images/uinib_1.png" width="320"></p>
 
-<p><a href="https://github.com/yaakaito/ObjCRoleSample">ObjCRoleSample</a></p>
+<p>UIViewを消します。</p>
+
+<p><img src="/images/uinib_2.png" width="320"></p>
+
+<p>UITableViewCellをおきます。</p>
+
+<p><img src="/images/uinib_3.png" width="320"></p>
+
+<p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
+FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
+
+<p>あとはこれをdatasource側で</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">Book</span> : <span class="nc">NSObject</span>
-</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">title</span><span class="p">;</span>
-</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">price</span><span class="p">;</span>
-</span><span class='line'><span class="k">@end</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">HogeCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="n">kHogeCellReuseIdentifier</span><span class="p">];</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">UINib</span> <span class="o">*</span><span class="n">nib</span> <span class="o">=</span> <span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">nib</span> <span class="nl">instantiateWithOwner:</span><span class="nb">nil</span> <span class="nl">options:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">objectAtIndex:</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">updateCell:</span><span class="n">cell</span> <span class="nl">indexPath:</span><span class="n">indexPath</span><span class="p">];</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>こういうモデルに対して、</p>
+<p>とかすれば使えた、泣いた。いままでのよくわからん！はなんだったのか。</p>
+
+<h2>細かいところはコードで制御したい</h2>
+
+<p>ざっくりとしたレイアウトとかを決めるのはxibで大分楽できるんですが、
+もっと細かいところとか、同じようなのだし、まとめて処理してほしい(背景とか)ってときに、毎回xibいじるのはだるいですね。</p>
+
+<p>まあなんだかんだでいろいろコードで弄りたいこととか、コードから追加したい要素とかもあると思うんですが、
+これをビューコントローラーからやったりするとゴミみたいなコードになるので、あまりやりたくないわけです。</p>
+
+<p>が、しかしこれは<code>willMoveToSuperview:</code>あたりをうまく使えば解決できることに気づいて</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">willMoveToSuperview:</span><span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nv">newSuperview</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">[</span><span class="n">super</span> <span class="nl">willMoveToSuperview:</span><span class="n">newSuperview</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// 共通のスタイルとかコードでやりたい処理書く</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ってやればあっさりできた、全俺が号泣した。</p>
+
+<h2>次にだるいのが</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -123,76 +178,24 @@ Objective-C書いててふと、Role使いたいなー出来たっけーと、�
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">BookPurchase</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setHoge:</span><span class="p">(</span><span class="n">Hoge</span> <span class="o">*</span><span class="p">)</span><span class="nv">hoge</span> <span class="p">{</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">purchase</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">Book</span> <span class="o">*</span><span class="n">this</span> <span class="o">=</span> <span class="p">(</span><span class="n">Book</span> <span class="o">*</span><span class="p">)</span><span class="n">self</span><span class="p">.</span><span class="n">target</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Purchased! %@ %u&quot;</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">price</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">_event</span> <span class="o">!=</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">_event</span> <span class="o">=</span> <span class="n">event</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">message</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">message</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">@end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>こんな感じの振る舞いを、</p>
+<p>こういうの、あると思います。(updateCellとか)</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">Book</span> <span class="o">*</span><span class="n">book</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Book</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;hoge&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">price</span> <span class="o">=</span> <span class="mi">420</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Book</span><span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">extended</span> <span class="o">=</span> <span class="p">[</span><span class="n">book</span> <span class="nl">roleExtended:</span><span class="n">BookPurchase</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">extended</span> <span class="n">purchase</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>Model-View-Binder使えばうまくいけそうですが、メジャーなの知らないので教えてください。</p>
 
-
-<p>こう合成できるようにしてみた。</p>
-
-<p><code>Book&lt;BookPurchase&gt;</code>が気に入らないと人は、ちょっと微妙な感じがするんだけど、<code>Book</code>の定義の方に書いちゃえば省略はできる。</p>
-
-<p>実装としては基本的には<code>NSProxy</code>で自分にメッセージ送れなかったら流すようにしたものをベースクラスにしてあげて、<code>protocol</code>を使ってこんな感じでロールを定義する</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@protocol</span> <span class="nc">BookPurchase</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
-</span><span class='line'><span class="err">@</span><span class="n">optional</span>
-</span><span class='line'><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">purchase</span><span class="p">;</span>
-</span><span class='line'><span class="k">@end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">@interface</span> <span class="nc">BookPurchase</span> : <span class="nc">OCRole</span> <span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうやると<code>BookPurchase</code>ロールと<code>Book</code>モデルで同じメッセージが送れるような(正確にはXCodeでコンパイル出来るような)感じになる。
-見た目はあんまりよくない。し、あんまり実用的でもないような感じがする。マクロとかで書きやすくしてあげるとちょっとは変わるかなー。</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="473" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
+<p>けど多分ないような気がするので作ります。</p>
 </div></section>
   
   
@@ -223,7 +226,7 @@ Objective-C書いててふと、Role使いたいなー出来たっけーと、�
   
 
 
-<time datetime="2013-01-31T01:38:00+09:00" pubdate data-updated="true">Jan 31<span>st</span>, 2013</time></p>
+<time datetime="2013-02-10T16:32:00+09:00" pubdate data-updated="true">Feb 10<span>th</span>, 2013</time></p>
           </footer>
         </div>
       </div>
@@ -246,6 +249,10 @@ Objective-C書いててふと、Role使いたいなー出来たっけーと、�
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
         </li>
       
@@ -259,10 +266,6 @@ Objective-C書いててふと、Role使いたいなー出来たっけーと、�
       
         <li class="post">
           <a href="/blog/2013/01/04/new-year-2013/">ことしの抱負</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a>
         </li>
       
     </ul>
