@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-11T02:59:16+09:00</updated>
+  <updated>2013-02-12T04:50:42+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -75,15 +75,15 @@ Interface Builderを使いたい！と思うわけですが、<code>UITableViewC
 
 <p>おもむろにxibファイルを作ります。</p>
 
-<p>{% img /images/uinib_1.png 320 %}</p>
+<p><img src="/images/uinib_1.png" width="320"></p>
 
 <p>UIViewを消します。</p>
 
-<p>{% img /images/uinib_2.png 320 %}</p>
+<p><img src="/images/uinib_2.png" width="320"></p>
 
 <p>UITableViewCellをおきます。</p>
 
-<p>{% img /images/uinib_3.png 320 %}</p>
+<p><img src="/images/uinib_3.png" width="320"></p>
 
 <p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
 FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
@@ -176,7 +176,7 @@ if (!cell) {
 
 <p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
 
-<p>{% img /images/confwd.png 660 %}</p>
+<p><img src="/images/confwd.png" width="660"></p>
 
 <p><a href="http://conference-with-developers.info/">公式サイト</a></p>
 
@@ -252,7 +252,7 @@ text-shadow-offset: 1,1;
 <p>}
 ```</p>
 
-<p>{% img /images/adv_nui.png 320 %}</p>
+<p><img src="/images/adv_nui.png" width="320"></p>
 
 <p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
 

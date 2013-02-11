@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Mock | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/mock/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-02-12T04:50:42+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <updated>2013-02-12T04:28:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <content type="html"><![CDATA[<p>こんにちは、うきょーです。
+<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
+
+<p>```objective-c
+SEHoge <em>hoge = [[SEHoge alloc] init];
+NSObject<SBStub> </em>stub = [Stubbilino stubObject:hoge];
+[stub stubMethod:@selector(intMethod) withBlock:^ {</p>
+
+<pre><code>return 10;
+</code></pre>
+
+<p>}];</p>
+
+<p>NSLog(@"%d", [hoge intMethod]);
+```</p>
+
+<p>みたいにselectorとBlocksを使って書きます。
+このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
+
+<p>```objective-c
+[stub stubMethod:@selector(stringMethod) withBlock:<sup>(){</sup></p>
+
+<pre><code>return @"string";
+</code></pre>
+
+<p>}];
+```</p>
+
+<p>こういうのもいける、超便利。
+OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
+Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
+
+<p>あとはクラスメソッドのスタブも出来るみたいです。
+こっちはまだ使ってないのでREADMEからの引用ですが、</p>
+
+<p>```objective-c
+// https://github.com/robb/Stubbilino/blob/master/README.md
+Class<SBClassStub> uiimage = [Stubbilino stubClass:UIImage.class];</p>
+
+<p>[uiimage stubMethod:@selector(imageNamed:)</p>
+
+<pre><code>      withBlock:^(NSString *name) { return myImage; }];
+</code></pre>
+
+<p>```</p>
+
+<p>こういう感じで書けるみたいです。
+クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
+
+<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
+なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
+
+<p>　</p>
+
+<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
+
+<p>「conferenceWithDevelopers」というタイトルです。</p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
+
+<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-11T02:59:16+09:00</updated>
+  <updated>2013-02-12T04:50:42+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,82 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <updated>2013-02-12T04:28:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <content type="html"><![CDATA[<p>こんにちは、うきょーです。
+<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
+
+<p>```objective-c
+SEHoge <em>hoge = [[SEHoge alloc] init];
+NSObject<SBStub> </em>stub = [Stubbilino stubObject:hoge];
+[stub stubMethod:@selector(intMethod) withBlock:^ {</p>
+
+<pre><code>return 10;
+</code></pre>
+
+<p>}];</p>
+
+<p>NSLog(@"%d", [hoge intMethod]);
+```</p>
+
+<p>みたいにselectorとBlocksを使って書きます。
+このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
+
+<p>```objective-c
+[stub stubMethod:@selector(stringMethod) withBlock:<sup>(){</sup></p>
+
+<pre><code>return @"string";
+</code></pre>
+
+<p>}];
+```</p>
+
+<p>こういうのもいける、超便利。
+OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
+Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
+
+<p>あとはクラスメソッドのスタブも出来るみたいです。
+こっちはまだ使ってないのでREADMEからの引用ですが、</p>
+
+<p>```objective-c
+// https://github.com/robb/Stubbilino/blob/master/README.md
+Class<SBClassStub> uiimage = [Stubbilino stubClass:UIImage.class];</p>
+
+<p>[uiimage stubMethod:@selector(imageNamed:)</p>
+
+<pre><code>      withBlock:^(NSString *name) { return myImage; }];
+</code></pre>
+
+<p>```</p>
+
+<p>こういう感じで書けるみたいです。
+クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
+
+<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
+なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
+
+<p>　</p>
+
+<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
+
+<p>「conferenceWithDevelopers」というタイトルです。</p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
+
+<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
@@ -75,15 +151,15 @@ Interface Builderを使いたい！と思うわけですが、<code>UITableViewC
 
 <p>おもむろにxibファイルを作ります。</p>
 
-<p>{% img /images/uinib_1.png 320 %}</p>
+<p><img src="/images/uinib_1.png" width="320"></p>
 
 <p>UIViewを消します。</p>
 
-<p>{% img /images/uinib_2.png 320 %}</p>
+<p><img src="/images/uinib_2.png" width="320"></p>
 
 <p>UITableViewCellをおきます。</p>
 
-<p>{% img /images/uinib_3.png 320 %}</p>
+<p><img src="/images/uinib_3.png" width="320"></p>
 
 <p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
 FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
@@ -266,7 +342,7 @@ book.price = 420;</p>
 
 <p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
 
-<p>{% img /images/confwd.png 660 %}</p>
+<p><img src="/images/confwd.png" width="660"></p>
 
 <p><a href="http://conference-with-developers.info/">公式サイト</a></p>
 
@@ -292,109 +368,6 @@ LT参加を希望されるかたは、チケットページより「LT参加チ�
 
 <iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/06/overline-010-release/"/>
-    <updated>2013-01-06T13:45:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/06/overline-010-release</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。寒いですね。
-Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
-バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
-
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
-
-<p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
-基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。ひかえめです。</p>
-
-<p>主に僕がだるいなーと思ったベースで追加しています。
-なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
-
-<p>underscoreなんかと違うところは、underscoreとかってがんばってJSっぽく書こうとしてる感じが伝わってくるんですが、
-僕はJavaScriptみたいに書くのが綺麗だなとか書きやすいとかまったく思ってないので、Objective-Cらしく書けるようにしてあります。
-好みのレベルかなーくらいのショートハンドは用意しています。</p>
-
-<h2>使い方</h2>
-
-<p>Cocoapodsでやるのが楽です。</p>
-
-<p><code>ruby
-pod 'Overline'
-</code></p>
-
-<p><code>
-pod install
-</code></p>
-
-<p>して</p>
-
-<p>```objective-c</p>
-
-<h1>import "Overline.h"</h1>
-
-<p>```</p>
-
-<p>簡単ですね。</p>
-
-<p>必要なところだけ使いたかったり、自分でプロジェクトに追加する場合は、<code>/Overline</code>の下から好きなファイルをプロジェクトに追加してください。
-READMEに書いてある通りに分割してあるので、それなどを参考に。</p>
-
-<h2>出来る事</h2>
-
-<p>一覧はREADMEに書いてありますが、一例をだすと<code>map</code>とか</p>
-
-<p>```objective-c
-NSArray *mapped = [@[@1,@2,@3,@4,@5,@6] mappedArrayUsingBlock:<sup>id(id</sup> obj, NSUInteger idx) {</p>
-
-<pre><code>if ([obj integerValue] % 2 == 0) {
-    return obj;
-}
-return nil;
-</code></pre>
-
-<p>}];
-// @[@2,@4,@6]
-```</p>
-
-<p>こういう感じで正規表現でマッチングできたりとか (正規表現オブジェクトとしてちゃんと表記できないので、ちょっと微妙だけども)</p>
-
-<p><code>objective-c
-[@"https?" testInString:urlString];
-</code></p>
-
-<p>たまにしか使わないけど毎回引き出してくるのだるいーみたいな</p>
-
-<p><code>objective-c
-[@"hoge" md5];
-[@"hoge" stringByHashingSha256];
-[@"YQ==" decodeBase64];
-</code></p>
-
-<p>なんでだよと突っ込みたくなる<code>insertObjects:atIndexes</code>とか</p>
-
-<p><code>objective-c
-[marray insertObjects:@[@4,@5,@6] atIndex:1];
-</code></p>
-
-<p><a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
-
-<p>```
-NSDictionary *dic = @{</p>
-
-<pre><code>    @"null-key" : [NSNull null]
-</code></pre>
-
-<p>};
-[[dic objectForKey:@"null-key"] objectForKey:@"fuck"]; // nil
-```</p>
-
-<p>できたりします。</p>
-
-<h3>よろしくね！</h3>
-
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
 ]]></content>
   </entry>
   

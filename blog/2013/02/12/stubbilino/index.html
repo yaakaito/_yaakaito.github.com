@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>gruntのcoffeelintタスク作ってみた - yaakaito.org</title>
+  <title>Stubbilinoというスタブライブラリがよさげです - yaakaito.org</title>
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Gruntのcoffeelintタスク作ってみた function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("CoffeeScript"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="Stubbilinoというスタブライブラリがよさげです function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Mock"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   
-  <link rel="canonical" href="http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/">
+  <link rel="canonical" href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
@@ -42,7 +42,7 @@
     <article class="blog clear-fix" role="article">
   <h1 class="separator">
     
-      Gruntのcoffeelintタスク作ってみた
+      Stubbilinoというスタブライブラリがよさげです
     
   </h1>
   
@@ -55,13 +55,11 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("CoffeeScript");
+      $scope.categories.push("Mock");
     
-      $scope.categories.push("JavaScript");
+      $scope.categories.push("Objective-C");
     
-      $scope.categories.push("Node.js");
-    
-      $scope.categories.push("grunt");
+      $scope.categories.push("Testing");
     
   
 }
@@ -78,49 +76,8 @@ function CategoryCtrl($scope) {
     </aside>
     <div class="clear-fix"> 
       
-<section><div ng-non-bindable><p>こんにちは！うきょーです！
-みなさん<a href="http://www.coffeelint.org/">CoffeeLint</a>使ってますか？
-僕はあんまりCoffeeは書かないんですが、ちょっと使ってみようかなーと思っているアプリがあるので、それの下準備をしています。
-coffeelintは便利ですがいちいち</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint hoge.coffee</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とかするのはだるいですよね！
-なので<a href="https://github.com/cowboy/grunt">grunt.js</a>を使いましょう！
-(grunt.jsの説明は別にしません)</p>
-
-<h2>使い方</h2>
-
-<p>ほぼ自分用でnpmとかには登録してないのでがんばってください！</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/grunt-coffeelint">grunt-coffeelint</a></li>
-</ul>
-
-
-<p>まずはCoffeelintを入れます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>取ってきます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/yaakaito/grunt-coffeelint.git grunt-coffeelint</span></code></pre></td></tr></table></div></figure>
-
-
-<p>タスクをコピーします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd grunt-coffeelint
-</span><span class='line'>cp -rf tasks your/grunt/dir</span></code></pre></td></tr></table></div></figure>
-
-
-<p>あとはロードしてconfigを埋めます。</p>
+<section><div ng-non-bindable><p>こんにちは、うきょーです。
+<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -129,56 +86,70 @@ coffeelintは便利ですがいちいち</p>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">loadTasks</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>  <span class="nx">coffeelint</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">all</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">files</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>        <span class="s1">&#39;coffee/*.coffee&#39;</span>
-</span><span class='line'>      <span class="p">]</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">SEHoge</span> <span class="o">*</span><span class="n">hoge</span> <span class="o">=</span> <span class="p">[[</span><span class="n">SEHoge</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'><span class="n">NSObject</span><span class="o">&lt;</span><span class="n">SBStub</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">stub</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubObject:</span><span class="n">hoge</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">intMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">hoge</span> <span class="n">intMethod</span><span class="p">]);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>いざ！</p>
+<p>みたいにselectorとBlocksを使って書きます。
+このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">stringMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">@&quot;string&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういうのもいける、超便利。
+OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
+Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
+
+<p>あとはクラスメソッドのスタブも出来るみたいです。
+こっちはまだ使ってないのでREADMEからの引用ですが、</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">grunt</span> <span class="nx">coffeelint</span>
-</span><span class='line'><span class="nx">Running</span> <span class="s2">&quot;coffeelint:all&quot;</span> <span class="p">(</span><span class="nx">coffeelint</span><span class="p">)</span> <span class="nx">task</span>
-</span><span class='line'><span class="p">[</span> <span class="s1">&#39;coffee/*.coffee&#39;</span> <span class="p">]</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="c1">// https://github.com/robb/Stubbilino/blob/master/README.md</span>
+</span><span class='line'><span class="n">Class</span><span class="o">&lt;</span><span class="n">SBClassStub</span><span class="o">&gt;</span> <span class="n">uiimage</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubClass:</span><span class="n">UIImage</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">a</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">coffee</span><span class="o">/</span><span class="nx">b</span><span class="p">.</span><span class="nx">coffee</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="err">✓</span> <span class="nx">Ok</span><span class="o">!</span> <span class="err">»</span> <span class="mi">0</span> <span class="nx">errors</span> <span class="nx">and</span> <span class="mi">0</span> <span class="nx">warnings</span> <span class="k">in</span> <span class="mi">2</span> <span class="nx">files</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Done</span><span class="p">,</span> <span class="nx">without</span> <span class="nx">errors</span><span class="p">.</span>
+</span><span class='line'><span class="p">[</span><span class="n">uiimage</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">imageNamed:</span><span class="p">)</span>
+</span><span class='line'>          <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">myImage</span><span class="p">;</span> <span class="p">}];</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>やりましたね！！！！</p>
+<p>こういう感じで書けるみたいです。
+クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
 
-<h2>まとめ</h2>
+<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
+なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
 
-<p>grunt.js便利なので使いましょう。</p>
+<p>　</p>
+
+<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
+
+<p>「conferenceWithDevelopers」というタイトルです。</p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
+
+<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
 </div></section>
 
 
@@ -186,7 +157,7 @@ coffeelintは便利ですがいちいち</p>
         
           <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2013/02/12/stubbilino/" data-via="" data-counturl="http://yaakaito.github.com/blog/2013/02/12/stubbilino/" >Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
   
@@ -207,7 +178,7 @@ coffeelintは便利ですがいちいち</p>
   
 
 
-<time datetime="2012-08-21T01:59:00+09:00" pubdate data-updated="true">Aug 21<span>st</span>, 2012</time></p>
+<time datetime="2013-02-12T04:28:00+09:00" pubdate data-updated="true">Feb 12<span>th</span>, 2013</time></p>
       </footer>
     </div>
   </div>
@@ -222,10 +193,8 @@ coffeelintは便利ですがいちいち</p>
 
 <aside class="pagenation clear-fix" role="navigation">
     
-      <p class="previous pagenation"><a href="/blog/2012/08/19/dequeue-reusable-making/" title="Previous Post: dequeueReusable~の実装とテスト">&laquo; Previous Post</a></p>
+      <p class="previous pagenation"><a href="/blog/2013/02/11/register-nib/" title="Previous Post: registerNibを使うとさらによいらしいです">&laquo; Previous Post</a></p>
     
-    
-      <p class="next pagenation"><a href="/blog/2012/08/31/hull-to-refresh/" title="Next Post: 便利なライブラリHullToRefresh作った">Next Post &raquo;</a></p>
     
 </aside>
 
@@ -335,8 +304,8 @@ coffeelintは便利ですがいちいち</p>
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/';
-        var disqus_url = 'http://yaakaito.github.com/blog/2012/08/21/grunt-coffeelint/';
+        var disqus_identifier = 'http://yaakaito.github.com/blog/2013/02/12/stubbilino/';
+        var disqus_url = 'http://yaakaito.github.com/blog/2013/02/12/stubbilino/';
         var disqus_script = 'embed.js?';
       
     (function () {

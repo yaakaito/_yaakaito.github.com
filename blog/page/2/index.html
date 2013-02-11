@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="ズルいデザインが流行っていたので function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Design"); $scope.categories.push("Zurui"); } {{ &hellip;">
+  <meta name="description" content="小さいCoffeeScriptのテストにはVowsが便利 function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("CoffeeScript"); $scope.categories.push &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,148 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/11/03/vows-coffee-testing/">小さいCoffeeScriptのテストにはVowsが便利</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("CoffeeScript");
+    
+      $scope.categories.push("Node.js");
+    
+      $scope.categories.push("Testing");
+    
+      $scope.categories.push("Vows");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+小さめのツールをCoffeeScriptで書く機会があったのですが、
+テストに使った<a href="http://vowsjs.org/">Vows</a>(<a href="http://vowsjs.jp/">日本語訳</a>)というのが結構良かったです。
+一言で言えば、BDDライクで非同期テストに強く、Coffeeと相性のよい、topicという独特の概念をもったフレームワークです。(長い)</p>
+
+<h2>Vowsのセットアップと実行</h2>
+
+<p>npm経由でインストールします。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install vows
+</span><span class='line'>npm install -g vows</span></code></pre></td></tr></table></div></figure>
+
+
+<p>設定ファイルとかは特に必要なく、直接テストファイルを実行します。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vows test.js</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CoffeeScriptをそのまま実行することができます。ここが重要</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vows test.coffee --spec</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>--spec</code>オプションを付けるといい感じの出力になります。</p>
+
+<h2>Vowsのテストケース</h2>
+
+<p>簡単な例として文字列を反転する<code>reverse</code>というモジュールを考えたときのテストはこんな感じ。
+特にCoffeeScriptで書くことにメリットを感じるので、サンプルは全部CoffeeScriptです。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vows    = require 'vows'
+</span><span class='line'>assert  = require 'assert'
+</span><span class='line'>reverse = require 'reverse'
+</span><span class='line'>
+</span><span class='line'>vows
+</span><span class='line'>  .describe('reverse')
+</span><span class='line'>  .addBatch
+</span><span class='line'>    'example' :
+</span><span class='line'>      topic : -&gt;
+</span><span class='line'>        reverse('abc')
+</span><span class='line'>      'should return cba' : (str) -&gt;
+</span><span class='line'>        assert.equal str, 'cba'</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>describe</code>を定義して、<code>addBatch</code>でテストのまとまりを追加します。
+ポイントはさっきからちょっと出てきている<code>topic</code>で、これの実行結果がその下のテストケースへ渡ってきます。
+この中は非同期でもokみたいで(今回は試していないけど)、<code>topic</code>の実行が終わったタイミングでテストが走る、という仕組みみたいです。便利ですね。
+<code>topic</code>を使っていくとどうしてもモジュールを小さくせざるをえないので、きれいなコードを書くのにはよいと思います。</p>
+
+<p><code>topic</code>とかテストケースはネストすることもできて、例えばabcの他にdefgもテストしたい！とかって場合は、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.addBatch
+</span><span class='line'>  'example2' :
+</span><span class='line'>    topic : reverse
+</span><span class='line'>    'when abc' :
+</span><span class='line'>      topic : (f) -&gt; f('abc')
+</span><span class='line'>      'should return cba' : (str) -&gt;
+</span><span class='line'>        assert.equal str, 'cba'
+</span><span class='line'>    'when abc' :
+</span><span class='line'>      topic : (f) -&gt; f('defg')
+</span><span class='line'>      'should return gfed' : (str) -&gt;
+</span><span class='line'>        assert.equal str, 'gfed'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じで書くこともできます、一つ上の<code>topic</code>は次の<code>topic</code>に渡っていくので、テストするスコープを制限することができます。
+ただ、ネストしすぎるとちょっと読みにくいですね。</p>
+
+<h2>まとめ</h2>
+
+<p>個人的には、今回みたいにNodeを使って小さいコマンドラインツールとかを全部Coffeeで書くときに使うのがよいかなーという印象でした。
+クライアントサイドのテストとかになってくると、長い目で見たときにBusterJSやその他Swarm系使った方がよさそうな印象。
+大きめのプロジェクトになってくると、テストケースが要はでかいオブジェクトの定義なので、どうもしんどくなっていく気がする。</p>
+
+<p>テストの為の中間ファイルとして.jsを吐く必要がないので、リポジトリがCoffeeScriptだけできれいに保てるのもポイント。
+vowsでカバーできるサイズなら全部CoffeeScriptで書いてしまっても、それなりにモチベーションが保てる。(CoffeeScriptそんなに好きじゃない)</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1150,91 +1292,6 @@ function CategoryCtrl($scope) {
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/09/03/re-github-oauth/">iOSアプリからGithubOAuth使うの見直している</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("Github");
-    
-      $scope.categories.push("Objective-C");
-    
-      $scope.categories.push("iOS");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>こんばんは！うきょーです、非常に眠いです。
-<a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
-<a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
-よくよく考えてみれば、起動スキーマ直接叩かれたらなんか起こりそうだよなーとかいろいろ気になってきたのでずっとOAuth2でググったりしてた。</p>
-
-<h2>そもそも</h2>
-
-<p>前回の感じになったのが単純に、メールとかパスワード入力するのがだるいしあんまりさせたくないなー、OAuthあったなーいけんじゃねー、という感じの理由。
-<a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a>を見てて、非Webアプリケーション向けの最初はBasic認証使って〜がやりたくなった感じですね。
-で、本来はBasic認証一回使ってーの方がいいと思うんですが、いろいろクライアントなライブラリを見ていると、<code>Client Secret</code>を引数に取ったりしてて、
-じゃあこっちでもいいのかなーとなった。</p>
-
-<h2>本当か？</h2>
-
-<p>で、気になって何個かGithubOAuth使ってそうなアプリを探してみたんだけど、hojokiなんかは<code>UIWebView</code>使ってやってるっぽいしやっぱこっちでいいんかなーと。
-けど<code>UIWebView</code>の作り上URLとか自分で出さないといけない訳ですが、それすら偽装してかなりそれっぽく見せる事は可能なので、
-僕が使う側だったらあんまり使いたくないなーと思ってしまった。一緒に変なJSとか走らされてもやだなーと思ったり。(他の人がどう思ってるのかは知らないですが)
-それだったらSafariに飛ばせばいいじゃん、でcallbackにカスタムスキームでー、でできたわけ。で、そこに弱そうなところがあるなら一旦塞ぐかーという感じで作ったのを適当にアップデート。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
-</ul>
-
-
-<p>やったのは、（今回はダミーだけど）<code>state</code>の付加と、OAuthしている時以外は起動スキーマを無効化した。（今は単純にabortしてるだけ）
-あとは本番では起動スキーマが使える時間とかも短くしぼったり、もやろうかなと思っていて、
-これでよっぽどな感じじゃない限りはインジェクションとかは大丈夫そうな感じがする。
-起動スキーマ持って行かれたときもまあ<code>Client Secret</code>バレなきゃだいじょ・・・そもそも<code>Secret</code>持っていいの？
-一応すごいがんばりをすれば秘密じゃなくなる気がする。</p>
-
-<h2>ライブラリにみるOAuth</h2>
-
-<p>さっきも書いたけどOAuthClientと名を打ってるライブラリは<code>Client ID</code>と<code>Client Secret</code>を要求していることが多いし、
-プラスアルファでアカウントとパスワードも要求してたりする。
-クライアント仲間ってことでJSも何個か見てみたんですが、
-カジュアルにSecretむき出し・・・秘密とは・・・みたいな感じになってて何を信じればいいのか分からなくなってきた。（まあTitaniumとかで使ってねってことだとは思うんだけど・・・）</p>
-
-<h2>Implicit Flow</h2>
-
-<p>さまよってるうちに「<a href="http://www.sakimura.org/2012/02/1487/">単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる</a>」
-というのに出会った、関係ありそうなので読んでみたんだけど、アプリケーションの認証として使うから駄目なのであって、
-クライアントとして認可される場合にはまあ大丈夫か、ってことでいいのかな。
-一旦は置いておいて良さそうだけど、あとで自分で見直したときのメモ。</p>
-
-<h2>で</h2>
-
-<p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1255,6 +1312,10 @@ function CategoryCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
         </li>
       
@@ -1268,10 +1329,6 @@ function CategoryCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a>
         </li>
       
     </ul>

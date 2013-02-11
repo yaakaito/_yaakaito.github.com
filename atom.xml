@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-11T02:59:06+09:00</updated>
+  <updated>2013-02-12T04:50:42+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,88 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <updated>2013-02-12T04:28:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <content type="html"><![CDATA[<p>こんにちは、うきょーです。
+<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">SEHoge</span> <span class="o">*</span><span class="n">hoge</span> <span class="o">=</span> <span class="p">[[</span><span class="n">SEHoge</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'><span class="n">NSObject</span><span class="o">&lt;</span><span class="n">SBStub</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">stub</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubObject:</span><span class="n">hoge</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">intMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">hoge</span> <span class="n">intMethod</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいにselectorとBlocksを使って書きます。
+このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">stringMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">@&quot;string&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういうのもいける、超便利。
+OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
+Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
+
+<p>あとはクラスメソッドのスタブも出来るみたいです。
+こっちはまだ使ってないのでREADMEからの引用ですが、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="c1">// https://github.com/robb/Stubbilino/blob/master/README.md</span>
+</span><span class='line'><span class="n">Class</span><span class="o">&lt;</span><span class="n">SBClassStub</span><span class="o">&gt;</span> <span class="n">uiimage</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubClass:</span><span class="n">UIImage</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">uiimage</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">imageNamed:</span><span class="p">)</span>
+</span><span class='line'>          <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">myImage</span><span class="p">;</span> <span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じで書けるみたいです。
+クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
+
+<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
+なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
+
+<p>　</p>
+
+<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
+
+<p>「conferenceWithDevelopers」というタイトルです。</p>
+
+<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
+
+<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
+
+<p>無料です！</p>
+
+<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
+
+<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
@@ -1740,61 +1822,6 @@ UIAlertViewがカジュアルに飛び出てきてウザイですよね＾ー＾
 <h2>疲れたのでケータイ持って飯へ現実逃避</h2>
 
 <p>ｼｬﾊﾞﾄﾞｩﾋﾞﾀﾞｯﾁﾍﾝｼﾝ!ﾄﾞｺﾓ!ﾌﾟ,ﾘｰｽﾞ↑ﾄﾞﾝﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾝ↑↑↑ｷﾒﾙｾﾞｪ!!!ﾙﾊﾟｯﾁ!ｱｲﾌｫﾝ!ﾀｯﾁｺﾞｩ↑ｺ,ﾈｸﾄ!ﾌﾟ,ﾘｰｽﾞ↑ｴｰﾕ→ﾁｮ→ｲｲﾈｯ↑ﾌﾟﾗﾁﾅｯｽﾄﾗｲｸｯ!ﾄﾞﾛｲﾄﾞｻｰｲｺｰﾀﾞｾﾞｪ↑ｳｨｰ↑↑↑</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOSアプリからGithubOAuth使うの見直している]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/03/re-github-oauth/"/>
-    <updated>2012-09-03T04:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/03/re-github-oauth</id>
-    <content type="html"><![CDATA[<p>こんばんは！うきょーです、非常に眠いです。
-<a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
-<a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
-よくよく考えてみれば、起動スキーマ直接叩かれたらなんか起こりそうだよなーとかいろいろ気になってきたのでずっとOAuth2でググったりしてた。</p>
-
-<h2>そもそも</h2>
-
-<p>前回の感じになったのが単純に、メールとかパスワード入力するのがだるいしあんまりさせたくないなー、OAuthあったなーいけんじゃねー、という感じの理由。
-<a href="http://developer.github.com/v3/oauth/">OAuth | GitHub API</a>を見てて、非Webアプリケーション向けの最初はBasic認証使って〜がやりたくなった感じですね。
-で、本来はBasic認証一回使ってーの方がいいと思うんですが、いろいろクライアントなライブラリを見ていると、<code>Client Secret</code>を引数に取ったりしてて、
-じゃあこっちでもいいのかなーとなった。</p>
-
-<h2>本当か？</h2>
-
-<p>で、気になって何個かGithubOAuth使ってそうなアプリを探してみたんだけど、hojokiなんかは<code>UIWebView</code>使ってやってるっぽいしやっぱこっちでいいんかなーと。
-けど<code>UIWebView</code>の作り上URLとか自分で出さないといけない訳ですが、それすら偽装してかなりそれっぽく見せる事は可能なので、
-僕が使う側だったらあんまり使いたくないなーと思ってしまった。一緒に変なJSとか走らされてもやだなーと思ったり。(他の人がどう思ってるのかは知らないですが)
-それだったらSafariに飛ばせばいいじゃん、でcallbackにカスタムスキームでー、でできたわけ。で、そこに弱そうなところがあるなら一旦塞ぐかーという感じで作ったのを適当にアップデート。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/GithubOAuthExample">GithubOAuthExample</a></li>
-</ul>
-
-
-<p>やったのは、（今回はダミーだけど）<code>state</code>の付加と、OAuthしている時以外は起動スキーマを無効化した。（今は単純にabortしてるだけ）
-あとは本番では起動スキーマが使える時間とかも短くしぼったり、もやろうかなと思っていて、
-これでよっぽどな感じじゃない限りはインジェクションとかは大丈夫そうな感じがする。
-起動スキーマ持って行かれたときもまあ<code>Client Secret</code>バレなきゃだいじょ・・・そもそも<code>Secret</code>持っていいの？
-一応すごいがんばりをすれば秘密じゃなくなる気がする。</p>
-
-<h2>ライブラリにみるOAuth</h2>
-
-<p>さっきも書いたけどOAuthClientと名を打ってるライブラリは<code>Client ID</code>と<code>Client Secret</code>を要求していることが多いし、
-プラスアルファでアカウントとパスワードも要求してたりする。
-クライアント仲間ってことでJSも何個か見てみたんですが、
-カジュアルにSecretむき出し・・・秘密とは・・・みたいな感じになってて何を信じればいいのか分からなくなってきた。（まあTitaniumとかで使ってねってことだとは思うんだけど・・・）</p>
-
-<h2>Implicit Flow</h2>
-
-<p>さまよってるうちに「<a href="http://www.sakimura.org/2012/02/1487/">単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる</a>」
-というのに出会った、関係ありそうなので読んでみたんだけど、アプリケーションの認証として使うから駄目なのであって、
-クライアントとして認可される場合にはまあ大丈夫か、ってことでいいのかな。
-一旦は置いておいて良さそうだけど、あとで自分で見直したときのメモ。</p>
-
-<h2>で</h2>
-
-<p>正直どうやるのが理想なのかよくわからなくなってきたね、ずばっと教えてエロい人！</p>
 ]]></content>
   </entry>
   
