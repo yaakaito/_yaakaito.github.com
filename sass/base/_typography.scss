@@ -1,0 +1,165 @@
+body {
+  color: $base-text-color;
+  font-size: $default-font-size;
+  font-family: $global-font-family;
+  h1, h2, h3, h4, h5 {
+    font-family: $emphasis-font-family;
+    font-weight: bold;
+    color: $primary-color;
+    a {
+      color: $primary-color;
+      &:hover {
+        color: $primary-dark-color;
+      }
+    }
+  }
+
+  time {
+    color: $time-color;
+    font-family: $time-font-family;
+  }
+}
+
+article {
+  line-height: 1.75em;
+
+  h1 , h2 , h3 , h4 , h5 {
+    font-size: 1.5em;
+    @media only screen and (max-width: 480px) {
+      font-size: 1.05em;
+    }
+  }
+
+  h3, h4, h5 {
+    font-size: 1.2em;
+  }
+
+  >  h1 {
+    color: $secondary-color-B;
+    font-size: 2em;
+    @media only screen and (max-width: 480px) {
+      font-size: 1.2em;
+    }
+    &:first-letter {
+      font-size: 2.2em;
+    }
+    a {
+      color: $secondary-color-B;
+      text-decoration: none;
+      &:hover {
+        color: $secondary-dark-color-B;
+      }
+    }
+  }
+
+  aside.categories {
+    @media only screen and (max-width: 480px) {
+      font-size: 0.8em;
+    }
+  }
+
+  a {
+    color: $base-text-color;
+    &:hover {
+      color: $complementary-dark-color;
+    }
+  }
+
+  aside {
+    li {
+      color: $secondary-color-A;
+      font-weight: bold;
+      a {
+        color: $secondary-color-A;  
+        text-decoration: none;
+        &:hover {
+          color: $secondary-dark-color-A;
+        }
+      }
+    }
+  }
+}
+
+aside.about-me {
+  p {
+    font-size: 0.8em;
+  }
+  li, ol {
+    font-size: 0.8em;
+  } 
+  a {
+    color: $complementary-color;
+    text-decoration: none;
+    &:hover {
+      color: $complementary-dark-color;
+    }
+  }
+}
+
+aside.pagenation {
+  p {
+    color: $complementary-color;
+    a {
+      color: $complementary-color;
+      text-decoration: none;
+      &:hover {
+        color: $complementary-dark-color;
+      }
+    }
+  }
+}
+
+aside.others {
+  h3 {
+    font-size: 1.1em;
+  }
+  li {
+    color: $base-text-color;
+    font-size: 0.9em;
+    a {
+      color: $base-text-color;
+    }
+  }
+  p {
+    > a {
+      color: $secondary-color-A;
+      &:hover {
+        color: $secondary-dark-color-A;
+      }
+    }
+  }
+}
+
+nav {
+  >ul {
+    >li {
+      color: $secondary-color-A;
+      font-size: 1.2em;
+      font-weight: bold;
+      a {
+        color: $secondary-color-A;
+        text-decoration: none;
+        &:hover {
+          color: $secondary-dark-color-A;
+        }
+      }
+    }
+  }
+}
+
+footer {
+
+  > p { 
+    color: $complementary-color;
+    font-size: 0.9em;
+    font-family: $copyright-font-family;
+    font-style: italic;
+    a {
+      color: $complementary-color;
+      &:hover {
+        color: $complementary-dark-color;
+      }
+    }
+  }
+}
+

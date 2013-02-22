@@ -1,0 +1,3 @@
+[submodule ".themes/blaze"]
+	path = .themes/blaze
+	url = git@github.com:yaakaito/Octopress-Theme-Blaze.git

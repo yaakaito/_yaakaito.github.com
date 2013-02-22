@@ -1,0 +1,11 @@
+{% if index %}
+  <section><div ng-non-bindable>{{ post.content | excerpt }}</div></section>
+  {% capture excerpted %}{{ post.content | has_excerpt }}{% endcapture %}
+  {% if excerpted == 'true' %}
+    <footer>
+      <a rel="full-article" href="{{ root_url }}{{ post.url }}">{{ site.excerpt_link }}</a>
+    </footer>
+  {% endif %}
+{% else %}
+<section><div ng-non-bindable>{{ content }}</div></section>
+{% endif %}

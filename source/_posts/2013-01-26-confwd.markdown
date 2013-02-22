@@ -1,0 +1,38 @@
+---
+layout: post
+title: "2/23に東京でiOSカンファレンスを開催します！"
+date: 2013-01-26 14:56
+comments: true
+categories: [iOS, Objective-C, confWD]
+---
+
+こんにちは！うきょーです。
+
+2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！
+
+{% img /images/confwd.png 660 %}
+
+[公式サイト](http://conference-with-developers.info/)
+
+[チケットをゲットはこちらから](http://peatix.com/event/9727)
+
+無料です！
+
+今現在、決定しているスピーカーとして、
+「iPhone Core Audioプログラミング」	で有名なクックパッドの永野さん、
+「ビートロボ」でiOSのリードエンジニアを務める菅宮さん。
+まだWebの更新がおいついていませんが、
+「Dynamic Objective-C」や「iOS開発におけるパターンによるオートマティズム」を執筆された木下さんをはじめとする、
+豪華なゲストでお送りする予定です！
+講演者は随時アップデート、こちらでも告知していきますのでお楽しみに！！！
+
+
+またLT参加者も募集しています！
+iOSネタであれば制限はありません、こんなことやってみた！から実践的なものまで！皆さんのトークを心からお待ちしております。
+LT参加を希望されるかたは、チケットページより「LT参加チケット」でお申し込みください！
+
+より詳しい情報は[公式サイト](http://conference-with-developers.info/)をご覧ください！
+
+みなさんのご来場をお待ちしております！！
+
+<iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
