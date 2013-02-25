@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-12T04:50:42+09:00</updated>
+  <updated>2013-02-26T00:51:11+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers/"/>
+    <updated>2013-02-26T00:39:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+2/23(土)に<a href="http://conference-with-developers.info/">conferenceWithDevelopers</a>というイベントを開催しました。
+当日はたくさんの方にご来場頂き、盛況のうちにイベントを終える事が出来ました。</p>
+
+<p>ご講演頂いたみなさん、ご来場頂いたみなさん、会場を提供していただいたグリー様、そして当日お手伝いをして頂いたスタッフの方、本当にありがとうございました。</p>
+
+<p>運営上至らない点も多くあったと思いますが、今回の反省を糧に次へ繋げていきたいと思います。</p>
+
+<p>何度か「次はあるんですか？」という趣旨の質問を受けました。
+これについて現状での回答をしておくと、「続けていきたい」思っています。
+ですが、毎月開催できるかと言えばそういう感じではないので、時期なんかに関してはまったくの未定です。
+イベントのポジションとして、年に一度のお祭り、とかそういう感じに成長できればよいなぁとぼんやり考えています。
+力を貸すよ！という方がいらっしゃいましたら是非お願いしたいとも思っています。</p>
+
+<p>というわけで、簡単ですが一旦の挨拶とさせて頂きます。みなさん、ありがとうございました！</p>
+
+<p>「次回にご期待ください！」</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
@@ -1791,37 +1816,6 @@ UIAlertViewがカジュアルに飛び出てきてウザイですよね＾ー＾
 <li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[もしプログラマーが仮面ライダーウィザードだったら]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/03/wizard/"/>
-    <updated>2012-09-03T08:25:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/03/wizard</id>
-    <content type="html"><![CDATA[<h2>普段の開発</h2>
-
-<p>ﾙﾊﾟｯﾁ!ｺﾐｯﾄ!ｱｯﾄﾞｯｺﾞ!</p>
-
-<h2>ブランチをマージするとき</h2>
-
-<p>ﾘﾍﾞｪｰｽ!ﾌﾟﾘｰｽﾞ!</p>
-
-<h2>マージしたのでプッシュするとき</h2>
-
-<p>ﾌﾟｯｼｭｯｽﾄﾗｲｸ!ｻｲｰｺｰﾀﾞｾﾞｯ!(reject)</p>
-
-<h2>しかたなくpull rebaseしたとき</h2>
-
-<p>ｶﾓﾝ!ｺｯﾐﾄ!ﾏｧｰｼﾞﾊﾝﾄﾞ!ｶﾓﾝ!ｺｯﾐﾄ!ﾏｧｰｼﾞﾊﾝﾄﾞ!ﾋｰﾋｰﾋｰﾋｰﾋｰ!ｽﾗｯｼｭｽﾄﾗｲｸ!(rebase失敗)</p>
-
-<h2>がんばって直して、テストを走らせたとき</h2>
-
-<p>ﾇﾙｯﾁ!ﾏｼﾞｯｸ!ﾀｯﾁｺﾞｳ!ﾇﾙｯﾁ!ﾏｼﾞｯｸ!ﾀｯﾁｺﾞｳ!ﾒｯｾｰｼﾞ!ﾌﾟﾘｰｽﾞ!ﾁｮｰｲｲn (ｾｸﾞﾌｫ)</p>
-
-<h2>疲れたのでケータイ持って飯へ現実逃避</h2>
-
-<p>ｼｬﾊﾞﾄﾞｩﾋﾞﾀﾞｯﾁﾍﾝｼﾝ!ﾄﾞｺﾓ!ﾌﾟ,ﾘｰｽﾞ↑ﾄﾞﾝﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾄﾞﾝ↑↑↑ｷﾒﾙｾﾞｪ!!!ﾙﾊﾟｯﾁ!ｱｲﾌｫﾝ!ﾀｯﾁｺﾞｩ↑ｺ,ﾈｸﾄ!ﾌﾟ,ﾘｰｽﾞ↑ｴｰﾕ→ﾁｮ→ｲｲﾈｯ↑ﾌﾟﾗﾁﾅｯｽﾄﾗｲｸｯ!ﾄﾞﾛｲﾄﾞｻｰｲｺｰﾀﾞｾﾞｪ↑ｳｨｰ↑↑↑</p>
 ]]></content>
   </entry>
   

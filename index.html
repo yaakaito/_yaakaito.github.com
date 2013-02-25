@@ -11,7 +11,7 @@
   
   <meta name="description" content="yaakaito.org 主にiOSとかJavaScriptのことを書いています。 Github
 Twitter
-Old blog Stubbilinoというスタブライブラリがよさげです function CategoryCtrl($scope) { $scope.categories &hellip;">
+Old blog conferenceWithDevelopersが無事に終了しました function CategoryCtrl($scope) { $scope. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -59,7 +59,7 @@ Old blog Stubbilinoというスタブライブラリがよさげです function 
   
     <article class="blog clear-fix" role="article">
       <h1 class="separator">
-        <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
+        <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
       </h1>
   
       <div class="clear-fix">
@@ -71,11 +71,11 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("Mock");
-    
       $scope.categories.push("Objective-C");
     
-      $scope.categories.push("Testing");
+      $scope.categories.push("confWD");
+    
+      $scope.categories.push("iOS");
     
   
 }
@@ -92,80 +92,23 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは、うきょーです。
-<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！
+2/23(土)に<a href="http://conference-with-developers.info/">conferenceWithDevelopers</a>というイベントを開催しました。
+当日はたくさんの方にご来場頂き、盛況のうちにイベントを終える事が出来ました。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">SEHoge</span> <span class="o">*</span><span class="n">hoge</span> <span class="o">=</span> <span class="p">[[</span><span class="n">SEHoge</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-</span><span class='line'><span class="n">NSObject</span><span class="o">&lt;</span><span class="n">SBStub</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">stub</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubObject:</span><span class="n">hoge</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">intMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">hoge</span> <span class="n">intMethod</span><span class="p">]);</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>ご講演頂いたみなさん、ご来場頂いたみなさん、会場を提供していただいたグリー様、そして当日お手伝いをして頂いたスタッフの方、本当にありがとうございました。</p>
 
+<p>運営上至らない点も多くあったと思いますが、今回の反省を糧に次へ繋げていきたいと思います。</p>
 
-<p>みたいにselectorとBlocksを使って書きます。
-このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
+<p>何度か「次はあるんですか？」という趣旨の質問を受けました。
+これについて現状での回答をしておくと、「続けていきたい」思っています。
+ですが、毎月開催できるかと言えばそういう感じではないので、時期なんかに関してはまったくの未定です。
+イベントのポジションとして、年に一度のお祭り、とかそういう感じに成長できればよいなぁとぼんやり考えています。
+力を貸すよ！という方がいらっしゃいましたら是非お願いしたいとも思っています。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">stringMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(){</span>
-</span><span class='line'>    <span class="k">return</span> <span class="s">@&quot;string&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>というわけで、簡単ですが一旦の挨拶とさせて頂きます。みなさん、ありがとうございました！</p>
 
-
-<p>こういうのもいける、超便利。
-OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
-Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
-
-<p>あとはクラスメソッドのスタブも出来るみたいです。
-こっちはまだ使ってないのでREADMEからの引用ですが、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="c1">// https://github.com/robb/Stubbilino/blob/master/README.md</span>
-</span><span class='line'><span class="n">Class</span><span class="o">&lt;</span><span class="n">SBClassStub</span><span class="o">&gt;</span> <span class="n">uiimage</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubClass:</span><span class="n">UIImage</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">uiimage</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">imageNamed:</span><span class="p">)</span>
-</span><span class='line'>          <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">myImage</span><span class="p">;</span> <span class="p">}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じで書けるみたいです。
-クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
-
-<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
-なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
-
-<p>　</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
+<p>「次回にご期待ください！」</p>
 </div></section>
   
   
@@ -196,7 +139,7 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
   
 
 
-<time datetime="2013-02-12T04:28:00+09:00" pubdate data-updated="true">Feb 12<span>th</span>, 2013</time></p>
+<time datetime="2013-02-26T00:39:00+09:00" pubdate data-updated="true">Feb 26<span>th</span>, 2013</time></p>
           </footer>
         </div>
       </div>
@@ -219,6 +162,10 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
         </li>
       
@@ -232,10 +179,6 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
       
         <li class="post">
           <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
         </li>
       
     </ul>

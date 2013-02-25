@@ -74,6 +74,20 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "conferenceWithDevelopersが無事に終了しました"
+                       , url : "/blog/2013/02/26/thanks-ios-developers/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Objective-C");
+    
+      current_archive.categories.push("confWD");
+    
+      current_archive.categories.push("iOS");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "Stubbilinoというスタブライブラリがよさげです"
                        , url : "/blog/2013/02/12/stubbilino/"
                        , categories: []}; 
@@ -515,6 +529,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
         </li>
       
@@ -528,10 +546,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/01/26/confwd/">2/23に東京でiOSカンファレンスを開催します！</a>
         </li>
       
     </ul>
