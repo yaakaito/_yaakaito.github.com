@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: WebApp - yaakaito.org</title>
+  <title>yaakaito.org</title>
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Category: WebApp">
+  <meta name="description" content="Objective-CからgithubAPI叩く function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   
-  <link rel="canonical" href="http://yaakaito.github.comblog/categories/webapp/">
+  <link rel="canonical" href="http://yaakaito.github.com/blog/page/4/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
@@ -39,37 +39,69 @@
 </ul>
 </nav>
   <div role="main" class="separator">
-    <div>
-<article class="page" role="article">
+    <div class="blog-index">
   
-    <h1 class="separator">Category: WebApp</h1>
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("github");
+    
+      $scope.categories.push("iOS");
     
   
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
 
-  <div id="blog-archives" class="category">
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
 
+<h1>UAGithubEngine</h1>
 
+<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
+GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
+特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
+pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
+per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
 
+<h1>他のgithubアプリとか</h1>
+
+<h2>iOctocat</h2>
+
+<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
+</div></section>
   
-  <h2>2012</h2>
-
-<article>
   
-<h1><a href="/blog/2012/08/09/parse-angular-sync-app/">ParseとAngularJSでユーザー毎にデータ同期してみる</a></h1>
-<time datetime="2012-08-09T02:29:00+09:00" pubdate><span class='month'>Aug</span> <span class='day'>09</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/backbone-js/'>Backbone.js</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/parse/'>Parse</a>, <a class='category' href='/blog/categories/webapp/'>WebApp</a></span>
-</footer>
 
 
-</article>
-
-</div>
-
+    </article>
   
-  
-</article>
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/3/">Newer &rarr;</a>
+    
+  </div>
 </div>
 
   </div>

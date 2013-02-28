@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-26T00:51:11+09:00</updated>
+  <updated>2013-03-01T03:06:55+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,173 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/"/>
+    <updated>2013-03-01T02:35:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
+
+<p>JSでテスト書く時に、こういうHTMLを使いたいんだけど的なことってあると思います。
+BusterJSはデフォルトでいい感じのHTMLを作って使ってくれるので楽にテストをはじめられるんですが、まあ差し替えたいよねーってことで差し替えます。</p>
+
+<p>BusterJSではこれをtestbedと呼んでいて、設定ファイル(だいたいの場合は<code>buster.js</code>)で設定することができます。
+設定の仕方は<a href="http://docs.busterjs.org/en/latest/overview/#custom-test-beds">こんな感じ</a>なんだけど、いまんところ<code>testbed</code>ってプロパティは設定できないので、<code>resources</code>から設定します。</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>sources: ["lib/*.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>というわけでこんな感じに設定を追加します。こうすると<code>hoge.html</code>を使ってテストを走らせてくれます。
+で、テスト用のファイルを読み込まなきゃいけないわけで(sourcesとかtestsに設定してるやつ)、それがどこに埋め込まれるのかなーというと、コードを見てみた感じ、</p>
+
+<ol>
+<li><code>{{scripts}}</code> という文字列を探して、あったらそこを置き換える</li>
+<li><code>&lt;/body&gt;</code> を探して、あったらその直前に置く</li>
+<li><code>&lt;/html&gt;</code> を探して、あったらその直前に置く</li>
+<li>何も見つからなかったら、一番最後に連結する</li>
+</ol>
+
+
+<p>という順番になってた。(<code>resource-middleware</code>とか読めば分かる)
+なので、例えばテストの時だけ <code>initialize</code> みたいな関数を、セットアップスクリプト走らせる前に置き換えたいんだけど的なときは、(↓みたいな感じの場合)</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<!-- この中に initialize って関数があるとする -->
+
+
+<script>
+// この時点までにテストのときだけinitializeを置き換えてほしい ＞＜
+initialize({
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p><code>{{scripts}}</code> を使って、</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<p>{{scripts}}</p>
+
+<script>
+initialize({
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p>こういう感じにする。で、<code>bootstrap.js</code>みたいなのを用意してあげて、
+<code>javascript
+// bootstrap.js
+initialize = function() { } // 何もしないでーーー＾ー＾
+</code></p>
+
+<p>これを<code>sources</code>に追加する。</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>sources: ["lib/*.js", "bootstrap.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>とすると、実際にテストで使われるファイルは、</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<script src="bootstrap.js"></script>
+
+
+<script src="テストとか"></script>
+
+
+<script>
+initialize({ // なにも・・・なかった・・・
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p>こんな感じになる。便利！</p>
+
+<p>で、次にテストの実行開始タイミングをコントロールしたいと思うんだけど、割と簡単んで、<a href="http://docs.busterjs.org/en/latest/starting-testrun-manually/#starting-testrun-manually">この辺</a>にも書いてあるように、</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>autoRun: false,
+sources: ["lib/*.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p><code>autoRun</code>を<code>false</code>にして、さっきの例だと、<code>initialize</code>まで呼ばれたら実行してほしい！とかなら、</p>
+
+<p>```javascript
+// bootstrap.js
+initialize = function() {</p>
+
+<pre><code>buster.run();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>みたいな感じ</p>
+
+<p>というわけでテストに使うHTMLも設定できましたし、ガンガンテストできますね！</p>
+
+<p>そういや別にもう一個なんか書こうと思ってたんですが、忘れたので知ってる人いたら教えてください。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
@@ -390,72 +557,6 @@ reverse = require 'reverse'</p>
 
 <p>テストの為の中間ファイルとして.jsを吐く必要がないので、リポジトリがCoffeeScriptだけできれいに保てるのもポイント。
 vowsでカバーできるサイズなら全部CoffeeScriptで書いてしまっても、それなりにモチベーションが保てる。(CoffeeScriptそんなに好きじゃない)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[KiwiとSpectaの比較]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta/"/>
-    <updated>2012-10-22T00:48:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/10/22/kiwi-vs-specta</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-前まではiOSのテストには主にKiwiを使っていたのですが、最近Spectaが良い感じなので使っています。
-結局のところ好みになってしまうのですが、簡単に比較というか感想を。(コードはそれぞれのREADMEみてください)
-どちらもRSpecに代表されるBDDスタイルの記述ができます。</p>
-
-<ul>
-<li><a href="https://github.com/allending/Kiwi">Kiwi</a></li>
-<li><a href="https://github.com/petejkim/specta">Specta</a></li>
-</ul>
-
-
-<h2>そもそもの違い</h2>
-
-<p>どちらも似た感じでテストを書くことができますが、そもそもとしてSpectaは自身がマッチャーなどは提供していません。
-主にExpectaを使うことになると思いますが、他のものを使うことができます。
-対してKiwiはモックから何からそろったフルセットのフレームワークです。</p>
-
-<p>Spectaの方がモジュール単位に分割されているので、ライブラリとして見たときは扱い易いです。
-ただ、好みのライブラリとか特にないって場合はKiwiを使った方がスムーズにいける印象です。</p>
-
-<h2>導入のしやすさ</h2>
-
-<p>SenTestingKitで動かすならどっちも同じくらい簡単にセットアップできます。
-ただしSpectaは分割している分、importとdefineが多くなってすこし見た目が悪いです。</p>
-
-<h2>アサーション</h2>
-
-<p>Sepcta使う最大の理由がほぼここにあって、Expectaががんばっているんですが、Objective-Cではありがちなプリミティブに対するラッパーが必要ないこと。
-Kiwiの場合は<code>theValue</code>マクロが用意されていて、これを使わなきゃいけないのでちょっとだるい。</p>
-
-<p><code>
-expect(1).to.equal(1); // Specta
-[[theValue(1) should] equal:theValue(1)]; // Kiwi
-</code></p>
-
-<p>あとはObjective-Cっぽく書くか、マクロで書くかの違いくらい。僕はKiwiっぽい記述の方が好きなんですが、どうしても<code>theValue</code>書きたくないでござる症候群が・・・。
-マッチャーの豊富さはどちらも同じくらいです。beNonZeroとかが分かりやすく書けるのはちょっとKiwiの方がいいかな。
-あとはBooleanがExpectaは<code>beTruthy</code> <code>beFalsy</code>ですが、Kiwiが<code>beTrue</code> <code>beFalse</code> なので気をつけましょう。</p>
-
-<h2>モックとか</h2>
-
-<p>Kiwiは組み込みのモック、SpectaはOCMockやLRMockyが推奨されているようです。
-メソッドをモックしたりとか基本的なところは一緒ですが、ちょっとずつ特徴があります。</p>
-
-<p>Kiwiの組み込みとLRMockyは、メッセージエクスペクテーションとして<code>recieve</code>がちゃんと使えるのがよいところ。
-OCMockはこのあたりがちょっとめんどくさくて、mockしてverifyしてね、という形式。notはない。</p>
-
-<p>逆にOCMockのいいところは<code>andDo:block</code>と<code>andCall:selector</code>が非常に使いやすいところ。
-Kiwiなんかは、特にBlocksが絡むとテスト用に拡張したオブジェクトに頼ったりする場面があるけど、OCMockはそれがほとんど必要ないのが良い。</p>
-
-<p>個人的にはBlocksを結構使うので、OCMockが使いやすいですね。</p>
-
-<h2>選ぶ基準</h2>
-
-<p>そもそもObjective-CでBDDフレームワーク使ったことないならKiwi使っとくのが無難です。
-元々GHUnitで書いていて、やっぱLRMocky使いたいわー＞＜とかならSpecta使うといいと思います。</p>
-
-<p>ちなみに最近ホットなReactiveCocoaはSpecta使ってますね。</p>
 ]]></content>
   </entry>
   

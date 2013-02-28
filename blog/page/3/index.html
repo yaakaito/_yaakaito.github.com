@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="もしプログラマーが仮面ライダーウィザードだったら function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Neta"); $scope.categories.push("Wizard &hellip;">
+  <meta name="description" content="ビューテストで便利なAlertNinjaを作りました function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AlertNinja"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,327 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/09/05/release-alert-ninja/">ビューテストで便利なAlertNinjaを作りました</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("AlertNinja");
+    
+      $scope.categories.push("Library");
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("Testing");
+    
+      $scope.categories.push("iOS");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！前回ふざけてましたが、今回は真面目にライブラリを作りました。
+といっても、毎回書くのはめんどくさいのでまとめとくか程度です。</p>
+
+<p>みなさん！iOSのテスト書いてますか？？？
+ViewControllerなんかのテストを書いてるときに、例えばGHUnitなんかを使ってたりすると、
+UIAlertViewがカジュアルに飛び出てきてウザイですよね＾ー＾ー＾ー＾</p>
+
+<p>僕はUIAlertViewは、適当なラッパークラスを作って、そこを差し替えて出ないようにすることが多いんですが、
+テストの為のクラスを作ってる様なものになってしまう上に、毎回書くのがだるポヨ・・・。</p>
+
+<p>なのでついでだしテストも出来るようにしよう、ってことで、UIAlertViewを非表示にしつつ、スパイするライブラリを作りました。</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
+</ul>
+
+
+<h2>AlertNinjaの機能</h2>
+
+<p>さっきも書きましたが、UIAlertViewを非表示にする、とスパイするの２つの機能を持っています。
+この二つの機能はほとんど同時に使う事が多くなると思います。</p>
+
+<p>使い方はこんな感じ、適当なViewControllerがこんな感じでshowDialogというメソッドを持っていたとすると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">showDialog</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;Ninja&quot;</span>
+</span><span class='line'>                                                  <span class="nl">message:</span><span class="s">@&quot;doron&quot;</span>
+</span><span class='line'>                                                 <span class="nl">delegate:</span><span class="nb">nil</span>
+</span><span class='line'>                                        <span class="nl">cancelButtonTitle:</span><span class="s">@&quot;YES&quot;</span>
+</span><span class='line'>                                        <span class="nl">otherButtonTitles:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">[</span><span class="n">alert</span> <span class="n">show</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>テストを書くときにどこかからこれを読んでいると、アラートが表示されてしまいますね。
+なのでAlertNinjaを使って、アラートがでる可能性のあるところを囲みます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">spy</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="n">showDialog</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">complete</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>spy</code>でスタートして、<code>complete</code>で終了です、なんか忍者っぽい感じにしたかったんです！！！
+こうすると、まずアラートの表示をなかった事にできます。</p>
+
+<p>次はどんなアラートか出たか知りたいですよね、出てないかもしれません。
+これは<code>report</code>というものを取得することで検証できます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">report</span><span class="p">]</span> <span class="n">showedAlerts</span><span class="p">]</span> <span class="n">lastObject</span><span class="p">];</span>
+</span><span class='line'><span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Ninja&quot;</span><span class="p">,</span> <span class="n">alert</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="s">@&quot;alert title is Ninja&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>showedAlerts</code>は<code>spy</code>されてから表示されたUIAlertViewのリストです。(今のところこの機能しかないです。)
+なので、これの<code>count</code>が0だったらアラートはなかったことになりますし、そうでなければ、その中身を検証できます。
+今回の例では<code>title</code>が<code>Ninja</code>なアラートが表示されるはず、というテストになっていますね。</p>
+
+<p>つなげるとこんな感じです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">spy</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="n">showDialog</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">report</span><span class="p">]</span> <span class="n">showedAlerts</span><span class="p">]</span> <span class="n">lastObject</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Ninja&quot;</span><span class="p">,</span> <span class="n">alert</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="s">@&quot;alert title is Ninja&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">complete</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>confirmもできるよ！</h3>
+
+<p>ボタンを何個か設定して、ここを押したい、みたいなテストにも対応できます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">showConfirm</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;Ninja&quot;</span>
+</span><span class='line'>                                                    <span class="nl">message:</span><span class="s">@&quot;Are you Ninja ?&quot;</span>
+</span><span class='line'>                                                   <span class="nl">delegate:</span><span class="n">self</span>
+</span><span class='line'>                                          <span class="nl">cancelButtonTitle:</span><span class="s">@&quot;NO&quot;</span>
+</span><span class='line'>                                          <span class="nl">otherButtonTitles:</span><span class="s">@&quot;YES&quot;</span><span class="p">,</span> <span class="s">@&quot;I&#39;m Kunoichi&quot;</span><span class="p">,</span> <span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">alert</span> <span class="n">show</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">alertView:</span><span class="p">(</span><span class="n">UIAlertView</span> <span class="o">*</span><span class="p">)</span><span class="nv">alertView</span> <span class="nf">clickedButtonAtIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">buttonIndex</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">calledClickedButtonAtIndex</span> <span class="o">=</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">buttonIndex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">result</span> <span class="o">=</span> <span class="s">@&quot;NO&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">buttonIndex</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">result</span> <span class="o">=</span> <span class="s">@&quot;YES&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">buttonIndex</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">result</span> <span class="o">=</span> <span class="s">@&quot;Kunoichi&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうなってるやつに・・・</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testConfirm</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">spy</span><span class="p">]</span> <span class="nl">andSelectIndexAt:</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="n">showConfirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">report</span><span class="p">]</span> <span class="n">showedAlerts</span><span class="p">]</span> <span class="n">lastObject</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Ninja&quot;</span><span class="p">,</span> <span class="n">alert</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="s">@&quot;alert title is Ninja&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Kunoichi&quot;</span><span class="p">,</span> <span class="n">viewController</span><span class="p">.</span><span class="n">result</span><span class="p">,</span> <span class="s">@&quot;result is &#39;Kunoichi&#39;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">complete</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じで、<code>spy</code>に続けて<code>andSelectIndexAt</code>でどのインデックスのボタンを押すかを指定することができます。何も設定しないとキャンセルボタン扱いになります。
+もちろんDelegateも呼ばれていて、さっきのViewControllerにはさらにこんなのが続いていて、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">willPresentAlertView:</span><span class="p">(</span><span class="n">UIAlertView</span> <span class="o">*</span><span class="p">)</span><span class="nv">alertView</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">calledWillPresent</span> <span class="o">=</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didPresentAlertView:</span><span class="p">(</span><span class="n">UIAlertView</span> <span class="o">*</span><span class="p">)</span><span class="nv">alertView</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">calledDidPresent</span> <span class="o">=</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">alertView:</span><span class="p">(</span><span class="n">UIAlertView</span> <span class="o">*</span><span class="p">)</span><span class="nv">alertView</span> <span class="nf">willDismissWithButtonIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">buttonIndex</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">calledWillDismiss</span> <span class="o">=</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">alertView:</span><span class="p">(</span><span class="n">UIAlertView</span> <span class="o">*</span><span class="p">)</span><span class="nv">alertView</span> <span class="nf">didDismissWithButtonIndex:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">buttonIndex</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">calledDidDismiss</span> <span class="o">=</span> <span class="n">YES</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>全体でこんなテストが通るようになっています。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testConfirm</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">spy</span><span class="p">]</span> <span class="nl">andSelectIndexAt:</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="n">showConfirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">UIAlertView</span> <span class="o">*</span><span class="n">alert</span> <span class="o">=</span> <span class="p">[[[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">report</span><span class="p">]</span> <span class="n">showedAlerts</span><span class="p">]</span> <span class="n">lastObject</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Ninja&quot;</span><span class="p">,</span> <span class="n">alert</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="s">@&quot;alert title is Ninja&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertTrue</span><span class="p">(</span><span class="n">viewController</span><span class="p">.</span><span class="n">calledWillPresent</span><span class="p">,</span> <span class="s">@&quot;called will present delegate method&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertTrue</span><span class="p">(</span><span class="n">viewController</span><span class="p">.</span><span class="n">calledDidPresent</span><span class="p">,</span> <span class="s">@&quot;called did present delegate method&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertTrue</span><span class="p">(</span><span class="n">viewController</span><span class="p">.</span><span class="n">calledWillDismiss</span><span class="p">,</span> <span class="s">@&quot;called will dismiss delegate method&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertTrue</span><span class="p">(</span><span class="n">viewController</span><span class="p">.</span><span class="n">calledDidDismiss</span><span class="p">,</span> <span class="s">@&quot;called did dismiss delegate method&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertTrue</span><span class="p">(</span><span class="n">viewController</span><span class="p">.</span><span class="n">calledClickedButtonAtIndex</span><span class="p">,</span> <span class="s">@&quot;called did clicked button at Index&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="s">@&quot;Kunoichi&quot;</span><span class="p">,</span> <span class="n">viewController</span><span class="p">.</span><span class="n">result</span><span class="p">,</span> <span class="s">@&quot;result is &#39;Kunoichi&#39;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[</span><span class="n">UIAlertView</span> <span class="n">ninja</span><span class="p">]</span> <span class="n">complete</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>流れがテストできる</h2>
+
+<p>UIAlertViewを含んだテストができるようになったので、全体としてフィーチャーのテストがし易くなりました。
+例えば <a href="https://github.com/yaakaito/NLTHTTPStubServer">NLTHTTPStubServer</a> と組み合わせると、
+「APIにアクセスしたけど、404だったから&#8221;そんなものはない&#8221;というアラートだす」みたいなテストを結構スマートに書く事ができますね！！！(宣伝)
+テストの為の何かをほとんどプロダクトコードに埋め込まなくとも良いのも特徴です。</p>
+
+<h2>TODO</h2>
+
+<p>今はこれだけで、以下には対応してない＆やろうと思っているので乞うご期待！</p>
+
+<ul>
+<li>UIActionSheetも使えるようになる</li>
+<li>UIAlertViewStyleのサポート</li>
+</ul>
+
+
+<p>他にもこれ必要じゃね、というのがあればIssueなどに投げてください！！！</p>
+
+<h2>というわけで</h2>
+
+<p>よろしくお願いします！</p>
+
+<ul>
+<li><a href="https://github.com/yaakaito/AlertNinja">AlertNinja</a></li>
+</ul>
+
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1833,60 +2154,9 @@ function CategoryCtrl($scope) {
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/07/16/objective-c-github-api/">Objective-CからgithubAPI叩く</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("Objective-C");
-    
-      $scope.categories.push("github");
-    
-      $scope.categories.push("iOS");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>Objective-CからgithubAPI叩く用があったので試してみた。</p>
-
-<h1>UAGithubEngine</h1>
-
-<p>公式でもおすすめされてるライブラリですけど、結論からいうと駄目でした
-GitAppっていうアプリがそうなんですけど、リクエストパラメーター付けずにgithubがデフォルトで返してくるレスポンスしか受け取れない感じになってしまっている・・・
-特によくわかるのがリポジトリ取得で、githubがデフォルトで返してくるのが30件っぽいんだけど(ソート順はよくわからない)、それしか受け取れないので、リポジトリが31個以上ある人の分は全部表示できない。
-pageオプションとかあったので試してみたけどどうも聞いてない様子なのでウゴゴゴゴ・・・という具合。
-per_pageとかをちゃんと付ければとれるので、まあ自分で叩けってことですかね・・・。</p>
-
-<h1>他のgithubアプリとか</h1>
-
-<h2>iOctocat</h2>
-
-<p>自前でちゃんとリクエストパラメーター付けて取ってる、エラい</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1904,6 +2174,10 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/01/buster-testbed-and-boot/">BusterJSでテストに使うHTMLの設定と手動実行</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
         </li>
       
@@ -1917,10 +2191,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
       
         <li class="post">
           <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/01/31/objective-c-role/">Objective-CでRoleやってみる</a>
         </li>
       
     </ul>

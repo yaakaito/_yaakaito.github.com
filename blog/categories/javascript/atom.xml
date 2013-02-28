@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-02-26T00:51:11+09:00</updated>
+  <updated>2013-03-01T03:06:55+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,173 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/"/>
+    <updated>2013-03-01T02:35:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
+
+<p>JSでテスト書く時に、こういうHTMLを使いたいんだけど的なことってあると思います。
+BusterJSはデフォルトでいい感じのHTMLを作って使ってくれるので楽にテストをはじめられるんですが、まあ差し替えたいよねーってことで差し替えます。</p>
+
+<p>BusterJSではこれをtestbedと呼んでいて、設定ファイル(だいたいの場合は<code>buster.js</code>)で設定することができます。
+設定の仕方は<a href="http://docs.busterjs.org/en/latest/overview/#custom-test-beds">こんな感じ</a>なんだけど、いまんところ<code>testbed</code>ってプロパティは設定できないので、<code>resources</code>から設定します。</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>sources: ["lib/*.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>というわけでこんな感じに設定を追加します。こうすると<code>hoge.html</code>を使ってテストを走らせてくれます。
+で、テスト用のファイルを読み込まなきゃいけないわけで(sourcesとかtestsに設定してるやつ)、それがどこに埋め込まれるのかなーというと、コードを見てみた感じ、</p>
+
+<ol>
+<li><code>{{scripts}}</code> という文字列を探して、あったらそこを置き換える</li>
+<li><code>&lt;/body&gt;</code> を探して、あったらその直前に置く</li>
+<li><code>&lt;/html&gt;</code> を探して、あったらその直前に置く</li>
+<li>何も見つからなかったら、一番最後に連結する</li>
+</ol>
+
+
+<p>という順番になってた。(<code>resource-middleware</code>とか読めば分かる)
+なので、例えばテストの時だけ <code>initialize</code> みたいな関数を、セットアップスクリプト走らせる前に置き換えたいんだけど的なときは、(↓みたいな感じの場合)</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<!-- この中に initialize って関数があるとする -->
+
+
+<script>
+// この時点までにテストのときだけinitializeを置き換えてほしい ＞＜
+initialize({
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p><code>{{scripts}}</code> を使って、</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<p>{{scripts}}</p>
+
+<script>
+initialize({
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p>こういう感じにする。で、<code>bootstrap.js</code>みたいなのを用意してあげて、
+<code>javascript
+// bootstrap.js
+initialize = function() { } // 何もしないでーーー＾ー＾
+</code></p>
+
+<p>これを<code>sources</code>に追加する。</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>sources: ["lib/*.js", "bootstrap.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>とすると、実際にテストで使われるファイルは、</p>
+
+<p>```html</p>
+
+<script src="hoge.js"></script>
+
+
+<script src="bootstrap.js"></script>
+
+
+<script src="テストとか"></script>
+
+
+<script>
+initialize({ // なにも・・・なかった・・・
+    hoge : fuga
+});
+</script>
+
+
+<p>```</p>
+
+<p>こんな感じになる。便利！</p>
+
+<p>で、次にテストの実行開始タイミングをコントロールしたいと思うんだけど、割と簡単んで、<a href="http://docs.busterjs.org/en/latest/starting-testrun-manually/#starting-testrun-manually">この辺</a>にも書いてあるように、</p>
+
+<p>```javascript
+var config = module.exports;</p>
+
+<p>config["test"] = {</p>
+
+<pre><code>autoRun: false,
+sources: ["lib/*.js"],
+tests: ["test/*-test.js"],
+resources : {
+    path : "/",
+    file : "hoge.html"
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p><code>autoRun</code>を<code>false</code>にして、さっきの例だと、<code>initialize</code>まで呼ばれたら実行してほしい！とかなら、</p>
+
+<p>```javascript
+// bootstrap.js
+initialize = function() {</p>
+
+<pre><code>buster.run();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>みたいな感じ</p>
+
+<p>というわけでテストに使うHTMLも設定できましたし、ガンガンテストできますね！</p>
+
+<p>そういや別にもう一個なんか書こうと思ってたんですが、忘れたので知ってる人いたら教えてください。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Buster.JSについて少しLTした]]></title>
@@ -652,85 +819,6 @@ Octopress自体のことを書くときも同じことなので気をつけま�
 <p>githubAPIでリポジトリ引いてくるみたいなコードよく見ますけど、
 クエリーなしだと30件しか帰ってこなくて全部みれないし、ソートが単なる名前順で微妙なので、
 <code>page</code> + <code>per_page</code> と <code>sort</code> くらいは指定した方がいいと思いますよ。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Angular.jsでcoderwallのバッチ取得してみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/07/30/angular-coderwall/"/>
-    <updated>2012-07-30T00:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/07/30/angular-coderwall</id>
-    <content type="html"><![CDATA[<h2>Coderwallのバッチ取得するのはよくみるけど</h2>
-
-<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
-といってもjQueryなんかでやるのとそんなに変わらないです。</p>
-
-<h2>バッチを表示させるHTMLを書く</h2>
-
-<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。
-```html</p>
-
-<div ng-controller="coderwallController">
-  <ul>
-    <li ng-repeat="badge in badges">
-      <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
-    </li>
-  </ul>
-</div>
-
-
-<p>```
-こんな感じでデータをバインディングします。</p>
-
-<h2>データを取得する</h2>
-
-<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。
-```javascript
-function coderwallController($scope, $http) {</p>
-
-<p>  $scope.badges = []; <br/>
-  $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){</p>
-
-<pre><code>$scope.badges = data.data.badges;
-console.log($scope.badges);
-</code></pre>
-
-<p>  });
-}
-```
-で、取得できました！やりましたね！</p>
-
-<p>全文はgistにあります。</p>
-
-<p><div><script src='https://gist.github.com/3199870.js?file='></script>
-<noscript><pre><code>&lt;!doctype html&gt;
-&lt;html ng-app&gt; 
-  &lt;head&gt;
-    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
-      &lt;ul&gt;
-        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
-          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-
-  &lt;script&gt;
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  &lt;/script&gt;
-&lt;/html&gt;</code></pre></noscript></div>
-</p>
 ]]></content>
   </entry>
   
