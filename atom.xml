@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-02T16:31:37+09:00</updated>
+  <updated>2013-03-02T16:33:04+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -218,7 +218,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>みたいにして通信部分をモックできるようにしたりしてる、便利。</p>
+<p>みたいにして通信部分をモックできるようしてみた、便利。</p>
 ]]></content>
   </entry>
   
