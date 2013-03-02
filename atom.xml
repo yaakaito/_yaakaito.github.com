@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-02T16:30:31+09:00</updated>
+  <updated>2013-03-02T16:31:37+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -192,7 +192,7 @@
 
 
 <p>こうなるはずなので、一見大丈夫そうに思えるんですが、うまくいきません。
-というか自分でコンパイルすると、ちゃんと動くので、プラグインの実行順か、それぞれの実行タイミングが悪いのかみたいな話だと思います。</p>
+というか自分でコンパイルするとちゃんと動くので、プラグインの実行順か、それぞれの実行タイミングが悪いのかみたいな話だと思います。</p>
 
 <p>ハマりやすいので気をつけましょう。</p>
 
