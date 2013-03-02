@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-02T16:26:32+09:00</updated>
+  <updated>2013-03-02T16:30:31+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -165,7 +165,7 @@ buster.testCase 'hoge',</p>
 <p>ハマりやすいので気をつけましょう。</p>
 
 <p>回避策としてはプラグインのところ見直してプルリクエストが一番早そうなんですが、
-僕は他の理由もあって僕は先にcoffeeを別にコンパイルするようにしてしまいました。</p>
+僕は他の理由もあって先にcoffeeを別にコンパイルするようにしてしまいました。</p>
 
 <h2>おまけ</h2>
 
