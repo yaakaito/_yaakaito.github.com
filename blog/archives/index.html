@@ -74,6 +74,22 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "buster-html-docとあとcoffee"
+                       , url : "/blog/2013/03/02/buster-html-doc-and-coffee/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("BusterJS");
+    
+      current_archive.categories.push("CoffeeScript");
+    
+      current_archive.categories.push("JavaScript");
+    
+      current_archive.categories.push("Testing");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "BusterJSでテストに使うHTMLの設定と手動実行"
                        , url : "/blog/2013/03/01/buster-testbed-and-boot/"
                        , categories: []}; 
@@ -543,6 +559,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/01/buster-testbed-and-boot/">BusterJSでテストに使うHTMLの設定と手動実行</a>
         </li>
       
@@ -556,10 +576,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
         </li>
       
     </ul>

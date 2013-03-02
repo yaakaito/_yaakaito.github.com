@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="Objective-CからgithubAPI叩く function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="Angular.jsでcoderwallのバッチ取得してみる function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AngularJS"); $scope.categories.push(" &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,128 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/07/30/angular-coderwall/">Angular.jsでcoderwallのバッチ取得してみる</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("AngularJS");
+    
+      $scope.categories.push("JavaScript");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><h2>Coderwallのバッチ取得するのはよくみるけど</h2>
+
+<p><a href="http://angularjs.org/">Angular</a>でやってみた的なのはみないなーと思ったのでやってみた。
+といってもjQueryなんかでやるのとそんなに変わらないです。</p>
+
+<h2>バッチを表示させるHTMLを書く</h2>
+
+<p>とりあえずリストにイメージを突っ込んでいく感じにすることにしました。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">&quot;coderwallController&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;badge in badges&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;img</span> <span class="na">ng-src=</span><span class="s">&quot;{{badge.badge}}&quot;</span> <span class="na">alt=</span><span class="s">&quot;{{badge.description}}&quot;</span> <span class="na">title=</span><span class="s">&quot;{{badge.name}}&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じでデータをバインディングします。</p>
+
+<h2>データを取得する</h2>
+
+<p>jQueryなんかでgetJSONとかするのとそんなに変わらないです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">coderwallController</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>  <span class="nx">$http</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="s2">&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;</span><span class="p">).</span><span class="nx">success</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">,</span><span class="nx">header</span><span class="p">,</span><span class="nx">config</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">badges</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">$scope</span><span class="p">.</span><span class="nx">badges</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で、取得できました！やりましたね！</p>
+
+<p>全文はgistにあります。</p>
+
+<div><script src='https://gist.github.com/3199870.js?file='></script>
+<noscript><pre><code>&lt;!doctype html&gt;
+&lt;html ng-app&gt; 
+  &lt;head&gt;
+    &lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div ng-controller=&quot;coderwallController&quot;&gt;
+      &lt;ul&gt;
+        &lt;li ng-repeat=&quot;badge in badges&quot;&gt;
+          &lt;img ng-src=&quot;{{badge.badge}}&quot; alt=&quot;{{badge.description}}&quot; title=&quot;{{badge.name}}&quot; /&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+
+  &lt;script&gt;
+    function coderwallController($scope, $http) {
+    
+      $scope.badges = [];   
+      $http.jsonp(&quot;http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK&quot;).success(function(data,status,header,config){
+        $scope.badges = data.data.badges;
+        console.log($scope.badges);
+});
+    }
+    
+  &lt;/script&gt;
+&lt;/html&gt;</code></pre></noscript></div>
+
+
+
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -113,6 +235,10 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/01/buster-testbed-and-boot/">BusterJSでテストに使うHTMLの設定と手動実行</a>
         </li>
       
@@ -126,10 +252,6 @@ per_pageとかをちゃんと付ければとれるので、まあ自分で叩け
       
         <li class="post">
           <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
         </li>
       
     </ul>

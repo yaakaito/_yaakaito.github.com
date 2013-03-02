@@ -9,7 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="CSSライクにUIKitをスタイルできるNUIがおもしろい！ function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Design"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="AppCodeで華麗にテストをキメる！ function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("AppCode"); $scope.categories.push("OCUnit"); $ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,6 +41,82 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2012/12/09/adv-appcode-splendid-testing/">AppCodeで華麗にテストをキメる！</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("AppCode");
+    
+      $scope.categories.push("OCUnit");
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("SenTestingKit");
+    
+      $scope.categories.push("Testing");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！！
+<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
+みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、
+XcodeだとManageShemesからチェックを外して・・・とか、できるんですが、非常に面倒ですよね！！！
+そんなあなたにAppCodeがおすすめです！</p>
+
+<h2>テストメソッド単位で実行をキメよう！</h2>
+
+<p>とりあえずキメてみましょう！テストフレームワークはSenTestingKitです。</p>
+
+<p>普通にテストを書いていって・・・</p>
+
+<p><img src="/images/adv-testing-test-case.png" width="420"></p>
+
+<p>この<code>testMappedArrayUsingBlock</code>だけを実行して確かめてみたいなーと思っずたら、
+キーバインドを弄っていない場合は<code>Command + Option + R</code>(多分あってるはず)なんかで、Run > Run&#8230; を呼び出します。
+そうするとこんな感じのメニューが現れて・・・</p>
+
+<p><img src="/images/adv-testing-select.png" width="420"></p>
+
+<p><code>2</code>を押すと、このコンテキストのみを実行してくれます。
+すると・・・</p>
+
+<p><img src="/images/adv-testing-result.png" width="420"></p>
+
+<p>こういう感じに<code>testMappedArrayUsingBlock</code>だけ実行してくれます！便利ですね！！！</p>
+
+<p>あとはガンガンテストをかいてガンガン実行してカイラクを得ましょう！！！</p>
+
+<h2>ちなみにこれをXcodeで開いてみると・・・</h2>
+
+<p><img src="/images/adv-testing-xcode.png" width="320"></p>
+
+<p>こんな感じになっています。</p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1133,132 +1209,6 @@ function CategoryCtrl($scope) {
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/09/25/ios6-attributed-string/">iOS6のNSAttributedStringで色とか付ける</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("Objective-C");
-    
-      $scope.categories.push("iOS");
-    
-      $scope.categories.push("iOS6");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>こんにちは！うきょーです！
-いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
-便利なので使ってみましょう！！！！</p>
-
-<h2>サンプル</h2>
-
-<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
-このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
-
-<p>コードはいつも通りgithubにあげてあります。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
-</ul>
-
-
-<h2>NSAttributedStringを作る</h2>
-
-<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
-
-<p>作り方は大きく分けて二通りあって、</p>
-
-<ul>
-<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
-<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
-</ul>
-
-
-<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
-
-<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
-
-<p>まず yaakaito の部分を作ります。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito&quot;</span>
-</span><span class='line'>                                                           <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span><span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
-この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
-他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
-よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
-
-<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">repository</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito/Specs&quot;</span>
-</span><span class='line'>                                                                 <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span> <span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">],</span>
-</span><span class='line'>                                                                               <span class="n">NSFontAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">boldSystemFontOfSize:</span><span class="mi">16</span><span class="p">]}</span> <span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最後に真ん中の部分を作って、連結します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">others</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot; pushed to master at &quot;</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithAttributedString:</span><span class="n">name</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">others</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">repository</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで、NSAttributedStringの完成です。</p>
-
-<h2>UILabelに表示する</h2>
-
-<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UILabel</span> <span class="o">*</span><span class="n">label</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">)];</span>
-</span><span class='line'><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview:</span><span class="n">label</span><span class="p">];</span>
-</span><span class='line'><span class="n">label</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1279,6 +1229,10 @@ function CategoryCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/01/buster-testbed-and-boot/">BusterJSでテストに使うHTMLの設定と手動実行</a>
         </li>
       
@@ -1292,10 +1246,6 @@ function CategoryCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/10/uinib-lost-jinsei/">UINib知らずにCellが作れなくて人生半分くらい損した話</a>
         </li>
       
     </ul>

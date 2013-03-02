@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-01T03:06:55+09:00</updated>
+  <updated>2013-03-02T16:26:32+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,215 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[buster-html-docとあとcoffee]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee/"/>
+    <updated>2013-03-02T14:40:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+<a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
+
+<blockquote><p>@yaakaito HTMLを用意するまでもない場合は buster-html-doc とかも良いと思いますがどうでしょう！</p><footer><strong>@y_imaya</strong> <cite><a href='https://twitter.com/y_imaya/status/307347977712848896'>twitter.com/y_imaya/status/&hellip;</a></cite></footer></blockquote>
+
+
+<p>という意見をもらったので、こっちのことも書いておこうと思いました。</p>
+
+<h2>そもそもbuster-html-docって何</h2>
+
+<p>BusterJSはJSTestDriver形式で書かれたテストケースの実行をサポートしているのですが、JSTestDriverに<a href="http://code.google.com/p/js-test-driver/wiki/HtmlDoc">HTML Doc</a>という昨日があります。
+この部分だけをBusterJS用に切り出したのがbuster-html-docで、前回のようにHTMLを用意するまでもない場合に</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
+</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という風にテスト毎にエレメントを生成することができます。</p>
+
+<h2>使い方</h2>
+
+<p><code>buster-html-doc</code>をnpmからインストールします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">html</span><span class="o">-</span><span class="nx">doc</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>buster.js</code>でbuster-html-docを読み込むようにします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;test.js&quot;</span>
+</span><span class='line'>  <span class="p">],</span>
+</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span> <span class="c1">// これ</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにテストを書きます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="s1">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
+</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでテストを実行すると、テスト時に<code>/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</code>の部分が、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">element</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;p&gt;aaaa&lt;/p&gt;&quot;</span><span class="p">;</span><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;HTML doc expected to only contain one root node, found &quot;</span> <span class="o">+</span> <span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">element</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+</span><span class='line'><span class="p">}());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じに変換されます。
+あとはこのエレメントを使ってアサーションするなりできます。</p>
+
+<p>上の例では<code>this.hoge</code>に対してエレメントを生成していますが、
+そうではなく<code>body</code>とかに突っ込んでほしい場合は、<code>+=</code>を使って書く事もできます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC += &lt;p id=&quot;hoge&quot;&gt;aaaa&lt;/p&gt;*/</span>
+</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じなのがbuster-html-docプラグインです。</p>
+
+<h2>buster-coffee</h2>
+
+<p>続いてbuster-coffeeなのですが、名前の通りテスト実行時にCoffeeScriptをコンパイルしてくれるので、コードをCoffeeScriptで書けるよ、というものです。
+これ自体は特にめんどくさくなくて、npmでインストールして、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">coffee</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">runner</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">runner</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;test.coffee&quot;</span> <span class="c1">// coffee</span>
+</span><span class='line'>  <span class="p">],</span>
+</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">)]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という風に使えばよいのですが、buster-html-docと少し相性の問題があるみたいで、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">),</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにして、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span> <span class="s">&#39;hoge&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="o">-&gt;</span>
+</span><span class='line'>      <span class="cm">###:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;###</span>
+</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s">&#39;aaaa&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こう書いても、</p>
+
+<blockquote><p>TypeError: Cannot read property &#8216;innerHTML&#8217; of undefined</p></blockquote>
+
+<p>となります。</p>
+
+<p>コンパイルされるとHTML Docの部分は</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;</span>
+</span><span class='line'><span class="cm">*/</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうなるはずなので、一見大丈夫そうに思えるんですが、うまくいきません。
+というか自分でコンパイルすると、ちゃんと動くので、プラグインの実行順か、それぞれの実行タイミングが悪いのかみたいな話だと思います。</p>
+
+<p>ハマりやすいので気をつけましょう。</p>
+
+<p>回避策としてはプラグインのところ見直してプルリクエストが一番早そうなんですが、
+僕は他の理由もあって僕は先にcoffeeを別にコンパイルするようにしてしまいました。</p>
+
+<h2>おまけ</h2>
+
+<p>HTML Doc形式の書式が結構便利で、最近関わっているプロダクトだと</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="cm">###:XHR /hoge = {</span>
+</span><span class='line'><span class="cm"> fuga : &#39;fuga&#39;,</span>
+</span><span class='line'><span class="cm"> piyo : &#39;piyo&#39;</span>
+</span><span class='line'><span class="cm">} </span>
+</span><span class='line'><span class="cm">###</span>
+</span><span class='line'><span class="c1"># /hoge にアクセスしたらこのレスポンスが返ってくる (XHR部分のラッパー有)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいにして通信部分をモックできるようにしたりしてる、便利。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
@@ -1623,102 +1832,6 @@ iPad版のリーダーみたいなことをやらせてもらって、いろい�
 <p><a href="http://www.amazon.co.jp/registry/wishlist/CKH9SKYKNOT5">なんかください！！！！！！</a></p>
 
 <p>ところで「みいくんのちくわぶ」送ってくれた人が誰か分からないので名乗り出てください！！！！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[iOS6のNSAttributedStringで色とか付ける]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string/"/>
-    <updated>2012-09-25T13:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/25/ios6-attributed-string</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-いままでは外部のライブラリを使わないとかなり面倒だった、UILabelとかに色付きの文字列の描画が、iOS6から標準サポートになりました！
-便利なので使ってみましょう！！！！</p>
-
-<h2>サンプル</h2>
-
-<p>適当に色を付ける文章を探します、今回はgithubから「yaakaito pushed to master at yaakaito/Specs」という文章を抜き出してきました。
-このうち yaakaito と yaakaito/Specs を青色にしてみようと思います。</p>
-
-<p>コードはいつも通りgithubにあげてあります。</p>
-
-<ul>
-<li><a href="https://github.com/yaakaito/AttributedStringExample">AttributedStringExample</a></li>
-</ul>
-
-
-<h2>NSAttributedStringを作る</h2>
-
-<p>実際のところ結構だるいのであんまり使ったことがない人も多いと思うのでまずはAttributedStringの作り方から。</p>
-
-<p>作り方は大きく分けて二通りあって、</p>
-
-<ul>
-<li>小さいNSAttributedStringを複数つくって最後に繋げる</li>
-<li>最初に全文でNSAttributedStringを作ってRangeで指定する</li>
-</ul>
-
-
-<p>という具合なのですが、多分前者の方が扱いやすいです。この記事では前者を使っています。</p>
-
-<p>今回は色を付ける場所が二箇所＋プレーンなものが間に一つなので、全部で三つのNSAttributedStringを作って繋げます。</p>
-
-<p>まず yaakaito の部分を作ります。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito&quot;</span>
-</span><span class='line'>                                                           <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span><span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">]}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>NSString</code>と同じような要領で、<code>initWithString:</code>してあげて、二個目の引数に<code>attributes</code>を取ります。
-この<code>attributes</code>は<code>NSDictionary</code>で、今回の例だと文字の色だけ指定しています。
-他にも背景色や、フォント、アンダーラインを付けたり、影を付けたりとか、いろいろできるようです。
-よく使いそうなのは <code>NSForegroundColorAttributedName</code>(文字の色) と <code>NSFontAttributeName</code>(フォント) あたりですかね。</p>
-
-<p>せっかくなので次はフォントも指定してみましょう。 yaakaito/Specs の部分を作ります。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">repository</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot;yaakaito/Specs&quot;</span>
-</span><span class='line'>                                                                 <span class="nl">attributes:</span><span class="err">@</span><span class="p">{</span> <span class="n">NSForegroundColorAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blueColor</span><span class="p">],</span>
-</span><span class='line'>                                                                               <span class="n">NSFontAttributeName</span> <span class="o">:</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">boldSystemFontOfSize:</span><span class="mi">16</span><span class="p">]}</span> <span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最後に真ん中の部分を作って、連結します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSAttributedString</span> <span class="o">*</span><span class="n">others</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithString:</span><span class="s">@&quot; pushed to master at &quot;</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">NSMutableAttributedString</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableAttributedString</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithAttributedString:</span><span class="n">name</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">others</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">message</span> <span class="nl">appendAttributedString:</span><span class="n">repository</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで、NSAttributedStringの完成です。</p>
-
-<h2>UILabelに表示する</h2>
-
-<p>こっちは笑えるほど簡単で、いままでは <code>label.text</code> にNSStringを入れていたものを、 <code>label.attributedText</code> にNSAttributedStringを入れるだけです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UILabel</span> <span class="o">*</span><span class="n">label</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">)];</span>
-</span><span class='line'><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addSubview:</span><span class="n">label</span><span class="p">];</span>
-</span><span class='line'><span class="n">label</span><span class="p">.</span><span class="n">attributedText</span> <span class="o">=</span> <span class="n">message</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうするとさっき作ったNSAttributedStringが表示されます、便利ですね！！！！</p>
 ]]></content>
   </entry>
   
