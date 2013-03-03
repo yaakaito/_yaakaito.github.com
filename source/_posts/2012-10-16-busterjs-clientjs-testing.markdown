@@ -3,7 +3,7 @@ layout: post
 title: "Buster.JSについて少しLTした"
 date: 2012-10-16 22:24
 comments: true
-categories: [Testing, JavaScript, Buster.JS]
+categories: [Testing, JavaScript, BusterJS]
 ---
 
 こんにちは！うきょーです。
