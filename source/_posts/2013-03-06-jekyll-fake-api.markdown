@@ -14,7 +14,7 @@ categories: [Jekyll, Ruby]
 [ww](http://agile.esm.co.jp/ww/)とかもあるが、別にそこまで高機能じゃなくてもいい・・・。
 
 というわけで[Jekyll](http://jekyllrb.com/)で作ることにした。特に難しいことはしません。
-`_layouts`にいつもの感じでテンプレートを書くんですが、HTMLじゃなくて代わりにJSONを書きます。
+`_layouts`にいつもの感じでテンプレートを書くんですが、HTMLではなく代わりにJSONを書きます。
 
 ```
 ---
@@ -60,7 +60,7 @@ $ jekyll
 あとは
 
 ```
-python -m SimpleHTTPServer
+$ python -m SimpleHTTPServer
 ```
 
 とかやっておけば
