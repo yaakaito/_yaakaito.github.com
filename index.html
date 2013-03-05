@@ -11,7 +11,7 @@
   
   <meta name="description" content="yaakaito.org 主にiOSとかJavaScriptのことを書いています。 Github
 Twitter
-Old blog Buster-html-docとあとcoffee function CategoryCtrl($scope) { $scope.categories = []; $ &hellip;">
+Old blog JekyllでエセAPI的なの作る話 function CategoryCtrl($scope) { $scope.categories = []; $scope. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -59,7 +59,7 @@ Old blog Buster-html-docとあとcoffee function CategoryCtrl($scope) { $scope.c
   
     <article class="blog clear-fix" role="article">
       <h1 class="separator">
-        <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">Buster-html-docとあとcoffee</a>
+        <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
       </h1>
   
       <div class="clear-fix">
@@ -71,13 +71,9 @@ function CategoryCtrl($scope) {
   $scope.categories = [];
   
     
-      $scope.categories.push("BusterJS");
+      $scope.categories.push("Jekyll");
     
-      $scope.categories.push("CoffeeScript");
-    
-      $scope.categories.push("JavaScript");
-    
-      $scope.categories.push("Testing");
+      $scope.categories.push("Ruby");
     
   
 }
@@ -94,207 +90,88 @@ function CategoryCtrl($scope) {
         </aside>
         <div class="clear-fix"> 
           
-  <section><div ng-non-bindable><p>こんにちは！うきょーです。
-<a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
+  <section><div ng-non-bindable><p>こんにちは！うきょーです！クライアント開発のみなさんこんばんは！
+元気にクライアントアプリを開発していますか？？？</p>
 
-<blockquote><p>@yaakaito HTMLを用意するまでもない場合は buster-html-doc とかも良いと思いますがどうでしょう！</p><footer><strong>@y_imaya</strong> <cite><a href='https://twitter.com/y_imaya/status/307347977712848896'>twitter.com/y_imaya/status/&hellip;</a></cite></footer></blockquote>
+<p>クライアントアプリとか作るときに、とりあえずAPI出来るまではモックのAPIをJSONで用意したりとかすると思うんですよね。
+ただなんか、複数個データ用意しちゃったときとかに、いちいち全部書き換えるのはめんどくさいし、わざわざモックサーバー書くのも面倒だし、
+<a href="http://agile.esm.co.jp/ww/">ww</a>とかもあるが、別にそこまで高機能じゃなくてもいい・・・。</p>
 
+<p>というわけで<a href="http://jekyllrb.com/">Jekyll</a>で作ることにした。特に難しいことはしません。
+<code>_layouts</code>にいつもの感じでテンプレートを書くんですが、HTMLじゃなくて代わりにJSONを書きます。</p>
 
-<p>という意見をもらったので、こっちのことも書いておこうと思いました。</p>
-
-<h2>そもそもbuster-html-docって何</h2>
-
-<p>BusterJSはJSTestDriver形式で書かれたテストケースの実行をサポートしているのですが、JSTestDriverに<a href="http://code.google.com/p/js-test-driver/wiki/HtmlDoc">HTML Doc</a>という昨日があります。
-この部分だけをBusterJS用に切り出したのがbuster-html-docで、前回のようにHTMLを用意するまでもない場合に</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という風にテスト毎にエレメントを生成することができます。</p>
-
-<h2>使い方</h2>
-
-<p><code>buster-html-doc</code>をnpmからインストールします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">html</span><span class="o">-</span><span class="nx">doc</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>buster.js</code>でbuster-html-docを読み込むようにします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;test.js&quot;</span>
-</span><span class='line'>  <span class="p">],</span>
-</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span> <span class="c1">// これ</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---
+</span><span class='line'>---
+</span><span class='line'>{
+</span><span class='line'>  "title" : "JekyllでエセAPI的なの作る話",
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
-<p>こういう感じにテストを書きます。</p>
+<p>準備完了！あとはAPIにしたい的なデータを</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>  <span class="s1">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---
+</span><span class='line'>title : each
+</span><span class='line'>layout : function
+</span><span class='line'>---</span></code></pre></td></tr></table></div></figure>
 
 
-<p>これでテストを実行すると、テスト時に<code>/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</code>の部分が、</p>
+<p>こういう感じに書いて、拡張子なしで保存します。とりあえず<code>each</code>って名前のをかいたので、こんな感じになります</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">element</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;p&gt;aaaa&lt;/p&gt;&quot;</span><span class="p">;</span><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;HTML doc expected to only contain one root node, found &quot;</span> <span class="o">+</span> <span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nx">element</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
-</span><span class='line'><span class="p">}());</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>├── _layouts
+</span><span class='line'>│   └── function.json
+</span><span class='line'>└── feature
+</span><span class='line'>    └── each</span></code></pre></td></tr></table></div></figure>
 
 
-<p>という感じに変換されます。
-あとはこのエレメントを使ってアサーションするなりできます。</p>
+<p>そしてコンパイルします</p>
 
-<p>上の例では<code>this.hoge</code>に対してエレメントを生成していますが、
-そうではなく<code>body</code>とかに突っ込んでほしい場合は、<code>+=</code>を使って書く事もできます。</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ jekyll</span></code></pre></td></tr></table></div></figure>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+
+<p>こんな感じになって、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC += &lt;p id=&quot;hoge&quot;&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>└── _site
+</span><span class='line'>    └── feature
+</span><span class='line'>        └── each</span></code></pre></td></tr></table></div></figure>
 
 
-<p>という感じなのがbuster-html-docプラグインです。</p>
+<p>あとは</p>
 
-<h2>buster-coffee</h2>
-
-<p>続いてbuster-coffeeなのですが、名前の通りテスト実行時にCoffeeScriptをコンパイルしてくれるので、コードをCoffeeScriptで書けるよ、というものです。
-これ自体は特にめんどくさくなくて、npmでインストールして、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">coffee</span>
-</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>python -m SimpleHTTPServer</span></code></pre></td></tr></table></div></figure>
 
 
+<p>とかやっておけば</p>
 
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">runner</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">runner</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;test.coffee&quot;</span> <span class="c1">// coffee</span>
-</span><span class='line'>  <span class="p">],</span>
-</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">)]</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl http://localhost:8000/feature/each
+</span><span class='line'>{
+</span><span class='line'>  "title" : "each",
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
-<p>という風に使えばよいのですが、buster-html-docと少し相性の問題があるみたいで、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">),</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じにして、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span> <span class="s">&#39;hoge&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="s">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="o">-&gt;</span>
-</span><span class='line'>      <span class="cm">###:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;###</span>
-</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こう書いても、</p>
-
-<blockquote><p>TypeError: Cannot read property &#8216;innerHTML&#8217; of undefined</p></blockquote>
-
-<p>となります。</p>
-
-<p>コンパイルされるとHTML Docの部分は</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;</span>
-</span><span class='line'><span class="cm">*/</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうなるはずなので、一見大丈夫そうに思えるんですが、うまくいきません。
-というか自分でコンパイルするとちゃんと動くので、プラグインの実行順か、それぞれの実行タイミングが悪いのかみたいな話だと思います。</p>
-
-<p>ハマりやすいので気をつけましょう。</p>
-
-<p>回避策としてはプラグインのところ見直してプルリクエストが一番早そうなんですが、
-僕は他の理由もあって先にcoffeeを別にコンパイルするようにしてしまいました。</p>
-
-<h2>おまけ</h2>
-
-<p>HTML Doc形式の書式が結構便利で、最近関わっているプロダクトだと</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="cm">###:XHR /hoge = {</span>
-</span><span class='line'><span class="cm"> fuga : &#39;fuga&#39;,</span>
-</span><span class='line'><span class="cm"> piyo : &#39;piyo&#39;</span>
-</span><span class='line'><span class="cm">} </span>
-</span><span class='line'><span class="cm">###</span>
-</span><span class='line'><span class="c1"># /hoge にアクセスしたらこのレスポンスが返ってくる (XHR部分のラッパー有)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいにして通信部分をモックできるようしてみた、便利。</p>
+<p>となります、やりましたね！！！！！
+コレクションっぽいのがほしかったら、ジェネレーターとかサクっと書けばよいだけなので、楽チンですね！</p>
 </div></section>
   
   
@@ -325,7 +202,7 @@ function CategoryCtrl($scope) {
   
 
 
-<time datetime="2013-03-02T14:40:00+09:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2013</time></p>
+<time datetime="2013-03-06T01:55:00+09:00" pubdate data-updated="true">Mar 6<span>th</span>, 2013</time></p>
           </footer>
         </div>
       </div>
@@ -348,6 +225,10 @@ function CategoryCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
         </li>
       
@@ -361,10 +242,6 @@ function CategoryCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
         </li>
       
     </ul>

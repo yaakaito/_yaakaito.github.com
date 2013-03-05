@@ -74,6 +74,18 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "JekyllでエセAPI的なの作る話"
+                       , url : "/blog/2013/03/06/jekyll-fake-api/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Jekyll");
+    
+      current_archive.categories.push("Ruby");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "buster-html-docとあとcoffee"
                        , url : "/blog/2013/03/02/buster-html-doc-and-coffee/"
                        , categories: []}; 
@@ -559,6 +571,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
         </li>
       
@@ -572,10 +588,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/11/register-nib/">registerNibを使うとさらによいらしいです</a>
         </li>
       
     </ul>

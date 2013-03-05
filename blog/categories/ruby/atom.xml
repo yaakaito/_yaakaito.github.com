@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-03-06T02:14:05+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[JekyllでエセAPI的なの作る話]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api/"/>
+    <updated>2013-03-06T01:55:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！クライアント開発のみなさんこんばんは！
+元気にクライアントアプリを開発していますか？？？</p>
+
+<p>クライアントアプリとか作るときに、とりあえずAPI出来るまではモックのAPIをJSONで用意したりとかすると思うんですよね。
+ただなんか、複数個データ用意しちゃったときとかに、いちいち全部書き換えるのはめんどくさいし、わざわざモックサーバー書くのも面倒だし、
+<a href="http://agile.esm.co.jp/ww/">ww</a>とかもあるが、別にそこまで高機能じゃなくてもいい・・・。</p>
+
+<p>というわけで<a href="http://jekyllrb.com/">Jekyll</a>で作ることにした。特に難しいことはしません。
+<code>_layouts</code>にいつもの感じでテンプレートを書くんですが、HTMLじゃなくて代わりにJSONを書きます。</p>
+
+<h2>```</h2>
+
+<hr />
+
+<p>{
+  "title" : "Category: Ruby",
+}
+```</p>
+
+<p>準備完了！あとはAPIにしたい的なデータを</p>
+
+<h2>```</h2>
+
+<p>title : each</p>
+
+<h2>layout : function</h2>
+
+<p>```</p>
+
+<p>こういう感じに書いて、拡張子なしで保存します。とりあえず<code>each</code>って名前のをかいたので、こんな感じになります</p>
+
+<p>```
+├── _layouts
+│   └── function.json
+└── feature</p>
+
+<pre><code>└── each
+</code></pre>
+
+<p>```</p>
+
+<p>そしてコンパイルします</p>
+
+<p><code>
+$ jekyll
+</code></p>
+
+<p>こんな感じになって、</p>
+
+<p><code>
+└── _site
+    └── feature
+        └── each
+</code></p>
+
+<p>あとは</p>
+
+<p><code>
+python -m SimpleHTTPServer
+</code></p>
+
+<p>とかやっておけば</p>
+
+<p><code>
+$ curl http://localhost:8000/feature/each
+{
+  "title" : "each",
+}
+</code></p>
+
+<p>となります、やりましたね！！！！！
+コレクションっぽいのがほしかったら、ジェネレーターとかサクっと書けばよいだけなので、楽チンですね！</p>
+]]></content>
+  </entry>
+  
+</feed>
