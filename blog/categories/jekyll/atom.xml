@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Jekyll | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/jekyll/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-06T02:14:05+09:00</updated>
+  <updated>2013-03-06T02:18:34+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -26,7 +26,7 @@
 <a href="http://agile.esm.co.jp/ww/">ww</a>とかもあるが、別にそこまで高機能じゃなくてもいい・・・。</p>
 
 <p>というわけで<a href="http://jekyllrb.com/">Jekyll</a>で作ることにした。特に難しいことはしません。
-<code>_layouts</code>にいつもの感じでテンプレートを書くんですが、HTMLじゃなくて代わりにJSONを書きます。</p>
+<code>_layouts</code>にいつもの感じでテンプレートを書くんですが、HTMLではなく代わりにJSONを書きます。</p>
 
 <h2>```</h2>
 
@@ -76,7 +76,7 @@ $ jekyll
 <p>あとは</p>
 
 <p><code>
-python -m SimpleHTTPServer
+$ python -m SimpleHTTPServer
 </code></p>
 
 <p>とかやっておけば</p>
