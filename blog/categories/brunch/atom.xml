@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Brunch | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/brunch/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-03-08T08:55:33+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BrunchでJavaScriptアプリはじめる手順]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/08/hello-brunch/"/>
+    <updated>2013-03-08T08:14:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/08/hello-brunch</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+最近<a href="http://brunch.io/">Brunch</a>というものを知ったので、とりあえずはじめてみたときのメモです。
+正確には<a href="http://chaplinjs.org/">Chaplin</a>を先に知って、結構良さげだし試してみよーとか思ったところが始まりなので、brunch-with-chaplinを前提にしてます。(今回はchaplinの話はしません。)</p>
+
+<h2>brunchってそもそも何</h2>
+
+<p>gruntとか使っている人は、gruntにgiter8をくっつけて++というイメージが分かりやすいかと思います。Yeomanとかその系列のものです。
+レイヤーが違うので比較してもあんまり意味はないんですが、grunt使っていた頃からすると、</p>
+
+<ul>
+<li>最初からCoffeeScriptのことを考えているので、CoffeeScript使う場合は嬉しい (最近はそうでもないみたいだけど)</li>
+<li>プロジェクトのひな形作りやすいのは嬉しい</li>
+<li>ビルトインサーバーがあるので、<code>watch --server</code> みたいなの出来て嬉しい</li>
+<li>Mocha+phantomjsを最初から生成してくれるので、テストドリブンで始めるが楽</li>
+<li>ブラウザのオートリロードとかもあるよ！</li>
+</ul>
+
+
+<p>という感じで、gruntみたいに自分でタスク組んで〜とやるよりは、サクッと開発を始められる感じです。
+そこまで使ってないし、まだよくわからんので説明はこのくらいで。</p>
+
+<h2>はじめる</h2>
+
+<p>brunchをインストールします。(node 0.6.10 ~)</p>
+
+<p><code>
+$ npm install -g brunch
+</code></p>
+
+<h3>プロジェクトのひな形を作る</h3>
+
+<p>Githubからテンプレートを引っ張ってきて作ります。今回はchaplinが使いたかったので、brunch-with-chaplinを引っ張ってきます。</p>
+
+<p><code>
+$ brunch new &lt;app-name&gt; --skeleton https://github.com/paulmillr/brunch-with-chaplin
+</code></p>
+
+<p>簡単ですね。<code>tree</code>してみるとこんな感じになってます。</p>
+
+<p><code>
+$ tree -L 2 -F --dirsfirst
+.
+├── app/
+│   ├── assets/
+│   ├── controllers/
+│   ├── lib/
+│   ├── models/
+│   ├── views/
+│   ├── application.coffee
+│   ├── initialize.coffee
+│   ├── mediator.coffee
+│   └── routes.coffee
+├── generators/
+│   ├── collection/
+│   ├── collection-test/
+│   ├── collection-view/
+│   ├── controller/
+│   ├── controller-test/
+│   ├── generator/
+│   ├── model/
+│   ├── model-test/
+│   ├── style/
+│   ├── template/
+│   ├── view/
+│   └── view-test/
+├── node_modules/
+│   ├── chai/
+│   ├── clean-css-brunch/
+│   ├── coffee-script-brunch/
+│   ├── css-brunch/
+│   ├── handlebars-brunch/
+│   ├── javascript-brunch/
+│   ├── sinon/
+│   ├── sinon-chai/
+│   ├── stylus-brunch/
+│   └── uglify-js-brunch/
+├── test/
+│   ├── assets/
+│   ├── vendor/
+│   ├── views/
+│   └── test-helpers.coffee
+├── vendor/
+│   ├── scripts/
+│   └── styles/
+├── README.md
+├── config.coffee
+└── package.json
+</code></p>
+
+<p><code>config.coffee</code>にいろいろ設定が書いてあるんですが、長いので別で書きます。</p>
+
+<p>とりあえずビルドしてみます。</p>
+
+<p><code>
+$ brunch build
+</code></p>
+
+<p><code>/public</code>ができて、ここにもろもろ生成されたファイルが入っています。デプロイのときはここを使えばよいっぽい。</p>
+
+<p>ビルトインサーバーを使ってアプリを起動してみる。</p>
+
+<p><code>
+$ brunch watch --server
+$ open http://localhost:3333/
+</code></p>
+
+<p><img src="/images/hello-brunch.png"></p>
+
+<p>こういう感じにアプリが起動していることがわかります、やりましたね！</p>
+
+<h2>テストを走らせる</h2>
+
+<p>サーバー起動してる状態で、<code>/public</code>の中に出来たテストランナーをブラウザで開けば普通にテストが走ります。
+phantomjs使いたいときは、</p>
+
+<p><code>
+$ brunch test
+</code></p>
+
+<p>でよいらしいです。(使ってない)</p>
+
+<h2>他の環境でのセットアップ</h2>
+
+<p>brunchベースのプロジェクトにコミットするときは、
+見た感じ、<code>npm install</code>すればよさそうなので試してみる</p>
+
+<p><code>
+$ npm install
+$ brunch w --server
+</code></p>
+
+<p>出来た、これでよさげ。</p>
+
+<p>使ってみてあーだこうだはもうちょっとしてから書こうと思います。</p>
+]]></content>
+  </entry>
+  
+</feed>

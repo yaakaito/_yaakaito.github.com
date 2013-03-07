@@ -9,11 +9,7 @@
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="ことしの抱負 こんにちは！うきょーです！あけてましたね！
-しばらく書いてなかったので、書き方忘れそうでした。
-去年はコード書くのがひじょーにだるくなっていく年でした、歳ですかね。
-なので今年目標は コードできるだけ書かない
-コードは昔の自分に書いてもらう で、いこうとおもいます。 &hellip;">
+  <meta name="description" content="Objective-C用ユーティリティOverlineを公開しました function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("Objective-C"); $scope.categories. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -45,6 +41,150 @@
   <div role="main" class="separator">
     <div class="blog-index">
   
+  
+  
+    <article class="separator">
+      <h1><a href="/blog/2013/01/06/overline-010-release/">Objective-C用ユーティリティOverlineを公開しました</a></h1>
+      <aside role="complementary">
+        
+
+<script>
+function CategoryCtrl($scope) {
+  $scope.categories = [];
+  
+    
+      $scope.categories.push("Objective-C");
+    
+      $scope.categories.push("Overline");
+    
+  
+}
+</script>
+<ul ng-controller="CategoryCtrl">
+  <li ng-repeat="category in categories">
+    <a href="/blog/categories/{{ category | lowercase }}/">
+      {{ category }}
+    </a>
+  </li>
+</ul>
+
+    
+      </aside> 
+      
+  <section><div ng-non-bindable><p>こんにちは！うきょーです。寒いですね。
+Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
+バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
+
+<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
+
+<p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
+基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。ひかえめです。</p>
+
+<p>主に僕がだるいなーと思ったベースで追加しています。
+なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
+
+<p>underscoreなんかと違うところは、underscoreとかってがんばってJSっぽく書こうとしてる感じが伝わってくるんですが、
+僕はJavaScriptみたいに書くのが綺麗だなとか書きやすいとかまったく思ってないので、Objective-Cらしく書けるようにしてあります。
+好みのレベルかなーくらいのショートハンドは用意しています。</p>
+
+<h2>使い方</h2>
+
+<p>Cocoapodsでやるのが楽です。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="s1">&#39;Overline&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>して</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &quot;Overline.h&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>簡単ですね。</p>
+
+<p>必要なところだけ使いたかったり、自分でプロジェクトに追加する場合は、<code>/Overline</code>の下から好きなファイルをプロジェクトに追加してください。
+READMEに書いてある通りに分割してあるので、それなどを参考に。</p>
+
+<h2>出来る事</h2>
+
+<p>一覧はREADMEに書いてありますが、一例をだすと<code>map</code>とか</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">mapped</span> <span class="o">=</span> <span class="p">[</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">1</span><span class="p">,</span><span class="err">@</span><span class="mi">2</span><span class="p">,</span><span class="err">@</span><span class="mi">3</span><span class="p">,</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">mappedArrayUsingBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">obj</span> <span class="n">integerValue</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">obj</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'><span class="c1">// @[@2,@4,@6]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じで正規表現でマッチングできたりとか (正規表現オブジェクトとしてちゃんと表記できないので、ちょっと微妙だけども)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;https?&quot;</span> <span class="nl">testInString:</span><span class="n">urlString</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>たまにしか使わないけど毎回引き出してくるのだるいーみたいな</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">md5</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">stringByHashingSha256</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="s">@&quot;YQ==&quot;</span> <span class="n">decodeBase64</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>なんでだよと突っ込みたくなる<code>insertObjects:atIndexes</code>とか</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">marray</span> <span class="nl">insertObjects:</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">atIndex:</span><span class="mi">1</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="err">@</span><span class="p">{</span>
+</span><span class='line'>        <span class="s">@&quot;null-key&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="n">NSNull</span> <span class="n">null</span><span class="p">]</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="p">[[</span><span class="n">dic</span> <span class="nl">objectForKey:</span><span class="s">@&quot;null-key&quot;</span><span class="p">]</span> <span class="nl">objectForKey:</span><span class="s">@&quot;fuck&quot;</span><span class="p">];</span> <span class="c1">// nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>できたりします。</p>
+
+<h3>よろしくね！</h3>
+
+<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
+</div></section>
+  
+  
+
+
+    </article>
   
   
     <article class="separator">
@@ -1112,92 +1252,6 @@ gruntと使うと簡単なものなら早くセットアップできて、ブラ
 
     </article>
   
-  
-    <article class="separator">
-      <h1><a href="/blog/2012/09/28/dwango/">ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)</a></h1>
-      <aside role="complementary">
-        
-
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("Kuzu");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
-
-    
-      </aside> 
-      
-  <section><div ng-non-bindable><p>こんにちは！うきょーです！株式会社ドワンゴを退職しました！</p>
-
-<p><a href="http://www.amazon.co.jp/registry/wishlist/CKH9SKYKNOT5">とりあえずなんかください。</a></p>
-
-<p>ドワンゴには19歳の時からお世話になっていているので、だいたい3年くらい働いていたことになります。
-主な業務はiOSアプリ開発でした、当初Objective-Cってなんですか、だった僕ですが、最終的には「オブジェクティブな汁が足りない」とかキチガイっぽいことを言っていたと思います。</p>
-
-<p>ドワンゴではたくさんエキサイティングなことをさせてもらいました、なんとなく振り返ってみようと思います。</p>
-
-<h2>ニコニコiPhone</h2>
-
-<p>最初から中頃まで関わっていた仕事です。
-生放送のサービスイン、その後の高画質化〜安定期までで、おもにプレイヤーを書いていました。
-少しづつでも確実に大きくなっていくサービスを見ているのは楽しいもので、単純に楽しかったプロジェクトでした。
-最後の方はプレイヤー全部改修して使いやすくしようとか、訳あって途中で引き継いだのですが、
-iPad版のリーダーみたいなことをやらせてもらって、いろいろよい経験ができました。</p>
-
-<h2>ニコニコiPhoneHTML5プレイヤー</h2>
-
-<p>突然やってきた仕事でした、去年の9月中の話です。
-「AU iPhone出るまでにiPhoneのブラウザでも再生できるようにしてほしい(10月中)」
-1ヶ月ない・・・だと・・・。</p>
-
-<p>というわけでいわゆるHTML5をプロダクトでやることになりました。
-上司にはマネージャーとしてサポートしてもらったのですが、急な案件だったために実質一人で立ち向かうことに。
-一人なのでリーダーですし、デザイナーのリソースもあいてないよ、ということだったので、リーダー兼プログラマー兼デザイナーというわりと楽しい状況でした。
-死ぬ死ぬいいながら働いていましたが、なんとなくプロダクトが発足してからリリースまでっていう流れを早送りで体験できてよい気分でした。
-途中で何度「これ終わったらW3C絶対殺す」と言ったか、もう覚えていません。
-ツメが甘かった部分もいくつかありましたが、上司が補助してくれて、無事にリリースできました、本当によかった。
-なんだかんだで一番思い入れのあるプロダクトでした。</p>
-
-<h2>ニコニコ書籍</h2>
-
-<p>後半はここでした。最初は火消しだったのですが、最終的には異動することになりました。
-アプリを作っていたのもそうなんですが、赤いのに「iOSもテストガンガンやりたい！なんとかして！」みたいなことを言われて、
-そっちのことを結構やったりとか、割と自由な感じで動いていました。(納期が緩いとかそういう話ではないですが。)
-この辺のアレはいまがんばって文章にしているところで、ちゃんと成果として少しづつ公開していきます。
-技術話とかそういうのも楽しかったですが、どっちかと言えばニコニコ書籍ではチームのつくりかた、みたいなのを見れた方が大きかったです。</p>
-
-<h2>研究開発チャンネル</h2>
-
-<p>エンジニアとはほとんど関係ないです。ドワンゴ研究開発チャンネルというニコニコのチャンネルで生放送をしたり出たりしていました。
-なんというか、いろいろありました、という感じです。
-機材の使い方から、プロデューサーっぽいことから、タレントっぽいことまでやってました。(こことは関係なしに何回かタレントっぽいこともやってましたが)
-駆け足で大変でしたが、エンジニア以外の仕事もやれてよかったです。</p>
-
-<h2>まとめ</h2>
-
-<p>ともかくたくさん成長できたと思うし、とても楽しかったです！！！
-みなさんお世話になりました！！！！！</p>
-
-<p>うきょー先生の次回作にご期待ください！！！！</p>
-</div></section>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1218,6 +1272,10 @@ iPad版のリーダーみたいなことをやらせてもらって、いろい�
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/08/hello-brunch/">BrunchでJavaScriptアプリはじめる手順</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
         </li>
       
@@ -1231,10 +1289,6 @@ iPad版のリーダーみたいなことをやらせてもらって、いろい�
       
         <li class="post">
           <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
         </li>
       
     </ul>

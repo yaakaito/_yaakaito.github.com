@@ -74,6 +74,20 @@ function ArchiveCtrl($scope) {
       current = {year : "2013", archives : [] }
       $scope.archives.push(current);
     
+    current_archive = {title: "BrunchでJavaScriptアプリはじめる手順"
+                       , url : "/blog/2013/03/08/hello-brunch/"
+                       , categories: []}; 
+    
+      current_archive.categories.push("Brunch");
+    
+      current_archive.categories.push("CoffeeScript");
+    
+      current_archive.categories.push("JavaScript");
+    
+    current.archives.push(current_archive);
+  
+  
+    
     current_archive = {title: "JekyllでエセAPI的なの作る話"
                        , url : "/blog/2013/03/06/jekyll-fake-api/"
                        , categories: []}; 
@@ -571,6 +585,10 @@ function ArchiveCtrl($scope) {
     <ul>
       
         <li class="post">
+          <a href="/blog/2013/03/08/hello-brunch/">BrunchでJavaScriptアプリはじめる手順</a>
+        </li>
+      
+        <li class="post">
           <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
         </li>
       
@@ -584,10 +602,6 @@ function ArchiveCtrl($scope) {
       
         <li class="post">
           <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/12/stubbilino/">Stubbilinoというスタブライブラリがよさげです</a>
         </li>
       
     </ul>
