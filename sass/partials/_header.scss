@@ -1,19 +1,18 @@
-header {
-  > h1 {
-    display: block;
+body > header {
+  background: $header-bg;
+  h1 {
+    display: inline-block;
     margin: 0;
-    width: 100%;
-    height: 10px;
-    background-color:  $primary-color;
-
-    > a {
-      display: block;
-      width: 100%;
-      height: 100%;
-      > span {
-        display: none;
-      }
+    a, a:visited, a:hover {
+      color: $title_color;
+      text-decoration: none;
     }
   }
+  h2 {
+    margin: .2em 0 0;
+    @extend .sans;
+    font-size: 1em;
+    color: $subtitle-color;
+    font-weight: normal;
+  }
 }
-
