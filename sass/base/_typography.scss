@@ -1,45 +1,54 @@
-$blockquote: $type-border !default;
+
+$base-font-size: 16px;
+$base-line-height: 22px;
+@include establish-baseline;
+
+$sans: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Meiryo, 'メイリオ', 'ＭＳ Ｐゴシック', Verdana, Geneva, Arial, Helvetica;
+$emphasis: 'ヒラギノ角ゴ Pro W6', 'Hiragino Kaku Gothic Pro W6', Meiryo, メイリオ, 'ＭＳ Ｐゴシック', Verdana, Geneva, Arial, Helvetica;
+$times: Georgia, Constantia, Hoefler Text, serif;
+
+$copyright-font-family:  Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', serif;
+$mono: "Lucida Console", "Monaco", monospace;
+
+//$blockquote: $type-border !default;
+/*
 $sans: "PT Sans", "Helvetica Neue", Arial, sans-serif !default;
 $serif: "PT Serif", Georgia, Times, "Times New Roman", serif !default;
 $mono: Menlo, Monaco, "Andale Mono", "lucida console", "Courier New", monospace !default;
+*/
 $heading-font-family: "PT Serif", "Georgia", "Helvetica Neue", Arial, sans-serif !default;
 $header-title-font-family: $heading-font-family !default;
 $header-subtitle-font-family: $heading-font-family !default;
 
 // Fonts
-.heading {
-  font-family: $heading-font-family;
-}
+.heading { font-family: $emphasis; }
 .sans { font-family: $sans; }
-.serif { font-family: $serif; }
+/*.serif { font-family: $serif; }*/
 .mono { font-family: $mono; }
 
-body > header h1 {
-  font-size: 2.2em;
-  @extend .heading;
-  font-family: $header-title-font-family;
-  font-weight: normal;
-  line-height: 1.2em;
-  margin-bottom: 0.6667em;
-}
-body > header h2 {
-  font-family: $header-subtitle-font-family;
-}
-
 body {
-  line-height: 1.5em;
   color: $text-color;
-  @extend .serif;
-}
-h1 {
-  font-size: 2.2em;
-  line-height: 1.2em;
+  @extend .sans;
 }
 
+@mixin rhythm($font-size, $lines) {
+  @include adjust-font-size-to($font-size, $lines);
+  @include leader(1, $font-size);
+  @include trailer(1, $font-size);  
+}
+
+h1 {
+  @extend .heading;
+  @include rhythm(24px, 2);
+
+}
+/*
 @media only screen and (min-width: 992px) {
   body { font-size: 1.15em; }
   h1 { font-size: 2.6em; line-height: 1.2em; }
 }
+
+*/
 
 #{headings()}{
   @extend .heading;
@@ -47,21 +56,29 @@ h1 {
   margin-bottom: 1em;
   font-weight: bold;
 }
-h2, section h1 {
-  font-size: 1.5em;
+
+h2 {
+  @extend .heading;
+  @include rhythm(20px, 2);
 }
-h3, section h2, section section h1 {
-  font-size: 1.3em;
+
+h3 {
+  @extend .heading;
+  @include rhythm(18px, 2);
 }
-h4, section h3, section section h2, section section section h1 {
-  font-size: 1em;
+
+h4 {
+  @extend .heading;
+  @include rhythm(20px, 2);
 }
-h5, section h4, section section h3 {
-  font-size: .9em;
+h5 {
+  @extend .heading;
+  @include rhythm(12px, 2);
 }
-h6, section h5, section section h4, section section section h3 {
-  font-size: .8em;
+h6 {
+  @include rhythm(12px, 2);
 }
+
 p, blockquote, ul, ol { margin-bottom: 1.5em; }
 
 ul { list-style-type: disc;
