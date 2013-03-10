@@ -3,7 +3,6 @@ body > header {
     color: $no-content-text-color;
     text-decoration: none;
     &:hover {
-      color: adjust-color($no-content-text-color, $lightness: 10, $saturation: 25);
       img {
         opacity: 0.9;
       }
@@ -34,6 +33,7 @@ body > header {
       }
 
       h1 {
+        color: $no-content-text-color;
         display: inline-block;
         margin: 0;
         font-size: 12px;

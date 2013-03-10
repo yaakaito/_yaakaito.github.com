@@ -38,11 +38,7 @@ body {
   @include trailer(1, $font-size);  
 }
 
-h1 {
-  @extend .heading;
-  @include rhythm(20px, 2);
 
-}
 /*
 @media only screen and (min-width: 992px) {
   body { font-size: 1.15em; }
@@ -56,6 +52,11 @@ h1 {
   text-rendering: optimizelegibility;
   margin-bottom: 1em;
   font-weight: bold;
+}
+
+h1 {
+  @extend .heading;
+  @include rhythm(20px, 2);
 }
 
 h2 {

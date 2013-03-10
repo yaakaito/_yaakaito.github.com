@@ -14,8 +14,8 @@ $header-border: lighten($header-bg, 15);
 $title-color: #f2f2f2;
 $subtitle-color: #aaa;
 
-$text-color: #222;
-$text-color-light: #aaa;
+$text-color: #333;
+$text-color-light: #555;
 $type-border: #ddd;
 
 $no-content-text-color: #888;
@@ -25,6 +25,17 @@ $no-content-text-color: #888;
 
 a {
   @include link-colors($link-color, $hover: $link-color-hover, $focus: $link-color-hover, $visited: $link-color-visited, $active: $link-color-active);
+  h1 {
+    @include link-colors($text-color, $hover: $text-color-light, $focus: $text-color-light, $visited: $text-color, $active: $text-color);
+    text-decoration: none;
+  }
+}
+
+h1 {
+  a {
+    @include link-colors($text-color, $hover: $text-color-light, $focus: $text-color-light, $visited: $text-color, $active: $text-color);
+    text-decoration: none;
+  }
 }
 
 body {
