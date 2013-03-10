@@ -7,8 +7,8 @@
       {{ content | expand_urls: root_url }}
     </div>
   </div>
-
-  <aside>{% include paginator.html %}</aside>
+  <aside id="aboutme">{% include aboutme.html %}</aside>
+  <aside id="paginator">{% include paginator.html %}</aside>
   <footer role="contentinfo">{% include footer.html %}</footer>
   {% include after_footer.html %}
 </body>

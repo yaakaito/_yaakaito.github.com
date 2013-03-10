@@ -100,4 +100,4 @@ disqus_show_comment_count: false
 google_analytics_tracking_id:
 
 # Facebook Like
-facebook_like: no
+facebook_like: true
