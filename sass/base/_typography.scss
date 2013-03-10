@@ -6,6 +6,7 @@ $base-line-height: 22px;
 $sans: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Meiryo, 'メイリオ', 'ＭＳ Ｐゴシック', Verdana, Geneva, Arial, Helvetica;
 $emphasis: 'ヒラギノ角ゴ Pro W6', 'Hiragino Kaku Gothic Pro W6', Meiryo, メイリオ, 'ＭＳ Ｐゴシック', Verdana, Geneva, Arial, Helvetica;
 $times: Georgia, Constantia, Hoefler Text, serif;
+$title: 'Open Sans';
 
 $copyright-font-family:  Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', serif;
 $mono: "Lucida Console", "Monaco", monospace;
@@ -39,7 +40,7 @@ body {
 
 h1 {
   @extend .heading;
-  @include rhythm(24px, 2);
+  @include rhythm(20px, 2);
 
 }
 /*
@@ -59,17 +60,17 @@ h1 {
 
 h2 {
   @extend .heading;
-  @include rhythm(20px, 2);
+  @include rhythm(18px, 2);
 }
 
 h3 {
   @extend .heading;
-  @include rhythm(18px, 2);
+  @include rhythm(16px, 2);
 }
 
 h4 {
   @extend .heading;
-  @include rhythm(20px, 2);
+  @include rhythm(14px, 2);
 }
 h5 {
   @extend .heading;

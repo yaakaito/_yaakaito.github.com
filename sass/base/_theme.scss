@@ -1,31 +1,30 @@
 $background-color: #fafafa;
 
-$noise-bg: image-url('noise.png') top left !default;
+$noise-bg: image-url('noise.png') top left;
 $img-border: inline-image('dotted-border.png');
 
 // Main Link Colors
-$link-color: lighten(#009250, 3) !default;
-$link-color-hover: adjust-color($link-color, $lightness: 10, $saturation: 25) !default;
+$link-color: lighten(#009250, 3);
+$link-color-hover: adjust-color($link-color, $lightness: 10, $saturation: 25);
 $link-color-visited: $link-color;
 $link-color-active: $link-color;
 
-$header-bg: #fefefe !default;
-$header-border: lighten($header-bg, 15) !default;
-$title-color: #f2f2f2 !default;
-$subtitle-color: #aaa !default;
+$header-bg: #fefefe;
+$header-border: lighten($header-bg, 15);
+$title-color: #f2f2f2;
+$subtitle-color: #aaa;
 
-$text-color: #222 !default;
-$text-color-light: #aaa !default;
-$type-border: #ddd !default;
+$text-color: #222;
+$text-color-light: #aaa;
+$type-border: #ddd;
+
+$no-content-text-color: #888;
 
 
 /* Core theme application */
 
 a {
   @include link-colors($link-color, $hover: $link-color-hover, $focus: $link-color-hover, $visited: $link-color-visited, $active: $link-color-active);
-}
-a {
-  @include transition(color .3s);
 }
 
 body {
