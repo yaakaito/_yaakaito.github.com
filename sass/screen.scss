@@ -4,9 +4,13 @@
 
 @import "base/theme";
 @import "base/typography";
+@import "base/image";
+@import "base/solarized";
 
 @import "partials/header";
 @import "partials/aboutme";
+@import "partials/syntax";
+
 
 /*
 @import "custom/colors";
