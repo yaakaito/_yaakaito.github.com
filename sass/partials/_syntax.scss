@@ -13,24 +13,18 @@
   .line-numbers {
     display: none;
   }
-  border-bottom: 1px solid #bbb;
   //border: 1px solid $pre-border !important;
 }
 figure.code, .gist-file, pre {
-  @include box-shadow(rgba(#000, .06) 0 0 10px);
   .highlight pre { @include box-shadow(none); }
 }
 
 html .gist .gist-file {
   margin-bottom: 1.8em;
   position: relative;
-  border: none;
   padding-top: image-height("code_bg.png") !important;
   .gist-syntax {
-    border-bottom: 0 !important;
-    background: none !important;
     .gist-highlight{
-      background: $base03 !important;
       pre {
         @extend .pre-code;
       }
@@ -38,7 +32,6 @@ html .gist .gist-file {
   }
   .gist-meta {
    padding: .6em 0.8em;
-   border: 1px solid lighten($base02, 2) !important;
    color: $base01;
    font-size: .7em !important;
    @if $solarized == light {
@@ -90,11 +83,8 @@ p, li {
     @extend .mono;
     display: inline-block;
     white-space: no-wrap;
-    background: #fff;
     font-size: .8em;
     line-height: 1.5em;
-    color: #555;
-    border: 1px solid #ddd;
     @include border-radius(.4em);
     padding: 0 .3em;
     margin: -1px 0;
@@ -193,42 +183,33 @@ p, li {
     margin-bottom: 0;
   }
   margin-bottom: 1.8em;
-  background: none;//$base03;
   overflow-y: hidden;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 
 }
 
-$solar-scroll-bg: rgba(#fff, .15);
-$solar-scroll-thumb: rgba(#fff, .2);
-@if $solarized == light {
-  $solar-scroll-bg: rgba(#000, .15);
-  $solar-scroll-thumb: rgba(#000, .15);
-}
-
-pre, .highlight, .gist-highlight {
-  /*
-  &::-webkit-scrollbar {  height: .5em; background: $solar-scroll-bg; }
-  &::-webkit-scrollbar-thumb:horizontal { background: $solar-scroll-thumb;  -webkit-border-radius: 4px; border-radius: 4px }
-  */
-}
-
 .highlight code { 
   @extend .pre-code;
-  background: #fafafa;
  }
 
 figure.code {
-  background: none;
-  padding: 0;
-  border: 0;
+  background: #fdfdfd;
+  padding: 2px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   margin-bottom: 1.5em;
-  pre { margin-bottom: 0; }
+  margin: 8px;
+  @include box-shadow(rgba(#777, 0.1) 1px 1px 1px);
+  pre { 
+    margin-bottom: 0;
+  }
   figcaption {
     position: relative;
     @extend .code-title;
-    a { @extend .download-source; }
+    a { 
+      @extend .download-source;
+    }
   }
   .highlight {
     margin-bottom: 0;
@@ -236,6 +217,7 @@ figure.code {
 }
 
 .code-title {
+  /*
   text-align: center;
   font-size: 13px;
   line-height: 2em;
@@ -251,6 +233,7 @@ figure.code {
   border-left-color: #a5a5a5;
   border-right-color: #a5a5a5;
   border-bottom: 0;
+  */
 }
 
 .download-source {

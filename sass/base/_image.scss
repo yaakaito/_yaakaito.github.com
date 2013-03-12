@@ -5,7 +5,7 @@
   border: $border;
 }
 
-img {
+article img {
   @include shadow-box;
   display: block;
   margin: 5px auto;
