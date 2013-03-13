@@ -1,86 +1,84 @@
 
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7" ng-app><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8" ng-app><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en" ng-app><!--<![endif]-->
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <title>dequeueReusable~の実装とテスト - yaakaito.org</title>
   <meta name="author" content="yaakaito">
 
   
-  <meta name="description" content="dequeueReusable~の実装とテスト function CategoryCtrl($scope) { $scope.categories = []; $scope.categories.push("NLTQuickCheck"); $scope.categories.push(" &hellip;">
+  <meta name="description" content="こんにちは！うきょーです。UITableViewに実装されているdequeueReusableCellWithIdentifierと同等の機能を持ったものを開発したいんだけど的な話です。
+dataSourceに似たのインターフェイスを持ってビューを実装するときに、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
-  <!-- <meta name="MobileOptimized" content="320"> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
   <link rel="canonical" href="http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
-  <script type="text/javascript" src="/javascripts/libs/angular-1.0.1.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
   
-
+  
 
 </head>
 
 <body   >
-  <header role="banner" class="clear-fix">
-    <h1 class="separator"><a href="/"><span>yaakaito.org</span></a></h1>
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">dequeueReusable~の実装とテスト</h1>
+    
+    
+      <p class="meta">
+        
 
 
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-19T02:35:00+09:00" pubdate data-updated="true">Aug 19<span>th</span>, 2012</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nltquickcheck/'>NLTQuickCheck</a>, <a class='category' href='/blog/categories/objective-c/'>Objective-C</a>, <a class='category' href='/blog/categories/quickcheck/'>QuickCheck</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+        
+      </p>
+    
   </header>
-  <nav role="navigation"><ul>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-</nav>
-  <div role="main" class="separator">
-    <article class="blog clear-fix" role="article">
-  <h1 class="separator">
-    
-      dequeueReusable~の実装とテスト
-    
-  </h1>
-  
-  <div class="clear-fix">
-    <aside class="categories" role="complementary">
-       
 
-<script>
-function CategoryCtrl($scope) {
-  $scope.categories = [];
-  
-    
-      $scope.categories.push("NLTQuickCheck");
-    
-      $scope.categories.push("Objective-C");
-    
-      $scope.categories.push("QuickCheck");
-    
-      $scope.categories.push("Testing");
-    
-      $scope.categories.push("iOS");
-    
-  
-}
-</script>
-<ul ng-controller="CategoryCtrl">
-  <li ng-repeat="category in categories">
-    <a href="/blog/categories/{{ category | lowercase }}/">
-      {{ category }}
-    </a>
-  </li>
-</ul>
 
-    
-    </aside>
-    <div class="clear-fix"> 
-      
-<section><div ng-non-bindable><p>こんにちは！うきょーです。UITableViewに実装されている<code>dequeueReusableCellWithIdentifier</code>と同等の機能を持ったものを開発したいんだけど的な話です。
+<div class="entry-content"><p>こんにちは！うきょーです。UITableViewに実装されている<code>dequeueReusableCellWithIdentifier</code>と同等の機能を持ったものを開発したいんだけど的な話です。
 dataSourceに似たのインターフェイスを持ってビューを実装するときに、不特定個数のものに対してインスタンスをすべて生成するわけにも行かないので、ある程度制御してあげる必要があります。
 今回はUIScrollView上に構築していく前提になっています。シンタックスハイライターを作ろうとしているので、使い回して描画される対象になるのは、行数表示とコード一行分の表示です。</p>
 
@@ -487,152 +485,82 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
 <p>これで<code>dequeueReusable~</code>っぽいものが実装できました。
 ビューが多くなってしまうが、不可視なビューが存在する、という状況では実装しておいて損はない機能です。
 ただやってみて実装コストは少し高めだなーと感じたので、その辺は相談、という感じでしょうか。</p>
-</div></section>
+</div>
 
 
-      <footer role="contentinfo">
-        
-          <div class="sharing">
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-19T02:35:00+09:00" pubdate data-updated="true">Aug 19<span>th</span>, 2012</time>
+    </p>
+   -->
+    
+      <div class="sharing">
   
   <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/" data-via="" data-counturl="http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/" >Tweet</a>
-  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-
   
   
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
   
 </div>
 
-        
-        <p>
+    
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-19T02:35:00+09:00" pubdate data-updated="true">Aug 19<span>th</span>, 2012</time></p>
-      </footer>
-    </div>
-  </div>
-
-  <article class="comments" class="clear-fix">
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </article>
-
+  </footer>
 </article>
 
-<aside class="pagenation clear-fix" role="navigation">
-    
-      <p class="previous pagenation"><a href="/blog/2012/08/09/parse-angular-sync-app/" title="Previous Post: ParseとAngularJSでユーザー毎にデータ同期してみる">&laquo; Previous Post</a></p>
-    
-    
-      <p class="next pagenation"><a href="/blog/2012/08/21/grunt-coffeelint/" title="Next Post: gruntのcoffeelintタスク作ってみた">Next Post &raquo;</a></p>
-    
-</aside>
-
-
-
-  </div>
-  <aside role="complementary" class="others clear-fix">
-    <div class="clear-fix">
-      <section id="recent-archives">
-  <h3>Recent Archives</h3>
   <div>
-    <ul>
-      
-        <li class="post">
-          <a href="/blog/2013/03/08/hello-brunch/">BrunchでJavaScriptアプリはじめる手順</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/03/06/jekyll-fake-api/">JekyllでエセAPI的なの作る話</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/03/02/buster-html-doc-and-coffee/">buster-html-docとあとcoffee</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/03/01/buster-testbed-and-boot/">BusterJSでテストに使うHTMLの設定と手動実行</a>
-        </li>
-      
-        <li class="post">
-          <a href="/blog/2013/02/26/thanks-ios-developers/">conferenceWithDevelopersが無事に終了しました</a>
-        </li>
-      
-    </ul>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
   </div>
-  <p><a href="/blog/archives/">Show All &raquo;</a></p>
-</section>
 
-<section id="github-repositories">
-  <h3>Github Repositories</h3>
-  <div ng-controller="githubCtlr">
-    <ul class="repositories">
-      
-        <li ng-repeat="repo in repos" data-lang="{{ repo.language | lowercase }}">
-          <a href="{{ repo.html_url }}">{{ repo.full_name }}</a>
-        </li>
-      
-    </ul>
-  </div> 
-  <p><a href="http://github.com/yaakaito">Show Github &raquo;</a></p>
-  <script>
-    function githubCtlr($scope, $http) {
-      $scope.repos = [];
-      $http.jsonp("https://api.github.com/users/yaakaito/repos?page=1&per_page=20&sort=pushed&callback=JSON_CALLBACK").success(function(data,status,header,config){
-        var count = 7 || 5;
-        for(var i = 0; i < count; i++) {
-          $scope.repos.push(data.data[i]);
-        }
-      });
-    }
-  </script>
-</section>
-
-
-<section id="coderwall-badges">
-  <h3>Coderwall Badges</h3>
-  <div ng-controller="coderwallController">
-    <ul class="badges">
-      
-      <li ng-repeat="badge in badges">
-        <img ng-src="{{badge.badge}}" alt="{{badge.description}}" title="{{badge.name}}" />
-      </li>
-      
-    </ul>
-  </div> 
-  <script>
-    function coderwallController($scope, $http) {
-    
-      $scope.badges = [];   
-      $http.jsonp("http://coderwall.com/yaakaito.json?callback=JSON_CALLBACK").success(function(data,status,header,config){
-        $scope.badges = data.data.badges;
-        console.log($scope.badges);
-});
-    }
-    
-  </script> 
-
-  <p><a href="http://coderwall.com/yaakaito">Show Coderwall &raquo;</a></p>
-</section>
-
+</div>
 
     </div>
-  </aside>
+  </div>
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2012/08/09/parse-angular-sync-app/" title="Previous Post: ParseとAngularJSでユーザー毎にデータ同期してみる">&laquo; ParseとAngularJSでユーザー毎にデータ同期してみる</a>
+  
+  
+    <a class="basic-alignment right" href="/blog/2012/08/21/grunt-coffeelint/" title="Next Post: gruntのcoffeelintタスク作ってみた">gruntのcoffeelintタスク作ってみた &raquo;</a>
+  
+</p></aside> -->
   <footer role="contentinfo"><p>
   Copyright &copy; 2013 - yaakaito -
-  <span class="credit">
-  Powered by <a href="http://octopress.org">Octopress</a> ,
-  <a href="http://github.com">Github</a> &
-  <a href="http://https://github.com/yaakaito/Octopress-Theme-Blaze">Blaze</a>
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
 </p>
 
 </footer>
@@ -645,7 +573,7 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
         // var disqus_developer = 1;
         var disqus_identifier = 'http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/';
         var disqus_url = 'http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/';
-        var disqus_script = 'embed.js?';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -655,6 +583,15 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
 </script>
 
 
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 
 
@@ -675,22 +612,4 @@ Objective-CのQuickCheckライブラリは、NLTQuickCheckをご利用くださ�
 
 
 </body>
-  <script>
-  (function(doc) {
-    var addEvent = 'addEventListener',
-        type = 'gesturestart',
-        qsa = 'querySelectorAll',
-        scales = [1, 1],
-        meta = qsa in doc ? doc[qsa]('meta[name=viewport]') : [];
-    function fix() {
-      meta.content = 'width=device-width,minimum-scale=' + scales[0] + ',maximum-scale=' + scales[1];
-      doc.removeEventListener(type, fix, true);
-    }
-    if ((meta = meta[meta.length - 1]) && addEvent in doc) {
-      fix();
-      scales = [0.25, 1.6];
-      doc[addEvent](type, fix, true);
-    }
-  }(document));
-  </script>
 </html>

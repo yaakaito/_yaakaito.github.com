@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Design | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/design/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-08T08:55:33+09:00</updated>
+  <updated>2013-03-14T03:33:47+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,26 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ブログのデザイン変えた]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/14/new-blog-design/"/>
+    <updated>2013-03-14T03:27:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/14/new-blog-design</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！</p>
+
+<p>ブログのデザイン変えました！</p>
+
+<p>読み返してて、「くそっよみづらいし、俺は読む事に集中したいんだよ」と思ったので直した、読みやすさ重視。</p>
+
+<p>これあってもなくても一緒やろみたいなのを全部消して、きれいに文章読めるように工夫したつもりである。緑だけ残した。緑見にくいし控えめで。
+(そもそもの話ほとんど文字サイズと行間の調整しかしていない)</p>
+
+<p>モバイル対応とかやるのだるいので、だいたいどれでみても同じようになるようにした。</p>
+
+<p>これでまた少し世界をよく出来た気がします、やりましたね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
