@@ -56,7 +56,7 @@ body {
 
 h1 {
   @extend .heading;
-  @include rhythm(20px, 2);
+  @include rhythm(20px, 1);
 }
 
 h2 {
@@ -79,6 +79,20 @@ h5 {
 }
 h6 {
   @include rhythm(12px, 2);
+}
+
+p.meta {
+  @include rhythm(14px, 1);
+  padding: 0.4em;
+  color: $text-color-light;
+}
+
+footer > p {
+  @include rhythm(12px, 1);
+  font-family: $copyright-font-family;
+  font-style: italic;
+  text-align: center;
+  color: $text-color-light;
 }
 
 p, blockquote, ul, ol { margin-bottom: 1.5em; }
@@ -125,22 +139,18 @@ small { font-size: .8em; }
 big { font-size: 1.2em; }
 
 blockquote {
-  $bq-margin: 1.2em;
+  margin: 8px;
   font-style: italic;
   position: relative;
-  font-size: 1.2em;
-  line-height: 1.5em;
-  padding-left: 1em;
-  border-left: 4px solid rgba($text-color-light, .5);
+  padding-left: 12px;
+  color: rgba($text-color-light, .8);
+  border-left: 8px solid rgba($text-color-light, .3);
   cite {
     font-style: italic;
     a { color: $text-color-light !important; word-wrap: break-word; }
     &:before { content: '\2014'; padding:{right: .3em; left: .3em;} color: $text-color-light; }
   }
-  @media only screen and (min-width: 992px) {
-    padding-left: 1.5em;
-    border-left-width: 4px;
-  }
+  margin-bottom: 24px; // FIXME
 }
 
 .pullquote-right:before,

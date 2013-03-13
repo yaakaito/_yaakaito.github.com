@@ -91,7 +91,7 @@ p, li {
   }
   pre code { font-size: 1em !important; background: none; border: none; }
 }
-
+ 
 .pre-code {
   @include selection(adjust-color($base03, $lightness: 23%, $saturation: -65%), $text-shadow: $base03 0 1px);
   font-family: $mono !important;
@@ -198,8 +198,8 @@ figure.code {
   padding: 2px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-bottom: 1.5em;
   margin: 8px;
+  margin-bottom: 24px; // FIXME
   @include box-shadow(rgba(#777, 0.1) 1px 1px 1px);
   pre { 
     margin-bottom: 0;
