@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.github.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-14T03:37:06+09:00</updated>
+  <updated>2013-03-16T00:02:30+09:00</updated>
   <id>http://yaakaito.github.com/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,148 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/"/>
+    <updated>2013-03-15T02:05:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+<a href="https://hosted-ci.com/">Hosted CI</a>という、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
+そこで<a href="https://github.com/yaakaito/overline">Overline</a>のテストを回してみました。(Hosted CIはまだベータ版みたいです。)</p>
+
+<p>参考までに、というかいろいろありそうなので、書いた時点でのOverlineの開発環境を先に乗せておきます。</p>
+
+<ul>
+<li>OS 10.7.5</li>
+<li>AppCode 1.6</li>
+<li>Xcode 4.5</li>
+<li>Cocoapods 0.15.2
+
+<ul>
+<li>OCHamcrest 1.9</li>
+</ul>
+</li>
+</ul>
+
+
+<p>コードはAppCodeで書いています。(Hosted CI関係ないけどAppCodeの問題もあったので下に書きます)
+テストはSenTestingKit + OCHamcrest。
+いろいろあってメインマシンでやらなかったので、ちょっと古いです。</p>
+
+<h2>Hosted CI へ登録する</h2>
+
+<p>OpenSourceだしfree planで登録しました。
+ちょっと時間がかかったので、先にローカルでやれることをやっておきます。</p>
+
+<h2>ローカルでテストをビルドする</h2>
+
+<p>とりあえずローカルでテストがビルドできないと話にならないので、そっちを確認します。
+Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだったので、ちょっと面倒でした。</p>
+
+<p>まずテスト用のSchemeを作ります。
+ビルドの設定へ<code>Jenkins</code>という名前のschemeを定義してあげます。</p>
+
+<p><img src="/images/appcode-jenkins-scheme.png"></p>
+
+<p>ところでこのschemeをjenkinsから使うのかと思ったんですが、実はいらなかったので、自身のある人はやらなくてよいかもしれません。
+作ったら<code>xcodebuild</code>で<code>-list</code>してみましょう。</p>
+
+<p>```
+$ xcodebuild -workspace Overline.xcworkspace -list
+Information about workspace "Overline":</p>
+
+<pre><code>Schemes:
+    ...
+    Jenkins
+</code></pre>
+
+<p>```</p>
+
+<p>こんな感じに出てきたら準備完了です。<code>xcodebuild</code>で<code>Jenkins</code>のshcemeをビルドします</p>
+
+<p><code>
+$ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'Debug' -sdk iphonesimulator clean build
+</code></p>
+
+<h2>Hosted CI へログイン</h2>
+
+<p>登録できたっぽいメールがきたので、Hosted CI へログインしましょう！ログインするとDashboardが出てきます。何個かプロジェクトがありますね。</p>
+
+<p><img src="/images/hosted-ci-dashboard.png"></p>
+
+<p>下の方にある Create new project からプロジェクトを追加します。</p>
+
+<p><img src="/images/hosted-ci-create.png"></p>
+
+<h2>プロジェクトの作成</h2>
+
+<p>新しいプロジェクトのセットアップを始めます。</p>
+
+<p><img src="/images/hosted-ci-new-project.png"></p>
+
+<p>おおーここから大まかな設定は出来るのかー。便利だなー。
+けどスクリプトとかどうせ書くんだろうしだるいなぁ、とか思いながらセットアップして、 Create Project します。さて次はめんどうな・・・</p>
+
+<p><img src="/images/hosted-ci-config-xcode.png"></p>
+
+<p>なん・・・だと・・・</p>
+
+<p><img src="/images/hosted-ci-selected-target.png"></p>
+
+<p>こいつは・・・まさか・・・ 力強くUpdateします。</p>
+
+<p><img src="/images/hosted-ci-created-project.png"></p>
+
+<p>プロジェクトのページができます。ビルドします。</p>
+
+<p><img src="/images/hosted-ci-jenkins-console.png"></p>
+
+<p><img src="/images/hosted-ci-test-complete.png"></p>
+
+<p>俺の知ってるJenkins+iOSと違う・・・。</p>
+
+<p>という感じで拍子抜けするくらい簡単にセットアップが出来てしまいました。
+(正確にはAppCodeの問題で2~3回ビルドしたんですが、それは後述します。)</p>
+
+<p>なにげにPodfileのサポートとかも入っててすごい・・・。</p>
+
+<h2>GithubにPushしたときにHookでテスト</h2>
+
+<p>HookのURLが提供されているので、それを使います。プロジェクトのページにあります。</p>
+
+<p><img src="/images/hosted-ci-github-hook.png"></p>
+
+<p>あとはGithubからJenkins Hook URL を設定して終わりです。</p>
+
+<p><img src="/images/github-jenkins-hook.png"></p>
+
+<h2>と、というわけで</h2>
+
+<p>あっさり動いてしまいましたね・・・？</p>
+
+<p><img src="http://tiqav.com/et.jpg"></p>
+
+<p>あ、いや本当に超絶素晴らしいサービスだと思いますし、フィードバックなどしつつ使わせて頂こうと思います、はい。</p>
+
+<h2>【おまけ】AppCode使っててうまくいかなかった話</h2>
+
+<p>Cocoapodsを使うときに、</p>
+
+<p><blockquote><p>[!] Xcodeproj doesn't know about the following attributes lastKnownFileTypetext for the 'PBXGroup' isa.</p></blockquote></p>
+
+<p>こういう感じになってしまったので、何かなーと思ったら、</p>
+
+<p><blockquote><p>Overline これにはまってた  "Problematic attribute added to PBXGroup when renaming group using AppCode : OC-5881"  http://bit.ly/13XdHU8</p><footer><strong>@azu_re</strong> <cite><a href='https://twitter.com/azu_re/status/312065250436456448'>twitter.com/azu_re/status/&hellip;</a></cite></footer></blockquote></p>
+
+<p>というのを見つけて、<a href="http://bit.ly/13XdHU8">リンク先</a>見てみたらどうもこれっぽい。
+<code>lastKnownFileType = text;</code> というのが入ってしまうのだとか。</p>
+
+<p>僕の場合はNSNumberのグループに入ってたので、<a href="https://github.com/yaakaito/Overline/commit/01fbeaf306a56319485e394d56b249bd502cab30">これ消したら</a>なおった。</p>
+
+<p>ありがとうございます。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
@@ -227,96 +369,6 @@ LT参加を希望されるかたは、チケットページより「LT参加チ�
 
 <iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit/"/>
-    <updated>2012-12-06T22:01:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 6日目の記事です。
-AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
-サンプルも書いていたのですが、アドベントにカレンダーできなさそうなので、今回は紹介だけです。</p>
-
-<h2>NUIって何</h2>
-
-<p>NUIはCSSライクにUIKitのスタイルを指定できるライブラリです。
-READMEからの引用ですが、こんな感じに定義することができます。</p>
-
-<p>```objective-c
-@primaryFontName: HelveticaNeue;
-@secondaryFontName: HelveticaNeue-Light;
-@primaryFontColor: #333333;
-@primaryBackgroundColor: #E6E6E6;</p>
-
-<p>Button {</p>
-
-<pre><code>background-color: @primaryBackgroundColor;
-border-color: #A2A2A2;
-border-width: @primaryBorderWidth;
-font-color: @primaryFontColor;
-font-color-highlighted: #999999;
-font-name: @primaryFontName;
-font-size: 18;
-corner-radius: 7;
-</code></pre>
-
-<p>}
-NavigationBar {</p>
-
-<pre><code>background-tint-color: @primaryBackgroundColor;
-font-name: @secondaryFontName;
-font-size: 20;
-font-color: @primaryFontColor;
-text-shadow-color: #666666;
-text-shadow-offset: 1,1;
-</code></pre>
-
-<p>}
-```</p>
-
-<p><img src="/images/adv_nui.png" width="320"></p>
-
-<p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
-
-<p>実際にCSSが書けるわけではなくて、あくまでUIKitに対応するプロパティをCSSライクに設定できるライブラリです。
-昔CSSをそのまま使えたら幸せじゃね、と考えてみたことはあったのですが、さすがにしんどくて挫折しました。
-そういう意味では NUI みたいな感じになっていても、十分良さそうに思えますね。</p>
-
-<h2>簡単な使い方</h2>
-
-<p>僕自身もまだちゃんと使えている訳ではないのですが、起動後にNUIを有効にしてあげて、</p>
-
-<p><code>objective-c
-[NUIAppearance init];
-</code></p>
-
-<p>で、NUIをセットアップします。</p>
-
-<p>あとは適用したいUIクラスをNUIButtonなどのサブクラスで定義して、</p>
-
-<p>```objective-c
-- (void)initNUI {</p>
-
-<pre><code>[super initNUI];
-self.nuiClass = @"Button:MyButton";
-</code></pre>
-
-<p>}
-```</p>
-
-<p>とかしてあげると、プロジェクトに含まれいる<code>NUIStyle.nss</code>を元にスタイリングしてくれるようです。
-自信はそんなにないですが。</p>
-
-<h2>設定できるプロパティとか</h2>
-
-<p><a href="https://github.com/tombenner/nui/blob/master/README.md#style-classes">READMEのStyleClasses</a>に書いてありますが、一通りは設定できる様子。</p>
-
-<h2>楽しみですね</h2>
-
-<p>ログをみたらまだできたばかりのプロダクトでした。今後どうなるか楽しみですね！</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hosted CIでiOSライブラリ(Overline)のテスト回してみた - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです。
+Hosted CIという、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
+そこでOverlineのテストを回してみました。(Hosted CIはまだベータ版みたいです。) 参考までに、というかいろいろありそうなので、 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hosted CIでiOSライブラリ(Overline)のテスト回してみた</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-15T02:05:00+09:00" pubdate data-updated="true">Mar 15<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/appcode/'>AppCode</a>, <a class='category' href='/blog/categories/hosted-ci/'>Hosted CI</a>, <a class='category' href='/blog/categories/jenkins/'>Jenkins</a>, <a class='category' href='/blog/categories/overline/'>Overline</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです。
+<a href="https://hosted-ci.com/">Hosted CI</a>という、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
+そこで<a href="https://github.com/yaakaito/overline">Overline</a>のテストを回してみました。(Hosted CIはまだベータ版みたいです。)</p>
+
+<p>参考までに、というかいろいろありそうなので、書いた時点でのOverlineの開発環境を先に乗せておきます。</p>
+
+<ul>
+<li>OS 10.7.5</li>
+<li>AppCode 1.6</li>
+<li>Xcode 4.5</li>
+<li>Cocoapods 0.15.2
+
+<ul>
+<li>OCHamcrest 1.9</li>
+</ul>
+</li>
+</ul>
+
+
+<p>コードはAppCodeで書いています。(Hosted CI関係ないけどAppCodeの問題もあったので下に書きます)
+テストはSenTestingKit + OCHamcrest。
+いろいろあってメインマシンでやらなかったので、ちょっと古いです。</p>
+
+<h2>Hosted CI へ登録する</h2>
+
+<p>OpenSourceだしfree planで登録しました。
+ちょっと時間がかかったので、先にローカルでやれることをやっておきます。</p>
+
+<h2>ローカルでテストをビルドする</h2>
+
+<p>とりあえずローカルでテストがビルドできないと話にならないので、そっちを確認します。
+Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだったので、ちょっと面倒でした。</p>
+
+<p>まずテスト用のSchemeを作ります。
+ビルドの設定へ<code>Jenkins</code>という名前のschemeを定義してあげます。</p>
+
+<p><img src="/images/appcode-jenkins-scheme.png"></p>
+
+<p>ところでこのschemeをjenkinsから使うのかと思ったんですが、実はいらなかったので、自身のある人はやらなくてよいかもしれません。
+作ったら<code>xcodebuild</code>で<code>-list</code>してみましょう。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ xcodebuild -workspace Overline.xcworkspace -list
+</span><span class='line'>Information about workspace "Overline":
+</span><span class='line'>    Schemes:
+</span><span class='line'>        ...
+</span><span class='line'>        Jenkins</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じに出てきたら準備完了です。<code>xcodebuild</code>で<code>Jenkins</code>のshcemeをビルドします</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'Debug' -sdk iphonesimulator clean build</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Hosted CI へログイン</h2>
+
+<p>登録できたっぽいメールがきたので、Hosted CI へログインしましょう！ログインするとDashboardが出てきます。何個かプロジェクトがありますね。</p>
+
+<p><img src="/images/hosted-ci-dashboard.png"></p>
+
+<p>下の方にある Create new project からプロジェクトを追加します。</p>
+
+<p><img src="/images/hosted-ci-create.png"></p>
+
+<h2>プロジェクトの作成</h2>
+
+<p>新しいプロジェクトのセットアップを始めます。</p>
+
+<p><img src="/images/hosted-ci-new-project.png"></p>
+
+<p>おおーここから大まかな設定は出来るのかー。便利だなー。
+けどスクリプトとかどうせ書くんだろうしだるいなぁ、とか思いながらセットアップして、 Create Project します。さて次はめんどうな・・・</p>
+
+<p><img src="/images/hosted-ci-config-xcode.png"></p>
+
+<p>なん・・・だと・・・</p>
+
+<p><img src="/images/hosted-ci-selected-target.png"></p>
+
+<p>こいつは・・・まさか・・・ 力強くUpdateします。</p>
+
+<p><img src="/images/hosted-ci-created-project.png"></p>
+
+<p>プロジェクトのページができます。ビルドします。</p>
+
+<p><img src="/images/hosted-ci-jenkins-console.png"></p>
+
+<p><img src="/images/hosted-ci-test-complete.png"></p>
+
+<p>俺の知ってるJenkins+iOSと違う・・・。</p>
+
+<p>という感じで拍子抜けするくらい簡単にセットアップが出来てしまいました。
+(正確にはAppCodeの問題で2~3回ビルドしたんですが、それは後述します。)</p>
+
+<p>なにげにPodfileのサポートとかも入っててすごい・・・。</p>
+
+<h2>GithubにPushしたときにHookでテスト</h2>
+
+<p>HookのURLが提供されているので、それを使います。プロジェクトのページにあります。</p>
+
+<p><img src="/images/hosted-ci-github-hook.png"></p>
+
+<p>あとはGithubからJenkins Hook URL を設定して終わりです。</p>
+
+<p><img src="/images/github-jenkins-hook.png"></p>
+
+<h2>と、というわけで</h2>
+
+<p>あっさり動いてしまいましたね・・・？</p>
+
+<p><img src="http://tiqav.com/et.jpg"></p>
+
+<p>あ、いや本当に超絶素晴らしいサービスだと思いますし、フィードバックなどしつつ使わせて頂こうと思います、はい。</p>
+
+<h2>【おまけ】AppCode使っててうまくいかなかった話</h2>
+
+<p>Cocoapodsを使うときに、</p>
+
+<blockquote><p>[!] Xcodeproj doesn&#8217;t know about the following attributes lastKnownFileTypetext for the &#8216;PBXGroup&#8217; isa.</p></blockquote>
+
+
+<p>こういう感じになってしまったので、何かなーと思ったら、</p>
+
+<blockquote><p>Overline これにはまってた  &#8220;Problematic attribute added to PBXGroup when renaming group using AppCode : OC-5881&#8221;  http://bit.ly/13XdHU8</p><footer><strong>@azu_re</strong> <cite><a href='https://twitter.com/azu_re/status/312065250436456448'>twitter.com/azu_re/status/&hellip;</a></cite></footer></blockquote>
+
+
+<p>というのを見つけて、<a href="http://bit.ly/13XdHU8">リンク先</a>見てみたらどうもこれっぽい。
+<code>lastKnownFileType = text;</code> というのが入ってしまうのだとか。</p>
+
+<p>僕の場合はNSNumberのグループに入ってたので、<a href="https://github.com/yaakaito/Overline/commit/01fbeaf306a56319485e394d56b249bd502cab30">これ消したら</a>なおった。</p>
+
+<p>ありがとうございます。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-15T02:05:00+09:00" pubdate data-updated="true">Mar 15<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/" data-via="" data-counturl="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/03/14/brunch-withw-testem/" title="Previous Post: Brunchプロジェクトでtestemを使う">&laquo; Brunchプロジェクトでtestemを使う</a>
+  
+  
+    <a class="basic-alignment right" href="/blog/2013/03/15/chaplin-overview-ja/" title="Next Post: Chaplin Overview オレオレ意訳">Chaplin Overview オレオレ意訳 &raquo;</a>
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/';
+        var disqus_url = 'http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

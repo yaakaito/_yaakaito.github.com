@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Testem | yaakaito.org]]></title>
+  <link href="http://yaakaito.github.com/blog/categories/testem/atom.xml" rel="self"/>
+  <link href="http://yaakaito.github.com/"/>
+  <updated>2013-03-16T00:02:30+09:00</updated>
+  <id>http://yaakaito.github.com/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
+    <link href="http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem/"/>
+    <updated>2013-03-14T16:36:00+09:00</updated>
+    <id>http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+<a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
+Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
+
+<h2>testemの準備</h2>
+
+<p>testemがないと始まらないのでtestemをインストールします。</p>
+
+<p><code>
+$ npm install -g testem
+</code></p>
+
+<h2>testem.jsonの設定</h2>
+
+<p>BrunchはデフォルトでMochaを使ったテストのテンプレートを作ってくれるので、これを参考にします。
+<code>brunch build</code>すると、<code>/public/test/index.html</code>ができるので、これを参考に書いていきます。</p>
+
+<p>```javascript
+{
+  "framework" : "mocha",
+  "src_files" : [</p>
+
+<pre><code>"public/javascripts/vendor.js",
+"public/javascripts/app.js",
+"public/test/javascripts/test-vendor.js",
+"public/test/javascripts/test.js"
+</code></pre>
+
+<p>  ]
+}
+```</p>
+
+<p>これをプロジェクトのルートに配置します。</p>
+
+<h2>brunchが生成するmochaを消す</h2>
+
+<p>brunchはmochaやsinonを <code>public/test/javascripts/test-vendor.js</code> にまとめてビルドしているので、このビルドからmochaを外します。とりあえず <code>rm</code> してしまいます。</p>
+
+<p><code>
+$ rm test/vender/scripts/mocha[version].js
+</code></p>
+
+<h2>brunch watchを起動する</h2>
+
+<p>brunchはテストをまとめて <code>public/test/javascripts/test.js</code> にビルドしてくれます。
+なのでtestem側からはこれを見ているだけでOKです。便利ですね。</p>
+
+<p><code>
+$ brunch w -s
+</code></p>
+
+<p>ついでなのでサーバーも立てておきます。</p>
+
+<h2>testemでテストする</h2>
+
+<p>あとはtestemでテストするだけです。</p>
+
+<p><code>
+$ testem
+</code></p>
+
+<p>便利ですね！</p>
+]]></content>
+  </entry>
+  
+</feed>
