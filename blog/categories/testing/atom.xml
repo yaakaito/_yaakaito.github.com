@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/testing/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/"/>
+    <link href="http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit/"/>
     <updated>2013-03-15T02:05:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit</id>
+    <id>http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="https://hosted-ci.com/">Hosted CI</a>という、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
 そこで<a href="https://github.com/yaakaito/overline">Overline</a>のテストを回してみました。(Hosted CIはまだベータ版みたいです。)</p>
@@ -157,9 +157,9 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
   
   <entry>
     <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem/"/>
+    <link href="http://yaakaito.org/blog/2013/03/14/brunch-withw-testem/"/>
     <updated>2013-03-14T16:36:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem</id>
+    <id>http://yaakaito.org/blog/2013/03/14/brunch-withw-testem</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
 Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
@@ -227,9 +227,9 @@ $ testem
   
   <entry>
     <title type="html"><![CDATA[buster-html-docとあとcoffee]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee/"/>
+    <link href="http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee/"/>
     <updated>2013-03-02T14:40:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee</id>
+    <id>http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
 
@@ -405,9 +405,9 @@ piyo : 'piyo'
   
   <entry>
     <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/"/>
+    <link href="http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot/"/>
     <updated>2013-03-01T02:35:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot</id>
+    <id>http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
 
@@ -572,9 +572,9 @@ initialize = function() {</p>
   
   <entry>
     <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <link href="http://yaakaito.org/blog/2013/02/12/stubbilino/"/>
     <updated>2013-02-12T04:28:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <id>http://yaakaito.org/blog/2013/02/12/stubbilino</id>
     <content type="html"><![CDATA[<p>こんにちは、うきょーです。
 <a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
 

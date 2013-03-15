@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Jasmine | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/jasmine/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/jasmine/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[CoffeeScriptでライトにBDDする]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/10/10/light-coffee-bdd/"/>
+    <link href="http://yaakaito.org/blog/2012/10/10/light-coffee-bdd/"/>
     <updated>2012-10-10T00:54:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/10/10/light-coffee-bdd</id>
+    <id>http://yaakaito.org/blog/2012/10/10/light-coffee-bdd</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 ちょろいCoffeeScript(単発ライブラリ程度)をBDDしながら書くとしたら、
 どんな感じにするのが楽かなーと思ったのでちょっとやってみた。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Overline | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/overline/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/overline/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/"/>
+    <link href="http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit/"/>
     <updated>2013-03-15T02:05:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit</id>
+    <id>http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="https://hosted-ci.com/">Hosted CI</a>という、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
 そこで<a href="https://github.com/yaakaito/overline">Overline</a>のテストを回してみました。(Hosted CIはまだベータ版みたいです。)</p>
@@ -157,9 +157,9 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
   
   <entry>
     <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/06/overline-010-release/"/>
+    <link href="http://yaakaito.org/blog/2013/01/06/overline-010-release/"/>
     <updated>2013-01-06T13:45:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/06/overline-010-release</id>
+    <id>http://yaakaito.org/blog/2013/01/06/overline-010-release</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。寒いですね。
 Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
 バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>

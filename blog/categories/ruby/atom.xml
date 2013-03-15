@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Ruby | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/ruby/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JekyllでエセAPI的なの作る話]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api/"/>
+    <link href="http://yaakaito.org/blog/2013/03/06/jekyll-fake-api/"/>
     <updated>2013-03-06T01:55:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api</id>
+    <id>http://yaakaito.org/blog/2013/03/06/jekyll-fake-api</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！クライアント開発のみなさんこんばんは！
 元気にクライアントアプリを開発していますか？？？</p>
 

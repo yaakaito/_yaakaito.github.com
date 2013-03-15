@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Joke | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/joke/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/joke/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[便利なライブラリHullToRefresh作った]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh/"/>
+    <link href="http://yaakaito.org/blog/2012/08/31/hull-to-refresh/"/>
     <updated>2012-08-31T06:31:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/08/31/hull-to-refresh</id>
+    <id>http://yaakaito.org/blog/2012/08/31/hull-to-refresh</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！みなさんPullToRefresh使ってますか？便利ですよね。
 けど、引っ張って更新、そろそろ飽きてきませんか？てゆーか、なんでわざわざ引っ張らなきゃいけないんですか？</p>
 

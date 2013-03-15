@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: OCUnit | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/ocunit/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/ocunit/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing/"/>
+    <link href="http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing/"/>
     <updated>2012-12-09T00:02:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing</id>
+    <id>http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！！
 <a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
 みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Brunch | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/brunch/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/brunch/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem/"/>
+    <link href="http://yaakaito.org/blog/2013/03/14/brunch-withw-testem/"/>
     <updated>2013-03-14T16:36:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem</id>
+    <id>http://yaakaito.org/blog/2013/03/14/brunch-withw-testem</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
 Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
@@ -85,9 +85,9 @@ $ testem
   
   <entry>
     <title type="html"><![CDATA[BrunchでJavaScriptアプリはじめる手順]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/08/hello-brunch/"/>
+    <link href="http://yaakaito.org/blog/2013/03/08/hello-brunch/"/>
     <updated>2013-03-08T08:14:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/08/hello-brunch</id>
+    <id>http://yaakaito.org/blog/2013/03/08/hello-brunch</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 最近<a href="http://brunch.io/">Brunch</a>というものを知ったので、とりあえずはじめてみたときのメモです。
 正確には<a href="http://chaplinjs.org/">Chaplin</a>を先に知って、結構良さげだし試してみよーとか思ったところが始まりなので、brunch-with-chaplinを前提にしてます。(今回はchaplinの話はしません。)</p>

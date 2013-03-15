@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: BusterJS | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/busterjs/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/busterjs/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[buster-html-docとあとcoffee]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee/"/>
+    <link href="http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee/"/>
     <updated>2013-03-02T14:40:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee</id>
+    <id>http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
 
@@ -193,9 +193,9 @@ piyo : 'piyo'
   
   <entry>
     <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/"/>
+    <link href="http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot/"/>
     <updated>2013-03-01T02:35:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot</id>
+    <id>http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
 
@@ -360,14 +360,14 @@ initialize = function() {</p>
   
   <entry>
     <title type="html"><![CDATA[Buster.JSについて少しLTした]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/10/16/busterjs-clientjs-testing/"/>
+    <link href="http://yaakaito.org/blog/2012/10/16/busterjs-clientjs-testing/"/>
     <updated>2012-10-16T22:24:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/10/16/busterjs-clientjs-testing</id>
+    <id>http://yaakaito.org/blog/2012/10/16/busterjs-clientjs-testing</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 突然LTすることになったので、最近気になってるBuster.JSネタで話してきました。
 LTなのであんまり内容は濃くないです。iPhoneシュミレーターとかでも楽に動くし便利だね！というくらいです。</p>
 
-<script async class="speakerdeck-embed" data-id="507b79def901500002026b02" data-ratio="1.3333333333333333" src="http://yaakaito.github.com//speakerdeck.com/assets/embed.js"></script>
+<script async class="speakerdeck-embed" data-id="507b79def901500002026b02" data-ratio="1.3333333333333333" src="http://yaakaito.org//speakerdeck.com/assets/embed.js"></script>
 
 
 <p>スライドにはほとんど情報がないので、どんな感じで話したかを箇条書きで。</p>

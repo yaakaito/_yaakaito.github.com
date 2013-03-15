@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: InterfaceBuilder | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/interfacebuilder/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/interfacebuilder/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/11/register-nib/"/>
+    <link href="http://yaakaito.org/blog/2013/02/11/register-nib/"/>
     <updated>2013-02-11T02:51:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/11/register-nib</id>
+    <id>http://yaakaito.org/blog/2013/02/11/register-nib</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 <a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
 
@@ -55,9 +55,9 @@ cell = [[HogeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifi
   
   <entry>
     <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/"/>
+    <link href="http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei/"/>
     <updated>2013-02-10T16:32:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei</id>
+    <id>http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
 最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>

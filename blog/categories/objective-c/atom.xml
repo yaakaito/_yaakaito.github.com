@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/objective-c/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers/"/>
+    <link href="http://yaakaito.org/blog/2013/02/26/thanks-ios-developers/"/>
     <updated>2013-02-26T00:39:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers</id>
+    <id>http://yaakaito.org/blog/2013/02/26/thanks-ios-developers</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 2/23(土)に<a href="http://conference-with-developers.info/">conferenceWithDevelopers</a>というイベントを開催しました。
 当日はたくさんの方にご来場頂き、盛況のうちにイベントを終える事が出来ました。</p>
@@ -40,9 +40,9 @@
   
   <entry>
     <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <link href="http://yaakaito.org/blog/2013/02/12/stubbilino/"/>
     <updated>2013-02-12T04:28:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <id>http://yaakaito.org/blog/2013/02/12/stubbilino</id>
     <content type="html"><![CDATA[<p>こんにちは、うきょーです。
 <a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
 
@@ -116,9 +116,9 @@ Class<SBClassStub> uiimage = [Stubbilino stubClass:UIImage.class];</p>
   
   <entry>
     <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/11/register-nib/"/>
+    <link href="http://yaakaito.org/blog/2013/02/11/register-nib/"/>
     <updated>2013-02-11T02:51:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/11/register-nib</id>
+    <id>http://yaakaito.org/blog/2013/02/11/register-nib</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 <a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
 
@@ -156,9 +156,9 @@ cell = [[HogeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifi
   
   <entry>
     <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/"/>
+    <link href="http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei/"/>
     <updated>2013-02-10T16:32:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei</id>
+    <id>http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
 最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
@@ -270,9 +270,9 @@ if (!cell) {
   
   <entry>
     <title type="html"><![CDATA[Objective-CでRoleやってみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/31/objective-c-role/"/>
+    <link href="http://yaakaito.org/blog/2013/01/31/objective-c-role/"/>
     <updated>2013-01-31T01:38:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/31/objective-c-role</id>
+    <id>http://yaakaito.org/blog/2013/01/31/objective-c-role</id>
     <content type="html"><![CDATA[<p>こんにちは、うきょーです！
 Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: confWD | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/confwd/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/confwd/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers/"/>
+    <link href="http://yaakaito.org/blog/2013/02/26/thanks-ios-developers/"/>
     <updated>2013-02-26T00:39:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers</id>
+    <id>http://yaakaito.org/blog/2013/02/26/thanks-ios-developers</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 2/23(土)に<a href="http://conference-with-developers.info/">conferenceWithDevelopers</a>というイベントを開催しました。
 当日はたくさんの方にご来場頂き、盛況のうちにイベントを終える事が出来ました。</p>
@@ -40,9 +40,9 @@
   
   <entry>
     <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/26/confwd/"/>
+    <link href="http://yaakaito.org/blog/2013/01/26/confwd/"/>
     <updated>2013-01-26T14:56:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/26/confwd</id>
+    <id>http://yaakaito.org/blog/2013/01/26/confwd</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。</p>
 
 <p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>

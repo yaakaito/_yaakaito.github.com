@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Chaplin Overview オレオレ意訳]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/15/chaplin-overview-ja/"/>
+    <link href="http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja/"/>
     <updated>2013-03-15T07:22:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/15/chaplin-overview-ja</id>
+    <id>http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 このエントリは<a href="http://chaplinjs.org/">Chaplin</a>の<a href="https://github.com/chaplinjs/chaplin/blob/master/docs/overview.md">Overview</a>のオレオレ意訳です。あんまり信用はしないでください。
 おかしいだろそれ、というのあれば教えてください。</p>
@@ -63,7 +63,7 @@ URLの変更などを監視して、責任を持つよ。
 
 <p><code>Layout</code>はアプリケーションの中で一番外側にあるビューだよ。新しい<code>Controller</code>が起動されると、<code>Layout</code>は新しい<code>Controller</code>をメインビューにするよ。</p>
 
-<p><code>Layout</code>はアプリケーション内でのリンクをうまく処理する役割ももつよ。たとえば<code>&lt;a href="http://yaakaito.github.com/foo"&gt;</code>というリンクなんかも、正しく機能するようにしてくれるよ。</p>
+<p><code>Layout</code>はアプリケーション内でのリンクをうまく処理する役割ももつよ。たとえば<code>&lt;a href="http://yaakaito.org/foo"&gt;</code>というリンクなんかも、正しく機能するようにしてくれるよ。</p>
 
 <p>そして、<code>window</code>や<code>document</code>などのトップレイヤーに対するイベントハンドリングなどは<code>Layout</code>で行うよ。</p>
 
@@ -142,9 +142,9 @@ Chaplinアプリケーションでは、ほとんどのモジュール間通信�
   
   <entry>
     <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit/"/>
+    <link href="http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit/"/>
     <updated>2013-03-15T02:05:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/15/hosted-ci-with-ocunit</id>
+    <id>http://yaakaito.org/blog/2013/03/15/hosted-ci-with-ocunit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="https://hosted-ci.com/">Hosted CI</a>という、なんとMac環境でのJenkinsをホスティングしてくれるという超絶便利サービスがあるのですが、
 そこで<a href="https://github.com/yaakaito/overline">Overline</a>のテストを回してみました。(Hosted CIはまだベータ版みたいです。)</p>
@@ -181,7 +181,7 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
 <p>まずテスト用のSchemeを作ります。
 ビルドの設定へ<code>Jenkins</code>という名前のschemeを定義してあげます。</p>
 
-<p><img src="http://yaakaito.github.com/images/appcode-jenkins-scheme.png"></p>
+<p><img src="http://yaakaito.org/images/appcode-jenkins-scheme.png"></p>
 
 <p>ところでこのschemeをjenkinsから使うのかと思ったんですが、実はいらなかったので、自身のある人はやらなくてよいかもしれません。
 作ったら<code>xcodebuild</code>で<code>-list</code>してみましょう。</p>
@@ -208,36 +208,36 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
 
 <p>登録できたっぽいメールがきたので、Hosted CI へログインしましょう！ログインするとDashboardが出てきます。何個かプロジェクトがありますね。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-dashboard.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-dashboard.png"></p>
 
 <p>下の方にある Create new project からプロジェクトを追加します。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-create.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-create.png"></p>
 
 <h2>プロジェクトの作成</h2>
 
 <p>新しいプロジェクトのセットアップを始めます。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-new-project.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-new-project.png"></p>
 
 <p>おおーここから大まかな設定は出来るのかー。便利だなー。
 けどスクリプトとかどうせ書くんだろうしだるいなぁ、とか思いながらセットアップして、 Create Project します。さて次はめんどうな・・・</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-config-xcode.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-config-xcode.png"></p>
 
 <p>なん・・・だと・・・</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-selected-target.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-selected-target.png"></p>
 
 <p>こいつは・・・まさか・・・ 力強くUpdateします。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-created-project.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-created-project.png"></p>
 
 <p>プロジェクトのページができます。ビルドします。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-jenkins-console.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-jenkins-console.png"></p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-test-complete.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-test-complete.png"></p>
 
 <p>俺の知ってるJenkins+iOSと違う・・・。</p>
 
@@ -250,11 +250,11 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
 
 <p>HookのURLが提供されているので、それを使います。プロジェクトのページにあります。</p>
 
-<p><img src="http://yaakaito.github.com/images/hosted-ci-github-hook.png"></p>
+<p><img src="http://yaakaito.org/images/hosted-ci-github-hook.png"></p>
 
 <p>あとはGithubからJenkins Hook URL を設定して終わりです。</p>
 
-<p><img src="http://yaakaito.github.com/images/github-jenkins-hook.png"></p>
+<p><img src="http://yaakaito.org/images/github-jenkins-hook.png"></p>
 
 <h2>と、というわけで</h2>
 
@@ -287,9 +287,9 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
   
   <entry>
     <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem/"/>
+    <link href="http://yaakaito.org/blog/2013/03/14/brunch-withw-testem/"/>
     <updated>2013-03-14T16:36:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/14/brunch-withw-testem</id>
+    <id>http://yaakaito.org/blog/2013/03/14/brunch-withw-testem</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
 Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
@@ -366,9 +366,9 @@ Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多�
   
   <entry>
     <title type="html"><![CDATA[ブログのデザイン変えた]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/14/new-blog-design/"/>
+    <link href="http://yaakaito.org/blog/2013/03/14/new-blog-design/"/>
     <updated>2013-03-14T03:27:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/14/new-blog-design</id>
+    <id>http://yaakaito.org/blog/2013/03/14/new-blog-design</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！</p>
 
 <p>ブログのデザイン変えました！</p>
@@ -388,9 +388,9 @@ Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多�
   
   <entry>
     <title type="html"><![CDATA[BrunchでJavaScriptアプリはじめる手順]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/08/hello-brunch/"/>
+    <link href="http://yaakaito.org/blog/2013/03/08/hello-brunch/"/>
     <updated>2013-03-08T08:14:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/08/hello-brunch</id>
+    <id>http://yaakaito.org/blog/2013/03/08/hello-brunch</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 最近<a href="http://brunch.io/">Brunch</a>というものを知ったので、とりあえずはじめてみたときのメモです。
 正確には<a href="http://chaplinjs.org/">Chaplin</a>を先に知って、結構良さげだし試してみよーとか思ったところが始まりなので、brunch-with-chaplinを前提にしてます。(今回はchaplinの話はしません。)</p>
@@ -546,7 +546,7 @@ Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多�
 </span><span class='line'>$ open http://localhost:3333/</span></code></pre></td></tr></table></div></figure>
 
 
-<p><img src="http://yaakaito.github.com/images/hello-brunch.png"></p>
+<p><img src="http://yaakaito.org/images/hello-brunch.png"></p>
 
 <p>こういう感じにアプリが起動していることがわかります、やりましたね！</p>
 
@@ -580,9 +580,9 @@ phantomjs使いたいときは、</p>
   
   <entry>
     <title type="html"><![CDATA[JekyllでエセAPI的なの作る話]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api/"/>
+    <link href="http://yaakaito.org/blog/2013/03/06/jekyll-fake-api/"/>
     <updated>2013-03-06T01:55:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/06/jekyll-fake-api</id>
+    <id>http://yaakaito.org/blog/2013/03/06/jekyll-fake-api</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！クライアント開発のみなさんこんばんは！
 元気にクライアントアプリを開発していますか？？？</p>
 
@@ -670,9 +670,9 @@ phantomjs使いたいときは、</p>
   
   <entry>
     <title type="html"><![CDATA[buster-html-docとあとcoffee]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee/"/>
+    <link href="http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee/"/>
     <updated>2013-03-02T14:40:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/02/buster-html-doc-and-coffee</id>
+    <id>http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
 
@@ -879,9 +879,9 @@ phantomjs使いたいときは、</p>
   
   <entry>
     <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/"/>
+    <link href="http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot/"/>
     <updated>2013-03-01T02:35:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot</id>
+    <id>http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
 
@@ -1069,9 +1069,9 @@ BusterJSはデフォルトでいい感じのHTMLを作って使ってくれる�
   
   <entry>
     <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers/"/>
+    <link href="http://yaakaito.org/blog/2013/02/26/thanks-ios-developers/"/>
     <updated>2013-02-26T00:39:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/26/thanks-ios-developers</id>
+    <id>http://yaakaito.org/blog/2013/02/26/thanks-ios-developers</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 2/23(土)に<a href="http://conference-with-developers.info/">conferenceWithDevelopers</a>というイベントを開催しました。
 当日はたくさんの方にご来場頂き、盛況のうちにイベントを終える事が出来ました。</p>
@@ -1094,9 +1094,9 @@ BusterJSはデフォルトでいい感じのHTMLを作って使ってくれる�
   
   <entry>
     <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/12/stubbilino/"/>
+    <link href="http://yaakaito.org/blog/2013/02/12/stubbilino/"/>
     <updated>2013-02-12T04:28:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/12/stubbilino</id>
+    <id>http://yaakaito.org/blog/2013/02/12/stubbilino</id>
     <content type="html"><![CDATA[<p>こんにちは、うきょーです。
 <a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
 
@@ -1176,9 +1176,9 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
   
   <entry>
     <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/11/register-nib/"/>
+    <link href="http://yaakaito.org/blog/2013/02/11/register-nib/"/>
     <updated>2013-02-11T02:51:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/11/register-nib</id>
+    <id>http://yaakaito.org/blog/2013/02/11/register-nib</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 <a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
 
@@ -1221,9 +1221,9 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
   
   <entry>
     <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/"/>
+    <link href="http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei/"/>
     <updated>2013-02-10T16:32:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei</id>
+    <id>http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
 最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
@@ -1241,15 +1241,15 @@ Interface Builderを使いたい！と思うわけですが、<code>UITableViewC
 
 <p>おもむろにxibファイルを作ります。</p>
 
-<p><img src="http://yaakaito.github.com/images/uinib_1.png" width="320"></p>
+<p><img src="http://yaakaito.org/images/uinib_1.png" width="320"></p>
 
 <p>UIViewを消します。</p>
 
-<p><img src="http://yaakaito.github.com/images/uinib_2.png" width="320"></p>
+<p><img src="http://yaakaito.org/images/uinib_2.png" width="320"></p>
 
 <p>UITableViewCellをおきます。</p>
 
-<p><img src="http://yaakaito.github.com/images/uinib_3.png" width="320"></p>
+<p><img src="http://yaakaito.org/images/uinib_3.png" width="320"></p>
 
 <p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
 FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
@@ -1352,9 +1352,9 @@ FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>�
   
   <entry>
     <title type="html"><![CDATA[Objective-CでRoleやってみる]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/31/objective-c-role/"/>
+    <link href="http://yaakaito.org/blog/2013/01/31/objective-c-role/"/>
     <updated>2013-01-31T01:38:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/31/objective-c-role</id>
+    <id>http://yaakaito.org/blog/2013/01/31/objective-c-role</id>
     <content type="html"><![CDATA[<p>こんにちは、うきょーです！
 Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
 
@@ -1465,14 +1465,14 @@ Objective-C書いててふと、Role使いたいなー出来たっけーと、�
   
   <entry>
     <title type="html"><![CDATA[2/23に東京でiOSカンファレンスを開催します！]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/26/confwd/"/>
+    <link href="http://yaakaito.org/blog/2013/01/26/confwd/"/>
     <updated>2013-01-26T14:56:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/26/confwd</id>
+    <id>http://yaakaito.org/blog/2013/01/26/confwd</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。</p>
 
 <p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
 
-<p><img src="http://yaakaito.github.com/images/confwd.png" width="660"></p>
+<p><img src="http://yaakaito.org/images/confwd.png" width="660"></p>
 
 <p><a href="http://conference-with-developers.info/">公式サイト</a></p>
 
@@ -1503,9 +1503,9 @@ LT参加を希望されるかたは、チケットページより「LT参加チ�
   
   <entry>
     <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/06/overline-010-release/"/>
+    <link href="http://yaakaito.org/blog/2013/01/06/overline-010-release/"/>
     <updated>2013-01-06T13:45:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/06/overline-010-release</id>
+    <id>http://yaakaito.org/blog/2013/01/06/overline-010-release</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。寒いですね。
 Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
 バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
@@ -1619,9 +1619,9 @@ READMEに書いてある通りに分割してあるので、それなどを参�
   
   <entry>
     <title type="html"><![CDATA[ことしの抱負]]></title>
-    <link href="http://yaakaito.github.com/blog/2013/01/04/new-year-2013/"/>
+    <link href="http://yaakaito.org/blog/2013/01/04/new-year-2013/"/>
     <updated>2013-01-04T01:42:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2013/01/04/new-year-2013</id>
+    <id>http://yaakaito.org/blog/2013/01/04/new-year-2013</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！あけてましたね！
 しばらく書いてなかったので、書き方忘れそうでした。
 去年はコード書くのがひじょーにだるくなっていく年でした、歳ですかね。
@@ -1639,9 +1639,9 @@ READMEに書いてある通りに分割してあるので、それなどを参�
   
   <entry>
     <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing/"/>
+    <link href="http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing/"/>
     <updated>2012-12-09T00:02:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/12/09/adv-appcode-splendid-testing</id>
+    <id>http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！！
 <a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
 みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、
@@ -1654,18 +1654,18 @@ XcodeだとManageShemesからチェックを外して・・・とか、できる
 
 <p>普通にテストを書いていって・・・</p>
 
-<p><img src="http://yaakaito.github.com/images/adv-testing-test-case.png" width="420"></p>
+<p><img src="http://yaakaito.org/images/adv-testing-test-case.png" width="420"></p>
 
 <p>この<code>testMappedArrayUsingBlock</code>だけを実行して確かめてみたいなーと思っずたら、
 キーバインドを弄っていない場合は<code>Command + Option + R</code>(多分あってるはず)なんかで、Run > Run&#8230; を呼び出します。
 そうするとこんな感じのメニューが現れて・・・</p>
 
-<p><img src="http://yaakaito.github.com/images/adv-testing-select.png" width="420"></p>
+<p><img src="http://yaakaito.org/images/adv-testing-select.png" width="420"></p>
 
 <p><code>2</code>を押すと、このコンテキストのみを実行してくれます。
 すると・・・</p>
 
-<p><img src="http://yaakaito.github.com/images/adv-testing-result.png" width="420"></p>
+<p><img src="http://yaakaito.org/images/adv-testing-result.png" width="420"></p>
 
 <p>こういう感じに<code>testMappedArrayUsingBlock</code>だけ実行してくれます！便利ですね！！！</p>
 
@@ -1673,7 +1673,7 @@ XcodeだとManageShemesからチェックを外して・・・とか、できる
 
 <h2>ちなみにこれをXcodeで開いてみると・・・</h2>
 
-<p><img src="http://yaakaito.github.com/images/adv-testing-xcode.png" width="320"></p>
+<p><img src="http://yaakaito.org/images/adv-testing-xcode.png" width="320"></p>
 
 <p>こんな感じになっています。</p>
 ]]></content>
@@ -1681,9 +1681,9 @@ XcodeだとManageShemesからチェックを外して・・・とか、できる
   
   <entry>
     <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit/"/>
+    <link href="http://yaakaito.org/blog/2012/12/06/adv-nui-css-like-uikit/"/>
     <updated>2012-12-06T22:01:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/12/06/adv-nui-css-like-uikit</id>
+    <id>http://yaakaito.org/blog/2012/12/06/adv-nui-css-like-uikit</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 <a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 6日目の記事です。
 AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
@@ -1743,7 +1743,7 @@ READMEからの引用ですが、こんな感じに定義することができ�
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p><img src="http://yaakaito.github.com/images/adv_nui.png" width="320"></p>
+<p><img src="http://yaakaito.org/images/adv_nui.png" width="320"></p>
 
 <p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
 
@@ -1790,9 +1790,9 @@ READMEからの引用ですが、こんな感じに定義することができ�
   
   <entry>
     <title type="html"><![CDATA[iOSアプリのテストを１週してみて思ったこと]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/11/12/ios-testing-cycle-1/"/>
+    <link href="http://yaakaito.org/blog/2012/11/12/ios-testing-cycle-1/"/>
     <updated>2012-11-12T21:57:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/11/12/ios-testing-cycle-1</id>
+    <id>http://yaakaito.org/blog/2012/11/12/ios-testing-cycle-1</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 iOSアプリのテストのことをそろそろ１年くらい考えていて、１周した感じもするので、
 ここら辺で一旦の区切りの意味でもなんとなく考えをまとめてみる。
@@ -1958,9 +1958,9 @@ iOSでガッツリ動くゲームとか、もっと大規模なものを作り�
   
   <entry>
     <title type="html"><![CDATA[小さいCoffeeScriptのテストにはVowsが便利]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/11/03/vows-coffee-testing/"/>
+    <link href="http://yaakaito.org/blog/2012/11/03/vows-coffee-testing/"/>
     <updated>2012-11-03T02:04:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/11/03/vows-coffee-testing</id>
+    <id>http://yaakaito.org/blog/2012/11/03/vows-coffee-testing</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 小さめのツールをCoffeeScriptで書く機会があったのですが、
 テストに使った<a href="http://vowsjs.org/">Vows</a>(<a href="http://vowsjs.jp/">日本語訳</a>)というのが結構良かったです。

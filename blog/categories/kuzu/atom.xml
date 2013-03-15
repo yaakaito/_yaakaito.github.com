@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Kuzu | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/kuzu/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/kuzu/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[ｼｬﾊﾞﾄﾞｭﾋﾞ!ﾀｯﾁ!ﾀｲｼｮｰｸ!(ドワンゴ退職しました)]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/28/dwango/"/>
+    <link href="http://yaakaito.org/blog/2012/09/28/dwango/"/>
     <updated>2012-09-28T10:21:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/28/dwango</id>
+    <id>http://yaakaito.org/blog/2012/09/28/dwango</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！株式会社ドワンゴを退職しました！</p>
 
 <p><a href="http://www.amazon.co.jp/registry/wishlist/CKH9SKYKNOT5">とりあえずなんかください。</a></p>
@@ -75,9 +75,9 @@ iPad版のリーダーみたいなことをやらせてもらって、いろい�
   
   <entry>
     <title type="html"><![CDATA[22歳になりました]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/26/22-birthday/"/>
+    <link href="http://yaakaito.org/blog/2012/09/26/22-birthday/"/>
     <updated>2012-09-26T15:56:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/26/22-birthday</id>
+    <id>http://yaakaito.org/blog/2012/09/26/22-birthday</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！22歳になりました！！！！！！！！！</p>
 
 <p>今年もいろいろありました！！！！！！！！わけあって今仕事してません！！！！</p>

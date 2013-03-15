@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Github | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/github/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/github/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[iOSアプリからGithubOAuth使うの見直している]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/03/re-github-oauth/"/>
+    <link href="http://yaakaito.org/blog/2012/09/03/re-github-oauth/"/>
     <updated>2012-09-03T04:53:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/03/re-github-oauth</id>
+    <id>http://yaakaito.org/blog/2012/09/03/re-github-oauth</id>
     <content type="html"><![CDATA[<p>こんばんは！うきょーです、非常に眠いです。
 <a href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/">前回</a>わりとカジュアルな感じでOAuthしたんですが、
 <a href="https://twitter.com/azu_re/status/241853336964444160">こういうツイート</a>をみて、<code>state</code>のこと書いてなかったからそのことかなーと思ったんですが、
@@ -70,9 +70,9 @@
   
   <entry>
     <title type="html"><![CDATA[iOSアプリでGithubにOAuthする]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/09/01/github-oauth/"/>
+    <link href="http://yaakaito.org/blog/2012/09/01/github-oauth/"/>
     <updated>2012-09-01T19:12:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/09/01/github-oauth</id>
+    <id>http://yaakaito.org/blog/2012/09/01/github-oauth</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 Githubと連動したアプリを作りたくなったので、GithubのOAuthをiOSアプリでやってみました。</p>
 

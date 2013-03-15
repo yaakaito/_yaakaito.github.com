@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Vows | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/vows/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/vows/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[小さいCoffeeScriptのテストにはVowsが便利]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/11/03/vows-coffee-testing/"/>
+    <link href="http://yaakaito.org/blog/2012/11/03/vows-coffee-testing/"/>
     <updated>2012-11-03T02:04:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/11/03/vows-coffee-testing</id>
+    <id>http://yaakaito.org/blog/2012/11/03/vows-coffee-testing</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 小さめのツールをCoffeeScriptで書く機会があったのですが、
 テストに使った<a href="http://vowsjs.org/">Vows</a>(<a href="http://vowsjs.jp/">日本語訳</a>)というのが結構良かったです。

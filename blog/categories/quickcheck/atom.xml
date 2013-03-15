@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: QuickCheck | yaakaito.org]]></title>
-  <link href="http://yaakaito.github.com/blog/categories/quickcheck/atom.xml" rel="self"/>
-  <link href="http://yaakaito.github.com/"/>
-  <updated>2013-03-16T00:02:30+09:00</updated>
-  <id>http://yaakaito.github.com/</id>
+  <link href="http://yaakaito.org/blog/categories/quickcheck/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-16T03:06:11+09:00</updated>
+  <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[dequeueReusable~の実装とテスト]]></title>
-    <link href="http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making/"/>
+    <link href="http://yaakaito.org/blog/2012/08/19/dequeue-reusable-making/"/>
     <updated>2012-08-19T02:35:00+09:00</updated>
-    <id>http://yaakaito.github.com/blog/2012/08/19/dequeue-reusable-making</id>
+    <id>http://yaakaito.org/blog/2012/08/19/dequeue-reusable-making</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。UITableViewに実装されている<code>dequeueReusableCellWithIdentifier</code>と同等の機能を持ったものを開発したいんだけど的な話です。
 dataSourceに似たのインターフェイスを持ってビューを実装するときに、不特定個数のものに対してインスタンスをすべて生成するわけにも行かないので、ある程度制御してあげる必要があります。
 今回はUIScrollView上に構築していく前提になっています。シンタックスハイライターを作ろうとしているので、使い回して描画される対象になるのは、行数表示とコード一行分の表示です。</p>
