@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-16T03:06:11+09:00</updated>
+  <updated>2013-03-21T05:00:01+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,232 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Flow.jsをObjective-Cに移植してみた]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1/"/>
+    <updated>2013-03-21T03:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="http://www.slideshare.net/uupaa/flowjs">Flow.js</a> というJavaScriptのライブラリを見て、面白いなーと思ったのでObjective-Cでも似たようなことが出来るようにしてみた。junctionとforkは(まだ)実装してないので、完全な移植ではないです。
+コードも適当なので遊び程度に見ていただければ。
+ところで英語全然書けないので誰か「Natural English」ってプルリクをください。</p>
+
+<p><a href="https://github.com/yaakaito/Flow.m">Flow.m</a></p>
+
+<p>名前はまんま、一応Cocoapodsにも入れてはいるのでCocoapods使ってる人は</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="s1">&#39;Flow.m&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で使える。</p>
+
+<h2>出来ること</h2>
+
+<p>といっても、基本的には本家と同じなので、<a href="http://www.slideshare.net/uupaa/flowjs">本家のスライド</a>の方が詳しいのでそちらを参照していただきたく。
+ただ微妙に仕様が違うところもある感じなので流しで書いておく。</p>
+
+<h3>基本的な使い方</h3>
+
+<p><code>FMFlow</code>のオブジェクトを作る時に、<code>waits</code>と<code>completionBlock</code>を渡す。
+<code>FMFlow</code>のオブジェクトには<code>pass</code>ってメソッドが生えていて、これを呼び出すとカウンタが一個づつあがる。
+呼び出した回数が<code>waits</code>に達したら、<code>completionBlock</code>が呼び出される。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">2</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Flow!&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">pass</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">pass</span><span class="p">];</span> <span class="c1">// Flow!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>extends</h3>
+
+<p>処理待機数を増やす、増える方向だけ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">1</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Flow!&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">extend:</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">pass</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">pass</span><span class="p">];</span>  <span class="c1">// Flow!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>arguments</h3>
+
+<p>本家に合わせる為に若干無理してるんだけど、<code>passWithValue:</code> か <code>passWithValue:forKey:</code>で渡せるし、インデックスかキーか好きなほうでどうぞ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">2</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">([</span><span class="n">arguments</span> <span class="nl">argumentAtIndex:</span><span class="mi">0</span><span class="p">]);</span> <span class="c1">// HOGE</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">([</span><span class="n">arguments</span> <span class="nl">argumentAtIndex:</span><span class="mi">1</span><span class="p">]);</span> <span class="c1">// FUGA</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">([</span><span class="n">arguments</span> <span class="nl">argumentForKey:</span><span class="s">@&quot;fuga&quot;</span><span class="p">]);</span> <span class="c1">// FUGA</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">passWithValue:</span><span class="s">@&quot;HOGE&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">passWithValue:</span><span class="s">@&quot;FUGA&quot;</span> <span class="nl">forKey:</span><span class="s">@&quot;fuga&quot;</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>missとmissable</h3>
+
+<p>失敗可能回数の設定と、失敗の通知</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">1</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Flow!&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">missable:</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">miss</span><span class="p">];</span> <span class="c1">// 1回は許可してるので問題ない</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">pass</span><span class="p">];</span> <span class="c1">// Flow!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>失敗可能回数を超えた時は</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">2</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// error がこんな感じで渡ってくる</span>
+</span><span class='line'>    <span class="c1">// error.domain : org.yaakaito.flow</span>
+</span><span class='line'>    <span class="c1">// error.code   : kFMErrorCodeFailure</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">([</span><span class="n">arguments</span> <span class="nl">argumentAtIndex:</span><span class="mi">0</span><span class="p">]);</span> <span class="c1">// ここまでに渡した引数は渡ってくる </span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">missable:</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">miss</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">passWithValue:</span><span class="s">@&quot;HOGE&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="n">miss</span><span class="p">];</span> <span class="c1">// 失敗したのでCompletionBlockを呼び出す</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>exit</h3>
+
+<p>強制終了。これはちょっと本家と違って、<code>userInfo</code>を渡すと、<code>CompletionBlock</code>の<code>error.userInfo</code>に入ってくるようになってる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">FMFlow</span> <span class="o">*</span><span class="n">flow</span> <span class="o">=</span> <span class="p">[</span><span class="n">FMFlow</span> <span class="nl">flowWithWaits:</span><span class="mi">1</span> <span class="nl">completionBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSError</span> <span class="o">*</span><span class="n">error</span><span class="p">,</span> <span class="n">FMArguments</span> <span class="o">*</span><span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// error.domain : org.yaakaito.flow</span>
+</span><span class='line'>    <span class="c1">// error.code   : kFMErrorCodeExit</span>
+</span><span class='line'>    <span class="n">NSLog</span><span class="p">([[</span><span class="n">error</span> <span class="n">userInfo</span><span class="p">]</span> <span class="nl">objectForKey:</span><span class="s">@&quot;msg&quot;</span><span class="p">]);</span> <span class="c1">// えらー</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">flow</span> <span class="nl">exit:</span><span class="err">@</span><span class="p">{</span> <span class="s">@&quot;msg&quot;</span> <span class="o">:</span> <span class="s">@&quot;えらー&quot;</span><span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じです、残りはまた今度・・・</p>
+
+<h2>ところで</h2>
+
+<p>AppCode2.0のDarculaテーマは、見やすいのでおすすめです。</p>
+
+<p>あああと非同期テストが必要になったわけなんですが、Cocoapods見てても、SenTestingKit+Asyncみたいなのはみるんだけど単純なモジュールねーなーみたいな。
+みんなSenTestingKit用のスーパークラス作るのかなーと思った。
+僕は別にちょっと待っててくれればいいだけなので、べつにただのオブジェクトでもいいわってなって、<a href="https://github.com/yaakaito/AsyncTestSupporter">こういう</a>の作った。作ったというか、元から他のコードで使ってたやつをpod化しただけ。
+なんか<code>waitForTimeout:</code>くらいしか使わんし、それで十分やろ、とか思うので、それしか作ってない。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testAsyncMethod</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Create instance.</span>
+</span><span class='line'>  <span class="n">AsyncTestSupporter</span> <span class="o">*</span><span class="n">asyncTest</span> <span class="o">=</span> <span class="p">[[</span><span class="n">AsyncTestSupporter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Prepare for asynchronous call.</span>
+</span><span class='line'>  <span class="p">[</span><span class="n">asyncTest</span> <span class="n">prepare</span><span class="p">]</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">__weak</span> <span class="n">AsyncTestSupporter</span> <span class="o">*</span><span class="n">that</span> <span class="o">=</span> <span class="n">asyncTest</span><span class="p">;</span>
+</span><span class='line'>  <span class="c1">// Call asynchronous method.</span>
+</span><span class='line'>  <span class="p">[</span><span class="n">object</span> <span class="nl">asyncMethod:</span><span class="o">^</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// Completion blocks.</span>
+</span><span class='line'>    <span class="c1">// Wait for notify with timeout seconds.</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">that</span> <span class="nl">waitForTimeout:</span><span class="mi">10</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Notify state if completed asynchronous method.</span>
+</span><span class='line'>  <span class="p">[</span><span class="n">asyncTest</span> <span class="nl">notify:notify:</span><span class="n">kAsyncTestSupporterWaitStatusSuccess</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Chaplin Overview オレオレ意訳]]></title>
@@ -1953,116 +2179,6 @@ iOSでガッツリ動くゲームとか、もっと大規模なものを作り�
 ここのテストしんどそうだなーと思ったら、それはしんどいんだと思います。
 時には人海戦術でパターン入れてみる、というのも必要だと思いますし、
 結局のところ人が触らないと分からないところも多いですが、それもテストです。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[小さいCoffeeScriptのテストにはVowsが便利]]></title>
-    <link href="http://yaakaito.org/blog/2012/11/03/vows-coffee-testing/"/>
-    <updated>2012-11-03T02:04:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2012/11/03/vows-coffee-testing</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-小さめのツールをCoffeeScriptで書く機会があったのですが、
-テストに使った<a href="http://vowsjs.org/">Vows</a>(<a href="http://vowsjs.jp/">日本語訳</a>)というのが結構良かったです。
-一言で言えば、BDDライクで非同期テストに強く、Coffeeと相性のよい、topicという独特の概念をもったフレームワークです。(長い)</p>
-
-<h2>Vowsのセットアップと実行</h2>
-
-<p>npm経由でインストールします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>npm install vows
-</span><span class='line'>npm install -g vows</span></code></pre></td></tr></table></div></figure>
-
-
-<p>設定ファイルとかは特に必要なく、直接テストファイルを実行します。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vows test.js</span></code></pre></td></tr></table></div></figure>
-
-
-<p>CoffeeScriptをそのまま実行することができます。ここが重要</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vows test.coffee --spec</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>--spec</code>オプションを付けるといい感じの出力になります。</p>
-
-<h2>Vowsのテストケース</h2>
-
-<p>簡単な例として文字列を反転する<code>reverse</code>というモジュールを考えたときのテストはこんな感じ。
-特にCoffeeScriptで書くことにメリットを感じるので、サンプルは全部CoffeeScriptです。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vows    = require 'vows'
-</span><span class='line'>assert  = require 'assert'
-</span><span class='line'>reverse = require 'reverse'
-</span><span class='line'>
-</span><span class='line'>vows
-</span><span class='line'>  .describe('reverse')
-</span><span class='line'>  .addBatch
-</span><span class='line'>    'example' :
-</span><span class='line'>      topic : -&gt;
-</span><span class='line'>        reverse('abc')
-</span><span class='line'>      'should return cba' : (str) -&gt;
-</span><span class='line'>        assert.equal str, 'cba'</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>describe</code>を定義して、<code>addBatch</code>でテストのまとまりを追加します。
-ポイントはさっきからちょっと出てきている<code>topic</code>で、これの実行結果がその下のテストケースへ渡ってきます。
-この中は非同期でもokみたいで(今回は試していないけど)、<code>topic</code>の実行が終わったタイミングでテストが走る、という仕組みみたいです。便利ですね。
-<code>topic</code>を使っていくとどうしてもモジュールを小さくせざるをえないので、きれいなコードを書くのにはよいと思います。</p>
-
-<p><code>topic</code>とかテストケースはネストすることもできて、例えばabcの他にdefgもテストしたい！とかって場合は、</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>.addBatch
-</span><span class='line'>  'example2' :
-</span><span class='line'>    topic : reverse
-</span><span class='line'>    'when abc' :
-</span><span class='line'>      topic : (f) -&gt; f('abc')
-</span><span class='line'>      'should return cba' : (str) -&gt;
-</span><span class='line'>        assert.equal str, 'cba'
-</span><span class='line'>    'when abc' :
-</span><span class='line'>      topic : (f) -&gt; f('defg')
-</span><span class='line'>      'should return gfed' : (str) -&gt;
-</span><span class='line'>        assert.equal str, 'gfed'</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じで書くこともできます、一つ上の<code>topic</code>は次の<code>topic</code>に渡っていくので、テストするスコープを制限することができます。
-ただ、ネストしすぎるとちょっと読みにくいですね。</p>
-
-<h2>まとめ</h2>
-
-<p>個人的には、今回みたいにNodeを使って小さいコマンドラインツールとかを全部Coffeeで書くときに使うのがよいかなーという印象でした。
-クライアントサイドのテストとかになってくると、長い目で見たときにBusterJSやその他Swarm系使った方がよさそうな印象。
-大きめのプロジェクトになってくると、テストケースが要はでかいオブジェクトの定義なので、どうもしんどくなっていく気がする。</p>
-
-<p>テストの為の中間ファイルとして.jsを吐く必要がないので、リポジトリがCoffeeScriptだけできれいに保てるのもポイント。
-vowsでカバーできるサイズなら全部CoffeeScriptで書いてしまっても、それなりにモチベーションが保てる。(CoffeeScriptそんなに好きじゃない)</p>
 ]]></content>
   </entry>
   

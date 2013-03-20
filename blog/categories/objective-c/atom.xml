@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-16T03:06:11+09:00</updated>
+  <updated>2013-03-21T05:00:01+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,177 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Flow.jsをObjective-Cに移植してみた]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1/"/>
+    <updated>2013-03-21T03:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="http://www.slideshare.net/uupaa/flowjs">Flow.js</a> というJavaScriptのライブラリを見て、面白いなーと思ったのでObjective-Cでも似たようなことが出来るようにしてみた。junctionとforkは(まだ)実装してないので、完全な移植ではないです。
+コードも適当なので遊び程度に見ていただければ。
+ところで英語全然書けないので誰か「Natural English」ってプルリクをください。</p>
+
+<p><a href="https://github.com/yaakaito/Flow.m">Flow.m</a></p>
+
+<p>名前はまんま、一応Cocoapodsにも入れてはいるのでCocoapods使ってる人は</p>
+
+<p><code>ruby
+pod 'Flow.m'
+</code></p>
+
+<p>で使える。</p>
+
+<h2>出来ること</h2>
+
+<p>といっても、基本的には本家と同じなので、<a href="http://www.slideshare.net/uupaa/flowjs">本家のスライド</a>の方が詳しいのでそちらを参照していただきたく。
+ただ微妙に仕様が違うところもある感じなので流しで書いておく。</p>
+
+<h3>基本的な使い方</h3>
+
+<p><code>FMFlow</code>のオブジェクトを作る時に、<code>waits</code>と<code>completionBlock</code>を渡す。
+<code>FMFlow</code>のオブジェクトには<code>pass</code>ってメソッドが生えていて、これを呼び出すとカウンタが一個づつあがる。
+呼び出した回数が<code>waits</code>に達したら、<code>completionBlock</code>が呼び出される。</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>NSLog(@"Flow!");
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow pass];
+[flow pass]; // Flow!
+```</p>
+
+<h3>extends</h3>
+
+<p>処理待機数を増やす、増える方向だけ。</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>NSLog(@"Flow!");
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow extend:1];</p>
+
+<p>[flow pass];
+[flow pass];  // Flow!
+```</p>
+
+<h3>arguments</h3>
+
+<p>本家に合わせる為に若干無理してるんだけど、<code>passWithValue:</code> か <code>passWithValue:forKey:</code>で渡せるし、インデックスかキーか好きなほうでどうぞ。</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>NSLog([arguments argumentAtIndex:0]); // HOGE
+NSLog([arguments argumentAtIndex:1]); // FUGA
+NSLog([arguments argumentForKey:@"fuga"]); // FUGA
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow passWithValue:@"HOGE"];
+[flow passWithValue:@"FUGA" forKey:@"fuga"];
+```</p>
+
+<h3>missとmissable</h3>
+
+<p>失敗可能回数の設定と、失敗の通知</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>NSLog(@"Flow!");
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow missable:1];</p>
+
+<p>[flow miss]; // 1回は許可してるので問題ない
+[flow pass]; // Flow!
+```</p>
+
+<p>失敗可能回数を超えた時は</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>// error がこんな感じで渡ってくる
+// error.domain : org.yaakaito.flow
+// error.code   : kFMErrorCodeFailure
+NSLog([arguments argumentAtIndex:0]); // ここまでに渡した引数は渡ってくる 
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow missable:1];</p>
+
+<p>[flow miss];
+[flow passWithValue:@"HOGE"];
+[flow miss]; // 失敗したのでCompletionBlockを呼び出す
+```</p>
+
+<h3>exit</h3>
+
+<p>強制終了。これはちょっと本家と違って、<code>userInfo</code>を渡すと、<code>CompletionBlock</code>の<code>error.userInfo</code>に入ってくるようになってる。</p>
+
+<p>```objective-c
+FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
+
+<pre><code>// error.domain : org.yaakaito.flow
+// error.code   : kFMErrorCodeExit
+NSLog([[error userInfo] objectForKey:@"msg"]); // えらー
+</code></pre>
+
+<p>}];</p>
+
+<p>[flow exit:@{ @"msg" : @"えらー"}];
+```</p>
+
+<p>こんな感じです、残りはまた今度・・・</p>
+
+<h2>ところで</h2>
+
+<p>AppCode2.0のDarculaテーマは、見やすいのでおすすめです。</p>
+
+<p>あああと非同期テストが必要になったわけなんですが、Cocoapods見てても、SenTestingKit+Asyncみたいなのはみるんだけど単純なモジュールねーなーみたいな。
+みんなSenTestingKit用のスーパークラス作るのかなーと思った。
+僕は別にちょっと待っててくれればいいだけなので、べつにただのオブジェクトでもいいわってなって、<a href="https://github.com/yaakaito/AsyncTestSupporter">こういう</a>の作った。作ったというか、元から他のコードで使ってたやつをpod化しただけ。
+なんか<code>waitForTimeout:</code>くらいしか使わんし、それで十分やろ、とか思うので、それしか作ってない。</p>
+
+<p>```objective-c
+- (void)testAsyncMethod
+{</p>
+
+<p>  // Create instance.
+  AsyncTestSupporter *asyncTest = [[AsyncTestSupporter alloc] init];</p>
+
+<p>  // Prepare for asynchronous call.
+  __weak AsyncTestSupporter *that = asyncTest;
+  // Call asynchronous method.
+  [object asyncMethod:<sup>()</sup> { // Completion blocks.</p>
+
+<pre><code>// Wait for notify with timeout seconds.
+[that waitForTimeout:10];
+</code></pre>
+
+<p>  }];</p>
+
+<p>  // Notify state if completed asynchronous method.
+  [asyncTest notify:notify:kAsyncTestSupporterWaitStatusSuccess];</p>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[conferenceWithDevelopersが無事に終了しました]]></title>
@@ -264,96 +435,6 @@ if (!cell) {
 <p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
 
 <iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Objective-CでRoleやってみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/01/31/objective-c-role/"/>
-    <updated>2013-01-31T01:38:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/01/31/objective-c-role</id>
-    <content type="html"><![CDATA[<p>こんにちは、うきょーです！
-Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
-
-<p>怪しいところもあるので、あんまり参考にならないかもですよと言っておく。</p>
-
-<h2>最終的にデータと振る舞いを合体させる</h2>
-
-<p>ってのができればいいと思うんだけど、Objective-Cならカテゴリで書いておけばよくね？と思ったり思わなかったり。
-けどちょっと違うよねーってことで、今回はそういうのはやめとく。</p>
-
-<p>で、実装としては<code>NSProxy</code>使えばそれっぽいものは割と簡単に出来た。</p>
-
-<p><a href="https://github.com/yaakaito/ObjCRoleSample">ObjCRoleSample</a></p>
-
-<p><code>objective-c
-@interface Book : NSObject
-@property (nonatomic, strong) NSString *title;
-@property (nonatomic) NSUInteger price;
-@end
-</code></p>
-
-<p>こういうモデルに対して、</p>
-
-<p>```objective-c
-@implementation BookPurchase</p>
-
-<ul>
-<li>(void)purchase
-{
-  Book <em>this = (Book </em>)self.target;
-  NSLog(@"Purchased! %@ %u", this.title, this.price);
-}
-@end
-```</li>
-</ul>
-
-
-<p>こんな感じの振る舞いを、</p>
-
-<p>```objective-c
-Book *book = [[Book alloc] init];
-book.title = @"hoge";
-book.price = 420;</p>
-
-<p>Book<BookPurchase> *extended = [book roleExtended:BookPurchase.class];</p>
-
-<p>[extended purchase];
-```</p>
-
-<p>こう合成できるようにしてみた。</p>
-
-<p><code>Book&lt;BookPurchase&gt;</code>が気に入らないと人は、ちょっと微妙な感じがするんだけど、<code>Book</code>の定義の方に書いちゃえば省略はできる。</p>
-
-<p>実装としては基本的には<code>NSProxy</code>で自分にメッセージ送れなかったら流すようにしたものをベースクラスにしてあげて、<code>protocol</code>を使ってこんな感じでロールを定義する</p>
-
-<p>```objective-c
-@protocol BookPurchase <NSObject>
-@optional
-- (void)purchase;
-@end</p>
-
-<p>@interface BookPurchase : OCRole <BookPurchase>
-@end
-```</p>
-
-<p>こうやると<code>BookPurchase</code>ロールと<code>Book</code>モデルで同じメッセージが送れるような(正確にはXCodeでコンパイル出来るような)感じになる。
-見た目はあんまりよくない。し、あんまり実用的でもないような感じがする。マクロとかで書きやすくしてあげるとちょっとは変わるかなー。</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="473" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
 ]]></content>
   </entry>
