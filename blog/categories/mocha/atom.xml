@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mocha | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/mocha/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-24T01:22:09+09:00</updated>
+  <updated>2013-03-24T01:24:27+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -48,7 +48,6 @@ $ nvm install 0.10.1
 <li>phantomjs</li>
 </ul>
 </li>
-<li>testem</li>
 </ul>
 
 
