@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>テスト書きながらTypeScript書ける環境作る - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！TypeScriptを書いています。
+というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
+触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。 そこで &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">テスト書きながらTypeScript書ける環境作る</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-24T19:33:00+09:00" pubdate data-updated="true">Mar 24<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mocha/'>Mocha</a>, <a class='category' href='/blog/categories/testem/'>Testem</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/typescript/'>TypeScript</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！TypeScriptを書いています。
+というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
+触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。</p>
+
+<p>そこで、テストを書きたいわけなんですが、TypeScriptのテスト環境の情報が少ないので、手探りでやったところまで記録しておきます。</p>
+
+<p><a href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/">前回、Mocha + Testem + HTMLCov</a> で基礎的な部分を作ったので、これをベースにします。
+なのでこれにTypeScriptのコンパイルやらを乗せていく感じです。</p>
+
+<p><a href="https://github.com/yaakaito/typebone">リポジトリはgithubにある</a>ので、見ながら読むと分かりやすいかもしれません。</p>
+
+<h2>TypeScriptのコンパイル</h2>
+
+<p>TypeScriptのコンパイルには <code>tsc</code> を使うので、npmで入れます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g tsc</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>tsc</code> でコンパイルする時に、<code>--out</code> オプションを付けると <code>refrence</code> を解決しながらビルドしてくれます。
+で、これは流儀的にどうなのかは分からないんですが、これを利用して、コンパイル対象は <code>reference</code> するだけにしました。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/backbone.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;events.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;model.ts&quot; /&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とりあえず<code>Backbone.Events</code>と<code>Backbone.Model</code>だけ用意します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/events.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/underscore.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Events</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/model.ts</span>
+</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Model</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにしておいて、以下のコマンドでビルドします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すると、<code>backbone.js</code>に <code>events.ts</code> と <code>models.ts</code> をコンパイルして、依存を解決したものが吐き出されます。
+これには <code>underscore</code> は含まれません。</p>
+
+<h2>テスト用のビルドとTestem</h2>
+
+<p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/events-test.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../src/events.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/mocha.d.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/chai.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Backbone.Events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;test name&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>test/bootstrap.ts</code> みたいなのを作って、こっちも <code>reference</code> だけにします。(<code>expect</code>のexportだけ書いてます。)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;events-tests.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vender/chai.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">expect</span> <span class="o">=</span> <span class="nx">chai</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これをビルドします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">ts</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、全部の<code>reference</code>が解決されると、さっきの<code>backbone.js</code>の下にテストが丸々ついたようなファイルが生成されます。
+これをTestemに食わせます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// testem.json</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;framework&quot;</span> <span class="o">:</span> <span class="s2">&quot;mocha&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;src_files&quot;</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;vendor/chai.js&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;vendor/underscore.js&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;backbone.test.js&quot;</span>
+</span><span class='line'>  <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでTestemでテストできるようになりました、<code>tsc</code> には <code>watch</code> があるので、これを使って 変更監視 -> 自動コンパイル -> テスト自動実行 というすてき環境を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">watch</span> <span class="o">-</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったー！これでいける！
+・・・と思ったんですが、どうもちゃんと <code>watch</code> が動いていなくて、うまくコンパイルできません。
+なので<a href="https://github.com/yaakaito/typebone/blob/master/Guardfile">Guardで代用</a>しました。</p>
+
+<p>ちょっと面倒ですが、すてき環境ができましたね！</p>
+
+<h2>カバレッジ</h2>
+
+<p>カバレッジをとるときは、<code>backbone.js</code>側に<code>jscoverage</code>をかける必要があるので、別々にコンパイルが必要です。
+となると、さっきの <code>test/bootstrap.js</code> なんかで依存関係を解決しながらコンパイルできないので、個別にコンパイルします。
+個別にコンパイルしたテストを全部 <code>cat</code>で繋げて、<code>all-tests.js</code> みたいなのを作ります。あとは前回を参考にしてください。</p>
+
+<p>Makefileにするとこんな感じ</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">compile</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">compile</span><span class="o">-</span><span class="nx">test</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">tsc</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">ts</span>
+</span><span class='line'>  <span class="nx">cat</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span> <span class="o">&gt;</span> <span class="nx">all</span><span class="o">-</span><span class="nx">tests</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>  <span class="nx">rm</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">cover</span><span class="o">:</span> <span class="nx">compile</span> <span class="nx">compile</span><span class="o">-</span><span class="nx">test</span>
+</span><span class='line'>  <span class="nx">jscoverage</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">cover</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>  <span class="nx">mocha</span><span class="o">-</span><span class="nx">phantomjs</span> <span class="o">-</span><span class="nx">R</span> <span class="nx">json</span><span class="o">-</span><span class="nx">cov</span> <span class="nx">cover</span><span class="o">-</span><span class="nx">runner</span><span class="p">.</span><span class="nx">html</span> <span class="o">|</span> <span class="nx">json2htmlcov</span> <span class="o">&gt;</span> <span class="nx">cover</span><span class="p">.</span><span class="nx">html</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>とりあえず</h2>
+
+<p>こんな感じで一旦は不満なく開発できる環境ができました。</p>
+
+<p>TypeScriptまだ勝手がよく分かってないので、コードはあんまり見ないでーーー＾ー＾</p>
+
+<p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
+無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
+なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-24T19:33:00+09:00" pubdate data-updated="true">Mar 24<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/" data-via="" data-counturl="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/03/23/testing-mocha-testem-htmlcov/" title="Previous Post: Mocha + Testem + HTMLCov 出来るようにする">&laquo; Mocha + Testem + HTMLCov 出来るようにする</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/03/24/test-driven-typescript/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/03/24/test-driven-typescript/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

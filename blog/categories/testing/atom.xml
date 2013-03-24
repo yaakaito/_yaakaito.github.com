@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-24T01:24:27+09:00</updated>
+  <updated>2013-03-24T20:06:57+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,169 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[テスト書きながらTypeScript書ける環境作る]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/"/>
+    <updated>2013-03-24T19:33:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/24/test-driven-typescript</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScriptを書いています。
+というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
+触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。</p>
+
+<p>そこで、テストを書きたいわけなんですが、TypeScriptのテスト環境の情報が少ないので、手探りでやったところまで記録しておきます。</p>
+
+<p><a href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/">前回、Mocha + Testem + HTMLCov</a> で基礎的な部分を作ったので、これをベースにします。
+なのでこれにTypeScriptのコンパイルやらを乗せていく感じです。</p>
+
+<p><a href="https://github.com/yaakaito/typebone">リポジトリはgithubにある</a>ので、見ながら読むと分かりやすいかもしれません。</p>
+
+<h2>TypeScriptのコンパイル</h2>
+
+<p>TypeScriptのコンパイルには <code>tsc</code> を使うので、npmで入れます。</p>
+
+<p><code>
+$ npm install -g tsc
+</code></p>
+
+<p><code>tsc</code> でコンパイルする時に、<code>--out</code> オプションを付けると <code>refrence</code> を解決しながらビルドしてくれます。
+で、これは流儀的にどうなのかは分からないんですが、これを利用して、コンパイル対象は <code>reference</code> するだけにしました。</p>
+
+<p><code>javascript
+// src/backbone.ts
+/// &lt;reference path="events.ts" /&gt;
+/// &lt;reference path="model.ts" /&gt;
+</code></p>
+
+<p>とりあえず<code>Backbone.Events</code>と<code>Backbone.Model</code>だけ用意します。</p>
+
+<p>```javascript
+// src/events.ts
+/// <reference path="../vendor/underscore.d.ts" /></p>
+
+<p>module Backbone {
+  export class Events {
+  // ....
+  }
+}
+```</p>
+
+<p><code>javascript
+// src/model.ts
+module Backbone {
+  export class Model {
+  // ....
+  }
+}
+</code></p>
+
+<p>こういう感じにしておいて、以下のコマンドでビルドします。</p>
+
+<p><code>
+$ tsc --out backbone.js src/backbone.ts
+</code></p>
+
+<p>すると、<code>backbone.js</code>に <code>events.ts</code> と <code>models.ts</code> をコンパイルして、依存を解決したものが吐き出されます。
+これには <code>underscore</code> は含まれません。</p>
+
+<h2>テスト用のビルドとTestem</h2>
+
+<p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
+
+<p>```javascript
+// test/events-test.ts
+/// <reference path="../src/events.ts" />
+/// <reference path="../vendor/mocha.d.ts" />
+/// <reference path="../vendor/chai.d.ts" /></p>
+
+<p>describe('Backbone.Events', function(){
+  it('test name', function(){</p>
+
+<pre><code>// ....
+</code></pre>
+
+<p>  });
+});
+```</p>
+
+<p><code>test/bootstrap.ts</code> みたいなのを作って、こっちも <code>reference</code> だけにします。(<code>expect</code>のexportだけ書いてます。)</p>
+
+<p>```javascript
+/// <reference path="events-tests.ts" />
+/// <reference path="../vender/chai.d.ts" /></p>
+
+<p>var expect = chai.expect;
+```</p>
+
+<p>これをビルドします。</p>
+
+<p><code>javascript
+$ tsc --out backbone.test.js test/bootstrap.ts
+</code></p>
+
+<p>これで、全部の<code>reference</code>が解決されると、さっきの<code>backbone.js</code>の下にテストが丸々ついたようなファイルが生成されます。
+これをTestemに食わせます。</p>
+
+<p>```javascript
+// testem.json
+{
+  "framework" : "mocha",
+  "src_files" : [</p>
+
+<pre><code>"vendor/chai.js",
+"vendor/underscore.js",
+"backbone.test.js"
+</code></pre>
+
+<p>  ]
+}
+```</p>
+
+<p>これでTestemでテストできるようになりました、<code>tsc</code> には <code>watch</code> があるので、これを使って 変更監視 -> 自動コンパイル -> テスト自動実行 というすてき環境を作ります。</p>
+
+<p><code>
+$ tsc --watch -out backbone.test.js test/bootstrap.js
+</code></p>
+
+<p>やったー！これでいける！
+・・・と思ったんですが、どうもちゃんと <code>watch</code> が動いていなくて、うまくコンパイルできません。
+なので<a href="https://github.com/yaakaito/typebone/blob/master/Guardfile">Guardで代用</a>しました。</p>
+
+<p>ちょっと面倒ですが、すてき環境ができましたね！</p>
+
+<h2>カバレッジ</h2>
+
+<p>カバレッジをとるときは、<code>backbone.js</code>側に<code>jscoverage</code>をかける必要があるので、別々にコンパイルが必要です。
+となると、さっきの <code>test/bootstrap.js</code> なんかで依存関係を解決しながらコンパイルできないので、個別にコンパイルします。
+個別にコンパイルしたテストを全部 <code>cat</code>で繋げて、<code>all-tests.js</code> みたいなのを作ります。あとは前回を参考にしてください。</p>
+
+<p>Makefileにするとこんな感じ</p>
+
+<p>```
+compile:
+  tsc --out backbone.js src/backbone.ts</p>
+
+<p>compile-test:
+  tsc test/<em>.ts
+  cat test/</em>.js > all-tests.js
+  rm test/*.js</p>
+
+<p>cover: compile compile-test
+  jscoverage backbone.js backbone.cover.js
+  mocha-phantomjs -R json-cov cover-runner.html | json2htmlcov > cover.html
+```</p>
+
+<h2>とりあえず</h2>
+
+<p>こんな感じで一旦は不満なく開発できる環境ができました。</p>
+
+<p>TypeScriptまだ勝手がよく分かってないので、コードはあんまり見ないでーーー＾ー＾</p>
+
+<p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
+無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
+なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Mocha + Testem + HTMLCov 出来るようにする]]></title>
@@ -98,7 +261,7 @@ else {
 
 <p>テストはこんな感じ、<code>NO</code>の方は通らないようにしてあります。</p>
 
-<p>```
+<p>```javascript
 // /test/tests/sample-tests.js
 describe('Sample', function(){
   var a;
@@ -629,173 +792,6 @@ piyo : 'piyo'
 <p>```</p>
 
 <p>みたいにして通信部分をモックできるようしてみた、便利。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[BusterJSでテストに使うHTMLの設定と手動実行]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot/"/>
-    <updated>2013-03-01T02:35:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/01/buster-testbed-and-boot</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-みなさんJavaScriptのテスト書いてますか？当然書いてますよね？？？</p>
-
-<p>JSでテスト書く時に、こういうHTMLを使いたいんだけど的なことってあると思います。
-BusterJSはデフォルトでいい感じのHTMLを作って使ってくれるので楽にテストをはじめられるんですが、まあ差し替えたいよねーってことで差し替えます。</p>
-
-<p>BusterJSではこれをtestbedと呼んでいて、設定ファイル(だいたいの場合は<code>buster.js</code>)で設定することができます。
-設定の仕方は<a href="http://docs.busterjs.org/en/latest/overview/#custom-test-beds">こんな感じ</a>なんだけど、いまんところ<code>testbed</code>ってプロパティは設定できないので、<code>resources</code>から設定します。</p>
-
-<p>```javascript
-var config = module.exports;</p>
-
-<p>config["test"] = {</p>
-
-<pre><code>sources: ["lib/*.js"],
-tests: ["test/*-test.js"],
-resources : {
-    path : "/",
-    file : "hoge.html"
-}
-</code></pre>
-
-<p>};
-```</p>
-
-<p>というわけでこんな感じに設定を追加します。こうすると<code>hoge.html</code>を使ってテストを走らせてくれます。
-で、テスト用のファイルを読み込まなきゃいけないわけで(sourcesとかtestsに設定してるやつ)、それがどこに埋め込まれるのかなーというと、コードを見てみた感じ、</p>
-
-<ol>
-<li><code>{{scripts}}</code> という文字列を探して、あったらそこを置き換える</li>
-<li><code>&lt;/body&gt;</code> を探して、あったらその直前に置く</li>
-<li><code>&lt;/html&gt;</code> を探して、あったらその直前に置く</li>
-<li>何も見つからなかったら、一番最後に連結する</li>
-</ol>
-
-
-<p>という順番になってた。(<code>resource-middleware</code>とか読めば分かる)
-なので、例えばテストの時だけ <code>initialize</code> みたいな関数を、セットアップスクリプト走らせる前に置き換えたいんだけど的なときは、(↓みたいな感じの場合)</p>
-
-<p>```html</p>
-
-<script src="hoge.js"></script>
-
-
-<!-- この中に initialize って関数があるとする -->
-
-
-<script>
-// この時点までにテストのときだけinitializeを置き換えてほしい ＞＜
-initialize({
-    hoge : fuga
-});
-</script>
-
-
-<p>```</p>
-
-<p><code>{{scripts}}</code> を使って、</p>
-
-<p>```html</p>
-
-<script src="hoge.js"></script>
-
-
-<p>{{scripts}}</p>
-
-<script>
-initialize({
-    hoge : fuga
-});
-</script>
-
-
-<p>```</p>
-
-<p>こういう感じにする。で、<code>bootstrap.js</code>みたいなのを用意してあげて、
-<code>javascript
-// bootstrap.js
-initialize = function() { } // 何もしないでーーー＾ー＾
-</code></p>
-
-<p>これを<code>sources</code>に追加する。</p>
-
-<p>```javascript
-var config = module.exports;</p>
-
-<p>config["test"] = {</p>
-
-<pre><code>sources: ["lib/*.js", "bootstrap.js"],
-tests: ["test/*-test.js"],
-resources : {
-    path : "/",
-    file : "hoge.html"
-}
-</code></pre>
-
-<p>};
-```</p>
-
-<p>とすると、実際にテストで使われるファイルは、</p>
-
-<p>```html</p>
-
-<script src="hoge.js"></script>
-
-
-<script src="bootstrap.js"></script>
-
-
-<script src="テストとか"></script>
-
-
-<script>
-initialize({ // なにも・・・なかった・・・
-    hoge : fuga
-});
-</script>
-
-
-<p>```</p>
-
-<p>こんな感じになる。便利！</p>
-
-<p>で、次にテストの実行開始タイミングをコントロールしたいと思うんだけど、割と簡単んで、<a href="http://docs.busterjs.org/en/latest/starting-testrun-manually/#starting-testrun-manually">この辺</a>にも書いてあるように、</p>
-
-<p>```javascript
-var config = module.exports;</p>
-
-<p>config["test"] = {</p>
-
-<pre><code>autoRun: false,
-sources: ["lib/*.js"],
-tests: ["test/*-test.js"],
-resources : {
-    path : "/",
-    file : "hoge.html"
-}
-</code></pre>
-
-<p>};
-```</p>
-
-<p><code>autoRun</code>を<code>false</code>にして、さっきの例だと、<code>initialize</code>まで呼ばれたら実行してほしい！とかなら、</p>
-
-<p>```javascript
-// bootstrap.js
-initialize = function() {</p>
-
-<pre><code>buster.run();
-</code></pre>
-
-<p>}
-```</p>
-
-<p>みたいな感じ</p>
-
-<p>というわけでテストに使うHTMLも設定できましたし、ガンガンテストできますね！</p>
-
-<p>そういや別にもう一個なんか書こうと思ってたんですが、忘れたので知ってる人いたら教えてください。</p>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-24T01:24:27+09:00</updated>
+  <updated>2013-03-24T20:06:57+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,219 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[テスト書きながらTypeScript書ける環境作る]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/"/>
+    <updated>2013-03-24T19:33:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/24/test-driven-typescript</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScriptを書いています。
+というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
+触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。</p>
+
+<p>そこで、テストを書きたいわけなんですが、TypeScriptのテスト環境の情報が少ないので、手探りでやったところまで記録しておきます。</p>
+
+<p><a href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/">前回、Mocha + Testem + HTMLCov</a> で基礎的な部分を作ったので、これをベースにします。
+なのでこれにTypeScriptのコンパイルやらを乗せていく感じです。</p>
+
+<p><a href="https://github.com/yaakaito/typebone">リポジトリはgithubにある</a>ので、見ながら読むと分かりやすいかもしれません。</p>
+
+<h2>TypeScriptのコンパイル</h2>
+
+<p>TypeScriptのコンパイルには <code>tsc</code> を使うので、npmで入れます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g tsc</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>tsc</code> でコンパイルする時に、<code>--out</code> オプションを付けると <code>refrence</code> を解決しながらビルドしてくれます。
+で、これは流儀的にどうなのかは分からないんですが、これを利用して、コンパイル対象は <code>reference</code> するだけにしました。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/backbone.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;events.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;model.ts&quot; /&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とりあえず<code>Backbone.Events</code>と<code>Backbone.Model</code>だけ用意します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/events.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/underscore.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Events</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/model.ts</span>
+</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Model</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにしておいて、以下のコマンドでビルドします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すると、<code>backbone.js</code>に <code>events.ts</code> と <code>models.ts</code> をコンパイルして、依存を解決したものが吐き出されます。
+これには <code>underscore</code> は含まれません。</p>
+
+<h2>テスト用のビルドとTestem</h2>
+
+<p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/events-test.ts</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../src/events.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/mocha.d.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/chai.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Backbone.Events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;test name&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="c1">// ....</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>test/bootstrap.ts</code> みたいなのを作って、こっちも <code>reference</code> だけにします。(<code>expect</code>のexportだけ書いてます。)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;events-tests.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vender/chai.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">expect</span> <span class="o">=</span> <span class="nx">chai</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これをビルドします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">ts</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで、全部の<code>reference</code>が解決されると、さっきの<code>backbone.js</code>の下にテストが丸々ついたようなファイルが生成されます。
+これをTestemに食わせます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// testem.json</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;framework&quot;</span> <span class="o">:</span> <span class="s2">&quot;mocha&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;src_files&quot;</span> <span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;vendor/chai.js&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;vendor/underscore.js&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;backbone.test.js&quot;</span>
+</span><span class='line'>  <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでTestemでテストできるようになりました、<code>tsc</code> には <code>watch</code> があるので、これを使って 変更監視 -> 自動コンパイル -> テスト自動実行 というすてき環境を作ります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">watch</span> <span class="o">-</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったー！これでいける！
+・・・と思ったんですが、どうもちゃんと <code>watch</code> が動いていなくて、うまくコンパイルできません。
+なので<a href="https://github.com/yaakaito/typebone/blob/master/Guardfile">Guardで代用</a>しました。</p>
+
+<p>ちょっと面倒ですが、すてき環境ができましたね！</p>
+
+<h2>カバレッジ</h2>
+
+<p>カバレッジをとるときは、<code>backbone.js</code>側に<code>jscoverage</code>をかける必要があるので、別々にコンパイルが必要です。
+となると、さっきの <code>test/bootstrap.js</code> なんかで依存関係を解決しながらコンパイルできないので、個別にコンパイルします。
+個別にコンパイルしたテストを全部 <code>cat</code>で繋げて、<code>all-tests.js</code> みたいなのを作ります。あとは前回を参考にしてください。</p>
+
+<p>Makefileにするとこんな感じ</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">compile</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">compile</span><span class="o">-</span><span class="nx">test</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">tsc</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">ts</span>
+</span><span class='line'>  <span class="nx">cat</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span> <span class="o">&gt;</span> <span class="nx">all</span><span class="o">-</span><span class="nx">tests</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>  <span class="nx">rm</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">cover</span><span class="o">:</span> <span class="nx">compile</span> <span class="nx">compile</span><span class="o">-</span><span class="nx">test</span>
+</span><span class='line'>  <span class="nx">jscoverage</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">cover</span><span class="p">.</span><span class="nx">js</span>
+</span><span class='line'>  <span class="nx">mocha</span><span class="o">-</span><span class="nx">phantomjs</span> <span class="o">-</span><span class="nx">R</span> <span class="nx">json</span><span class="o">-</span><span class="nx">cov</span> <span class="nx">cover</span><span class="o">-</span><span class="nx">runner</span><span class="p">.</span><span class="nx">html</span> <span class="o">|</span> <span class="nx">json2htmlcov</span> <span class="o">&gt;</span> <span class="nx">cover</span><span class="p">.</span><span class="nx">html</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>とりあえず</h2>
+
+<p>こんな感じで一旦は不満なく開発できる環境ができました。</p>
+
+<p>TypeScriptまだ勝手がよく分かってないので、コードはあんまり見ないでーーー＾ー＾</p>
+
+<p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
+無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
+なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Mocha + Testem + HTMLCov 出来るようにする]]></title>
@@ -2161,115 +2374,6 @@ XcodeだとManageShemesからチェックを外して・・・とか、できる
 <p><img src="http://yaakaito.org/images/adv-testing-xcode.png" width="320"></p>
 
 <p>こんな感じになっています。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CSSライクにUIKitをスタイルできるNUIがおもしろい！]]></title>
-    <link href="http://yaakaito.org/blog/2012/12/06/adv-nui-css-like-uikit/"/>
-    <updated>2012-12-06T22:01:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2012/12/06/adv-nui-css-like-uikit</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 6日目の記事です。
-AppCodeのことを書こうと思っていたのですが、今日 <a href="https://github.com/tombenner/nui">NUI</a> というライブラリを見つけて、今僕の中でアツいので紹介しようと思います。
-サンプルも書いていたのですが、アドベントにカレンダーできなさそうなので、今回は紹介だけです。</p>
-
-<h2>NUIって何</h2>
-
-<p>NUIはCSSライクにUIKitのスタイルを指定できるライブラリです。
-READMEからの引用ですが、こんな感じに定義することができます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="err">@</span><span class="nl">primaryFontName:</span> <span class="n">HelveticaNeue</span><span class="p">;</span>
-</span><span class='line'><span class="err">@</span><span class="nl">secondaryFontName:</span> <span class="n">HelveticaNeue</span><span class="o">-</span><span class="n">Light</span><span class="p">;</span>
-</span><span class='line'><span class="err">@</span><span class="nl">primaryFontColor:</span> <span class="err">#</span><span class="mi">333333</span><span class="p">;</span>
-</span><span class='line'><span class="err">@</span><span class="nl">primaryBackgroundColor:</span> <span class="err">#</span><span class="n">E6E6E6</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Button</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">background</span><span class="o">-</span><span class="nl">color:</span> <span class="err">@</span><span class="n">primaryBackgroundColor</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">border</span><span class="o">-</span><span class="nl">color:</span> <span class="err">#</span><span class="n">A2A2A2</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">border</span><span class="o">-</span><span class="nl">width:</span> <span class="err">@</span><span class="n">primaryBorderWidth</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">color:</span> <span class="err">@</span><span class="n">primaryFontColor</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="n">color</span><span class="o">-</span><span class="nl">highlighted:</span> <span class="err">#</span><span class="mi">999999</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">name:</span> <span class="err">@</span><span class="n">primaryFontName</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">size:</span> <span class="mi">18</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">corner</span><span class="o">-</span><span class="nl">radius:</span> <span class="mi">7</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="n">NavigationBar</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">background</span><span class="o">-</span><span class="n">tint</span><span class="o">-</span><span class="nl">color:</span> <span class="err">@</span><span class="n">primaryBackgroundColor</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">name:</span> <span class="err">@</span><span class="n">secondaryFontName</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">size:</span> <span class="mi">20</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">font</span><span class="o">-</span><span class="nl">color:</span> <span class="err">@</span><span class="n">primaryFontColor</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">text</span><span class="o">-</span><span class="n">shadow</span><span class="o">-</span><span class="nl">color:</span> <span class="err">#</span><span class="mi">666666</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">text</span><span class="o">-</span><span class="n">shadow</span><span class="o">-</span><span class="nl">offset:</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="http://yaakaito.org/images/adv_nui.png" width="320"></p>
-
-<p>(<a href="https://github.com/tombenner/nui/blob/master/README.md">README</a>より引用)</p>
-
-<p>実際にCSSが書けるわけではなくて、あくまでUIKitに対応するプロパティをCSSライクに設定できるライブラリです。
-昔CSSをそのまま使えたら幸せじゃね、と考えてみたことはあったのですが、さすがにしんどくて挫折しました。
-そういう意味では NUI みたいな感じになっていても、十分良さそうに思えますね。</p>
-
-<h2>簡単な使い方</h2>
-
-<p>僕自身もまだちゃんと使えている訳ではないのですが、起動後にNUIを有効にしてあげて、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">NUIAppearance</span> <span class="n">init</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で、NUIをセットアップします。</p>
-
-<p>あとは適用したいUIクラスをNUIButtonなどのサブクラスで定義して、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">initNUI</span> <span class="p">{</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">initNUI</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">nuiClass</span> <span class="o">=</span> <span class="s">@&quot;Button:MyButton&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とかしてあげると、プロジェクトに含まれいる<code>NUIStyle.nss</code>を元にスタイリングしてくれるようです。
-自信はそんなにないですが。</p>
-
-<h2>設定できるプロパティとか</h2>
-
-<p><a href="https://github.com/tombenner/nui/blob/master/README.md#style-classes">READMEのStyleClasses</a>に書いてありますが、一通りは設定できる様子。</p>
-
-<h2>楽しみですね</h2>
-
-<p>ログをみたらまだできたばかりのプロダクトでした。今後どうなるか楽しみですね！</p>
 ]]></content>
   </entry>
   
