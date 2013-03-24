@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-24T20:06:57+09:00</updated>
+  <updated>2013-03-25T00:32:43+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -100,6 +100,23 @@
 <h2>テスト用のビルドとTestem</h2>
 
 <p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
+
+<h3>【追記】d.tsファイルについて</h3>
+
+<p>TypeScriptからMocha(JavaScript)を利用する為に、<code>d.ts</code>というファイルが必要になります。
+これは安全に既存のJavaScriptをTypeScriptから利用する為の仕組みです。</p>
+
+<p><code>d.ts</code> ファイル自体はただのテキストで、コードと対して変わらないです。</p>
+
+<p>入手方法としては自分で書く(ある程度自動生成できるっぽい？)、他の人が作ったものを使う、<a href="http://www.tsdpm.com/">tsd</a>を利用するの3つがあります。
+tsdは<code>d.ts</code>のパッケージマネージャみたいなものなんですが、僕はそこまで大げさなものじゃないよなーと思っているので、適当に拾ってきて突っ込んでいます。(あんまりツール的なの増やしたくないのもある。)</p>
+
+<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a> を見ると大体のものは揃ってるので、ほとんどの場合はここから取得すれば済むと思います。
+mochaとchaiはこの中になかったので、僕は下のを使ってます。</p>
+
+<p><a href="https://gist.github.com/muratg/4163650">mocha.d.ts</a> | <a href="https://github.com/TobiaszCudnik/asyncmachine/blob/master/headers/chai.d.ts">chai.d.ts</a></p>
+
+<h3>テストを書く</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
