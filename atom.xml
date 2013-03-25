@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-25T01:08:12+09:00</updated>
+  <updated>2013-03-25T09:11:04+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,182 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/25/typescript-module-division-files/"/>
+    <updated>2013-03-25T08:42:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/25/typescript-module-division-files</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！分からないので誰か教えてください。
+TypeScriptに<code>module</code>って機能があるんですが、こいつでハマってる。</p>
+
+<p>というのもこれって、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいにしておくと、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">A</span><span class="p">;</span>
+</span><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">A</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">function</span> <span class="nx">Hoge</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})();</span>
+</span><span class='line'><span class="p">})(</span><span class="nx">A</span> <span class="o">||</span> <span class="p">(</span><span class="nx">A</span> <span class="o">=</span> <span class="p">{}));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうなるわけ。
+で、<code>module</code>は複数のファイルに渡って同一のものを定義できるらしい。
+実際そういう感じになっているし、そうなんだろう、分かる。</p>
+
+<p>問題はこのモジュール内で変数定義しようとしたときに起こった。
+例えばシングルトン的な感じでオブジェクトを外に出したいときに、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kd">var</span> <span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とすれば、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">A</span><span class="p">;</span>
+</span><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">A</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">function</span> <span class="nx">Hoge</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})();</span>
+</span><span class='line'>    <span class="nx">A</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
+</span><span class='line'><span class="p">})(</span><span class="nx">A</span> <span class="o">||</span> <span class="p">(</span><span class="nx">A</span> <span class="o">=</span> <span class="p">{}));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>となる、ここまではよい。
+もう一個同じ<code>module</code>を実装しているファイルがあるとする、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">class</span> <span class="nx">Fuga</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で、この二つを個別にコンパイルする分には何も起こらないし、普通に実行できてるっぽいんだけど、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="kr">export</span> <span class="kd">var</span> <span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という風にreferenceすると <code>export var hoge = new Hoge();</code> でHogeが見つからなくなる。真上にあるが・・・。</p>
+
+<p>例えばこういう感じにしてビルドしてみても駄目。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;Hogeの方.ts&quot; /&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>なんだけど、順番を入れ替えると・・・</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Hogeの方.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>なんか知らんが通る。そんな参照で大丈夫か？</p>
+
+<p>要するに、コンパイルするときに</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という状態になると、二番目以降の<code>module</code>内で参照が死ぬ。
+けど<code>class</code>とかでプロパティに持つ分には大丈夫という謎状況。</p>
+
+<p>バグなのかな、バグならバグでよいんだけど。</p>
+
+<p>で、ここまで説明してきたんだけど、これエラーは出るけど、コンパイルはちゃんと通った跡がある、どっちやねん。</p>
+
+<p>一番いい解説を頼む。</p>
+
+<p>(誰も知らなさそうなら公式に投げてみようと思います。)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[テスト書きながらTypeScript書ける環境作る]]></title>
@@ -2349,48 +2525,6 @@ READMEに書いてある通りに分割してあるので、それなどを参�
 
 
 <p>で、いこうとおもいます。今年もよろしくお願いします！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[AppCodeで華麗にテストをキメる！]]></title>
-    <link href="http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing/"/>
-    <updated>2012-12-09T00:02:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2012/12/09/adv-appcode-splendid-testing</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！！
-<a href="http://qiita.com/advent-calendar/2012/objective-c">Objective-Cアドベントカレンダー2012</a> 8日目の記事です。
-みなさんiOSアプリを開発するときに当然テストを書くと思うんですが、このテストメソッドだけ試したいなーってときに、
-XcodeだとManageShemesからチェックを外して・・・とか、できるんですが、非常に面倒ですよね！！！
-そんなあなたにAppCodeがおすすめです！</p>
-
-<h2>テストメソッド単位で実行をキメよう！</h2>
-
-<p>とりあえずキメてみましょう！テストフレームワークはSenTestingKitです。</p>
-
-<p>普通にテストを書いていって・・・</p>
-
-<p><img src="http://yaakaito.org/images/adv-testing-test-case.png" width="420"></p>
-
-<p>この<code>testMappedArrayUsingBlock</code>だけを実行して確かめてみたいなーと思っずたら、
-キーバインドを弄っていない場合は<code>Command + Option + R</code>(多分あってるはず)なんかで、Run > Run&#8230; を呼び出します。
-そうするとこんな感じのメニューが現れて・・・</p>
-
-<p><img src="http://yaakaito.org/images/adv-testing-select.png" width="420"></p>
-
-<p><code>2</code>を押すと、このコンテキストのみを実行してくれます。
-すると・・・</p>
-
-<p><img src="http://yaakaito.org/images/adv-testing-result.png" width="420"></p>
-
-<p>こういう感じに<code>testMappedArrayUsingBlock</code>だけ実行してくれます！便利ですね！！！</p>
-
-<p>あとはガンガンテストをかいてガンガン実行してカイラクを得ましょう！！！</p>
-
-<h2>ちなみにこれをXcodeで開いてみると・・・</h2>
-
-<p><img src="http://yaakaito.org/images/adv-testing-xcode.png" width="320"></p>
-
-<p>こんな感じになっています。</p>
 ]]></content>
   </entry>
   
