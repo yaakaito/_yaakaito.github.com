@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kuzu | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/kuzu/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-25T09:11:04+09:00</updated>
+  <updated>2013-03-26T02:46:31+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,11 +14,37 @@
 
   
   <entry>
-    <title type="html"><![CDATA[TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
+    <title type="html"><![CDATA[【解決した】TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
     <link href="http://yaakaito.org/blog/2013/03/25/typescript-module-division-files/"/>
     <updated>2013-03-25T08:42:00+09:00</updated>
     <id>http://yaakaito.org/blog/2013/03/25/typescript-module-division-files</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！分からないので誰か教えてください。
+    <content type="html"><![CDATA[<h2>解決した</h2>
+
+<p>どうも俺が0.8.3だと思っていた<code>tsc</code>は0.8.0だった。
+バージョンが古いなんて生易しいもんじゃねぇ、気がついたらnode環境がぶっ壊れていた、何を言っているかわからねーと思うが(ry
+npm listで出てくるtscと、パスが通ってるtscが違った。とりあえず直した、お騒がせしました。</p>
+
+<p>本来下に書いてある</p>
+
+<p>```javascript
+module A {
+  class Hoge {</p>
+
+<pre><code>// ...
+</code></pre>
+
+<p>  }
+  export var hoge = new Hoge();
+}
+```</p>
+
+<p>というのは、0.8.3時点でコンパイルでエラーになるようになっています、<code>Hoge</code>をexportしろ、とのことです。
+で、Hogeの中でさらにインナークラスとか呼んでると、それもexportしなくちゃいけなくてヤダーなので、ほしいメソッドだけ<code>interface</code>にしました。</p>
+
+<p>あと、<code>reference</code>を反対にするとなんかおかしい問題は健在っぽいです。
+いろいろ邪推してみましたが、それにあんまり意味はないので、issueにしてこようと思います。</p>
+
+<p>こんにちは！うきょーです！分からないので誰か教えてください。
 TypeScriptに<code>module</code>って機能があるんですが、こいつでハマってる。</p>
 
 <p>というのもこれって、</p>
