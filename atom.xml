@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-26T02:46:31+09:00</updated>
+  <updated>2013-03-26T02:50:56+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -46,6 +46,10 @@ npm listで出てくるtscと、パスが通ってるtscが違った。とりあ
 
 <p>あと、<code>reference</code>を反対にするとなんかおかしい問題は健在っぽいです。
 いろいろ邪推してみましたが、それにあんまり意味はないので、issueにしてこようと思います。</p>
+
+<hr />
+
+<p>　</p>
 
 <p>こんにちは！うきょーです！分からないので誰か教えてください。
 TypeScriptに<code>module</code>って機能があるんですが、こいつでハマってる。</p>
