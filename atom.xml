@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-28T03:02:51+09:00</updated>
+  <updated>2013-03-28T04:26:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,43 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScript + SourceMap でデバッグしてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap/"/>
+    <updated>2013-03-28T03:43:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+SourceMap便利ですよね！TypeScriptでも使ってみましょう。</p>
+
+<p>といってもそんなにやることないです。
+<code>tsc</code>でコンパイルするときに <code>--sourcemap</code> オプションをつけてあげれば生成されます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ tsc &lt;file&gt; --sourcemap</span></code></pre></td></tr></table></div></figure>
+
+
+<p>単体で吐いてもいいですが、<a href="https://github.com/yaakaito/typebone">前から使ってこのリポジトリ</a>みたいに、<code>reference</code>だけしてるファイルをコンパイルしているような場合でも、ちゃんと吐いてくれます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ tsc --out backbone.test.js test/bootstrap.ts --sourcemap</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じにすると、<code>backbone.test.js.map</code>が出てくるので、Chormeで使ってみましょう。</p>
+
+<p><img src="http://yaakaito.org/images/ts-sourcemap-setting.png"></p>
+
+<p><code>Enable source maps</code>をonにして、</p>
+
+<p><img src="http://yaakaito.org/images/ts-sourcemap-show.png"></p>
+
+<p>読み込めばこんな感じに<code>.ts</code>が出てくるので、</p>
+
+<p><img src="http://yaakaito.org/images/ts-sourcemap-debug.png"></p>
+
+<p>BP打つなりして使います、便利ですね！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
@@ -2460,122 +2497,6 @@ LT参加を希望されるかたは、チケットページより「LT参加チ�
 
 <iframe frameborder="0" width="400" height="446" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Objective-C用ユーティリティOverlineを公開しました]]></title>
-    <link href="http://yaakaito.org/blog/2013/01/06/overline-010-release/"/>
-    <updated>2013-01-06T13:45:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/01/06/overline-010-release</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。寒いですね。
-Objective-C(主にiOS開発)向けのユーティリティライブラリを公開しました。
-バージョンは0.1.0で、まだAPIはそこまでそろってません。</p>
-
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
-
-<p>似たようなライブラリではunderscore.mとかBlocksKitが近いかなーと思います。
-基本的な機能の拡張で、めんどくさいところを楽にする系のライブラリです。ひかえめです。</p>
-
-<p>主に僕がだるいなーと思ったベースで追加しています。
-なのでいわゆるmapもあれば、URLエンコードしてくれるメソッドもありますし、という感じ。あとはいつも忘れる系とか。</p>
-
-<p>underscoreなんかと違うところは、underscoreとかってがんばってJSっぽく書こうとしてる感じが伝わってくるんですが、
-僕はJavaScriptみたいに書くのが綺麗だなとか書きやすいとかまったく思ってないので、Objective-Cらしく書けるようにしてあります。
-好みのレベルかなーくらいのショートハンドは用意しています。</p>
-
-<h2>使い方</h2>
-
-<p>Cocoapodsでやるのが楽です。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="s1">&#39;Overline&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">pod</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>して</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &quot;Overline.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>簡単ですね。</p>
-
-<p>必要なところだけ使いたかったり、自分でプロジェクトに追加する場合は、<code>/Overline</code>の下から好きなファイルをプロジェクトに追加してください。
-READMEに書いてある通りに分割してあるので、それなどを参考に。</p>
-
-<h2>出来る事</h2>
-
-<p>一覧はREADMEに書いてありますが、一例をだすと<code>map</code>とか</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">mapped</span> <span class="o">=</span> <span class="p">[</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">1</span><span class="p">,</span><span class="err">@</span><span class="mi">2</span><span class="p">,</span><span class="err">@</span><span class="mi">3</span><span class="p">,</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">mappedArrayUsingBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">idx</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">obj</span> <span class="n">integerValue</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">obj</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span><span class='line'><span class="c1">// @[@2,@4,@6]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じで正規表現でマッチングできたりとか (正規表現オブジェクトとしてちゃんと表記できないので、ちょっと微妙だけども)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;https?&quot;</span> <span class="nl">testInString:</span><span class="n">urlString</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>たまにしか使わないけど毎回引き出してくるのだるいーみたいな</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">md5</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="s">@&quot;hoge&quot;</span> <span class="n">stringByHashingSha256</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="s">@&quot;YQ==&quot;</span> <span class="n">decodeBase64</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>なんでだよと突っ込みたくなる<code>insertObjects:atIndexes</code>とか</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">marray</span> <span class="nl">insertObjects:</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">4</span><span class="p">,</span><span class="err">@</span><span class="mi">5</span><span class="p">,</span><span class="err">@</span><span class="mi">6</span><span class="p">]</span> <span class="nl">atIndex:</span><span class="mi">1</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://stackoverflow.com/questions/2060741/does-objective-c-use-short-circuit-evaluation">よく話題になったりはまったりするNSNull</a>をできるだけ意識せずに使えるように</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSDictionary</span> <span class="o">*</span><span class="n">dic</span> <span class="o">=</span> <span class="err">@</span><span class="p">{</span>
-</span><span class='line'>        <span class="s">@&quot;null-key&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="n">NSNull</span> <span class="n">null</span><span class="p">]</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'><span class="p">[[</span><span class="n">dic</span> <span class="nl">objectForKey:</span><span class="s">@&quot;null-key&quot;</span><span class="p">]</span> <span class="nl">objectForKey:</span><span class="s">@&quot;fuck&quot;</span><span class="p">];</span> <span class="c1">// nil</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>できたりします。</p>
-
-<h3>よろしくね！</h3>
-
-<p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
 ]]></content>
   </entry>
   
