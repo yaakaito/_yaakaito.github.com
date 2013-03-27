@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-26T02:50:56+09:00</updated>
+  <updated>2013-03-28T02:34:39+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,44 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands/"/>
+    <updated>2013-03-28T02:26:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/yaakaito/Overline/">Overline</a>であんまり気が向かなかった<code>NSDateFormatter</code>系のところに手をつけ始めました。
+わりと意見を求めている記事です。</p>
+
+<p>といっても、そんなにやることはないかなーとか思っていて、<code>NSDateFormatter</code>をそのまま使っちゃって、あれ・・・和暦・・・みたいなトラップを意識的に回避できればそれでよいのかなーと思ってます。</p>
+
+<p>んで、以下の２つのメソッドを追加した。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">dateFormatterWithCalendarIndetifiter:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">calendar</span>
+</span><span class='line'>                                   <span class="nf">LocaleIdentifiter:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">locale</span>
+</span><span class='line'>                                <span class="nf">timeZoneAbbreviation:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">timeZone</span><span class="p">;</span>
+</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">userDefaultFormatter</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>１個目はカレンダー、ロケール、タイムゾーンを忘れずに設定してね、というのを明確にするために作ったメソッド。
+なんかこの辺は設定するかなーというものを引数にとってる。</p>
+
+<p>２個目は、デフォルトのものを返してくるよ、というもの。
+つまりは単純に<code>alloc init</code>した状態のものなんだけど、そもそもの話その状態が分かりにくいんだよ・・・ってことで名前を付けたもの。
+ちょっとは分かりやすくなるのかなーと思ってる。</p>
+
+<h2>意見があったらほしいです</h2>
+
+<p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
+Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[【解決した】TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
@@ -2538,26 +2576,6 @@ READMEに書いてある通りに分割してあるので、それなどを参�
 <h3>よろしくね！</h3>
 
 <p><a href="https://github.com/yaakaito/Overline">Overline</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ことしの抱負]]></title>
-    <link href="http://yaakaito.org/blog/2013/01/04/new-year-2013/"/>
-    <updated>2013-01-04T01:42:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/01/04/new-year-2013</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！あけてましたね！
-しばらく書いてなかったので、書き方忘れそうでした。
-去年はコード書くのがひじょーにだるくなっていく年でした、歳ですかね。
-なので今年目標は</p>
-
-<ul>
-<li>コードできるだけ書かない</li>
-<li>コードは昔の自分に書いてもらう</li>
-</ul>
-
-
-<p>で、いこうとおもいます。今年もよろしくお願いします！</p>
 ]]></content>
   </entry>
   

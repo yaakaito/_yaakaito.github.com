@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-26T02:50:56+09:00</updated>
+  <updated>2013-03-28T02:34:39+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands/"/>
+    <updated>2013-03-28T02:26:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/yaakaito/Overline/">Overline</a>であんまり気が向かなかった<code>NSDateFormatter</code>系のところに手をつけ始めました。
+わりと意見を求めている記事です。</p>
+
+<p>といっても、そんなにやることはないかなーとか思っていて、<code>NSDateFormatter</code>をそのまま使っちゃって、あれ・・・和暦・・・みたいなトラップを意識的に回避できればそれでよいのかなーと思ってます。</p>
+
+<p>んで、以下の２つのメソッドを追加した。</p>
+
+<p>```objective-c
++ (instancetype)dateFormatterWithCalendarIndetifiter:(NSString *)calendar</p>
+
+<pre><code>                               LocaleIdentifiter:(NSString *)locale
+                            timeZoneAbbreviation:(NSString *)timeZone;
+</code></pre>
+
+<ul>
+<li>(instancetype)userDefaultFormatter;
+```</li>
+</ul>
+
+
+<p>１個目はカレンダー、ロケール、タイムゾーンを忘れずに設定してね、というのを明確にするために作ったメソッド。
+なんかこの辺は設定するかなーというものを引数にとってる。</p>
+
+<p>２個目は、デフォルトのものを返してくるよ、というもの。
+つまりは単純に<code>alloc init</code>した状態のものなんだけど、そもそもの話その状態が分かりにくいんだよ・・・ってことで名前を付けたもの。
+ちょっとは分かりやすくなるのかなーと思ってる。</p>
+
+<h2>意見があったらほしいです</h2>
+
+<p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
+Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Flow.jsをObjective-Cに移植してみた]]></title>
@@ -322,120 +362,6 @@ cell = [[HogeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifi
 </code></p>
 
 <p>こういう感じにいける、こっちのがよさげ。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei/"/>
-    <updated>2013-02-10T16:32:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
-最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
-
-<h3>追記しました</h3>
-
-<p><a href="http://yaakaito.github.com/blog/2013/02/11/register-nib/">続き</a></p>
-
-<p>みなさん<code>UITableViewCell</code>のサブクラス作りますよね。
-そしてそのままコーディングしていくと非常にだるく、3秒でモチベーションがなくなるので、
-Interface Builderを使いたい！と思うわけですが、<code>UITableViewCell</code>用のxibファイル作るのは30秒で心が折れる。
-(というかいつも忘れるしXcodeのバージョンあがると分からなくなる)</p>
-
-<h2>UINibを使う</h2>
-
-<p>おもむろにxibファイルを作ります。</p>
-
-<p><img src="/images/uinib_1.png" width="320"></p>
-
-<p>UIViewを消します。</p>
-
-<p><img src="/images/uinib_2.png" width="320"></p>
-
-<p>UITableViewCellをおきます。</p>
-
-<p><img src="/images/uinib_3.png" width="320"></p>
-
-<p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
-FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
-
-<p>あとはこれをdatasource側で</p>
-
-<p>```objective-c</p>
-
-<pre><code>HogeCell *cell = [tableView dequeueReusableCellWithIdentifier:kHogeCellReuseIdentifier];
-if (!cell) {
-    UINib *nib = [UINib nibWithNibName:@"HogeCell" bundle:nil];
-    cell = [[nib instantiateWithOwner:nil options:nil] objectAtIndex:0];
-}
-
-[self updateCell:cell indexPath:indexPath];
-</code></pre>
-
-<p>```</p>
-
-<p>とかすれば使えた、泣いた。いままでのよくわからん！はなんだったのか。</p>
-
-<h2>細かいところはコードで制御したい</h2>
-
-<p>ざっくりとしたレイアウトとかを決めるのはxibで大分楽できるんですが、
-もっと細かいところとか、同じようなのだし、まとめて処理してほしい(背景とか)ってときに、毎回xibいじるのはだるいですね。</p>
-
-<p>まあなんだかんだでいろいろコードで弄りたいこととか、コードから追加したい要素とかもあると思うんですが、
-これをビューコントローラーからやったりするとゴミみたいなコードになるので、あまりやりたくないわけです。</p>
-
-<p>が、しかしこれは<code>willMoveToSuperview:</code>あたりをうまく使えば解決できることに気づいて</p>
-
-<p>```objective-c
-- (void)willMoveToSuperview:(UIView *)newSuperview {</p>
-
-<pre><code>[super willMoveToSuperview:newSuperview];
-
-// 共通のスタイルとかコードでやりたい処理書く
-</code></pre>
-
-<p>}
-```</p>
-
-<p>ってやればあっさりできた、全俺が号泣した。</p>
-
-<h2>次にだるいのが</h2>
-
-<p>```objective-c
-- (void)setHoge:(Hoge *)hoge {</p>
-
-<pre><code>if (hoge != hoge) {
-    _hoge = hoge;
-
-    self.thumbnail.image = hoge.thumbnail;
-    self.message.text = hoge.message;
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こういうの、あると思います。(updateCellとか)</p>
-
-<p>Model-View-Binder使えばうまくいけそうですが、メジャーなの知らないので教えてください。</p>
-
-<p>けど多分ないような気がするので作ります。</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
 ]]></content>
   </entry>
   

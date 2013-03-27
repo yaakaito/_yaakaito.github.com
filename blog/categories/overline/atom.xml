@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Overline | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/overline/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-26T02:50:56+09:00</updated>
+  <updated>2013-03-28T02:34:39+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands/"/>
+    <updated>2013-03-28T02:26:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/yaakaito/Overline/">Overline</a>であんまり気が向かなかった<code>NSDateFormatter</code>系のところに手をつけ始めました。
+わりと意見を求めている記事です。</p>
+
+<p>といっても、そんなにやることはないかなーとか思っていて、<code>NSDateFormatter</code>をそのまま使っちゃって、あれ・・・和暦・・・みたいなトラップを意識的に回避できればそれでよいのかなーと思ってます。</p>
+
+<p>んで、以下の２つのメソッドを追加した。</p>
+
+<p>```objective-c
++ (instancetype)dateFormatterWithCalendarIndetifiter:(NSString *)calendar</p>
+
+<pre><code>                               LocaleIdentifiter:(NSString *)locale
+                            timeZoneAbbreviation:(NSString *)timeZone;
+</code></pre>
+
+<ul>
+<li>(instancetype)userDefaultFormatter;
+```</li>
+</ul>
+
+
+<p>１個目はカレンダー、ロケール、タイムゾーンを忘れずに設定してね、というのを明確にするために作ったメソッド。
+なんかこの辺は設定するかなーというものを引数にとってる。</p>
+
+<p>２個目は、デフォルトのものを返してくるよ、というもの。
+つまりは単純に<code>alloc init</code>した状態のものなんだけど、そもそもの話その状態が分かりにくいんだよ・・・ってことで名前を付けたもの。
+ちょっとは分かりやすくなるのかなーと思ってる。</p>
+
+<h2>意見があったらほしいです</h2>
+
+<p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
+Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
