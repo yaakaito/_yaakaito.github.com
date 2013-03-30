@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-30T18:48:57+09:00</updated>
+  <updated>2013-03-30T19:41:56+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,124 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/30/overline-020-release/"/>
+    <updated>2013-03-30T19:13:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/30/overline-020-release</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Objective-C用ユーティリティ、<a href="https://github.com/yaakaito">Overline</a> 0.2.0を公開しました。0.1.5は6時間くらいの命でした。
+同時に0.1.xで問題になっていたBlocksKitと一緒に使うとassertで死ぬ問題を回避した、Overline-BlocksKitを公開しています。</p>
+
+<h2>BlocksKitと一緒に使う場合</h2>
+
+<p>Overline-BlocksKitを利用します。Podfileはこんな感じ。</p>
+
+<p><code>
+pod 'BlocksKit'
+pod 'Overline-BlocksKit'
+</code></p>
+
+<p>重複を解決するために、いくつかショートハンドのメソッドを削除しています。
+削除されているのは、<code>NSArray</code> <code>NSDictionary</code> <code>NSSet</code> にある以下のメソッドです。</p>
+
+<ul>
+<li><code>each:</code></li>
+<li><code>map:</code></li>
+<li><code>reduce:memo:</code></li>
+<li><code>filter:</code></li>
+<li><code>reject:</code></li>
+</ul>
+
+
+<p>ショートハンドは削除されますが、Objective-Cっぽい方はそのまま使えます。このあたりはBlocksKitが実装してくれているので、そちらをご利用ください。</p>
+
+<h2>追加された機能とか</h2>
+
+<p>たらたらと紹介していきます。全部書くのはだるいので全部じゃないです。0.1.0から0.2.0までの変更のうちいろいろという感じです。</p>
+
+<h3>NSArray arrayWithRange</h3>
+
+<p>指定した範囲のNSArrayを作ります、NSNumber自体が使いにくいので、あんまり使わないですかね。</p>
+
+<p><code>objective-c
+NSArray *array = [NSArray arrayWithRangeFrom:0 to:10];
+// @[@0, @1, @2, @3, @4, @5, @6, @7, @8, @9]
+</code></p>
+
+<p>逆方向にも行けます</p>
+
+<p><code>objective-c
+NSArray *array2 = [NSArray arrayWithRangeFrom:0 to:-10 step:2];
+// @[@0, @-2, @-4, @-6, @-8]
+</code></p>
+
+<h3>NSArray uniqueObjects</h3>
+
+<p>まんま、ユニークなものだけ返ってきます。</p>
+
+<p><code>objective-c
+NSArray *uniqueObjects = [@[@1, @2, @3, @1, @3, @4, @5] uniqueObjects];
+// @[@1, @2, @3, @4, @5]
+</code></p>
+
+<p>比較の部分をBlocksで書ける <code>uniqueObjectsUsingEqualsBlock:</code> もあります。</p>
+
+<h3>その他NSArray</h3>
+
+<p><code>subArray</code> <code>diffrence</code> <code>reversed</code> とかが地味に増えました。</p>
+
+<h3>NSDictionary arrayMap</h3>
+
+<p>そもそも<code>map</code>おかしくね？となって、追加した。</p>
+
+<p>```objective-c
+[@{</p>
+
+<pre><code>@"a" : @1,
+@"b" : @2,
+@"c" : @3,
+@"d" : @4
+</code></pre>
+
+<p>} mappedArrayUsingBlock:<sup>(id</sup> obj, NSString *key) {</p>
+
+<pre><code>return @([obj integerValue] * 2);
+</code></pre>
+
+<p>}];
+// @[@2,@4,@6,@8]
+```</p>
+
+<h3>NSDictionary objectForKey:transformBlock: pathForKey:</h3>
+
+<p><code>objectForKey:</code>したあとに変換してーというのが面倒なので、Blocksでまとめられるようにしました。</p>
+
+<p>```objective-c
+NSDate *date = [JSON objectForKey:@"date8601" transformBlock:<sup>id(id</sup> obj) {</p>
+
+<pre><code>NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+[formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss Z"];
+return [formatter dateFromString:obj];
+</code></pre>
+
+<p>}];
+```</p>
+
+<p>とか、あとは<code>stringForKey:</code> <code>dateForKey:usingFormat:</code> <code>bookForKey:withTrueValue:</code> <code>integerForKey:</code> などもろもろ。多いのでREADMEかテストを見てください。</p>
+
+<p><code>objectForPath:</code> は <code>hoge.fuga</code> みたいなので階層を辿れる。 <code>valueForKey</code> とか <code>valueForKeyPath</code> でも出来たはずだけど、本来その目的に使う物ではないはずなので、あんまり使っちゃ駄目だと思います。</p>
+
+<p>こっちの<code>transform</code>とかの対応そういえばやってなかった・・・</p>
+
+<p>多分大きめなのはこれくらいかと思います。はい。</p>
+
+<h2>よろしくね！</h2>
+
+<p><a href="https://github.com/yaakaito">Overline</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
@@ -322,46 +440,6 @@ Class<SBClassStub> uiimage = [Stubbilino stubClass:UIImage.class];</p>
 
 <iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/11/register-nib/"/>
-    <updated>2013-02-11T02:51:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/11/register-nib</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
-
-<p>UINibで楽チンに<code>UITableViewCell</code>をxibで作れることは分かったけど、</p>
-
-<p><code>objective-c
-UINib *nib = [UINib nibWithNibName:@"HogeCell" bundle:nil];
-cell = [[nib instantiateWithOwner:nil options:nil] objectAtIndex:0];
-</code></p>
-
-<p>このコードはぶっちゃけ微妙だよね。</p>
-
-<p>で、iOS5~だと<code>registerNib</code>というものがあるらしく</p>
-
-<p>```objective-c
-- (void)viewDidLoad {</p>
-
-<pre><code>[super viewDidLoad];
-
-[self.tableView registerNib:[UINib nibWithNibName:@"HogeCell" bundle:nil] forCellReuseIdentifier:kHogeCellReuseIdentifier];
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こういう感じに書いておくと、さっきの生成部分が</p>
-
-<p><code>objective-c
-cell = [[HogeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kBGHogeCellReuseIdentifier];
-</code></p>
-
-<p>こういう感じにいける、こっちのがよさげ。</p>
 ]]></content>
   </entry>
   

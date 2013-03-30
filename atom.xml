@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-30T18:48:57+09:00</updated>
+  <updated>2013-03-30T19:41:56+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,136 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/30/overline-020-release/"/>
+    <updated>2013-03-30T19:13:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/30/overline-020-release</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Objective-C用ユーティリティ、<a href="https://github.com/yaakaito">Overline</a> 0.2.0を公開しました。0.1.5は6時間くらいの命でした。
+同時に0.1.xで問題になっていたBlocksKitと一緒に使うとassertで死ぬ問題を回避した、Overline-BlocksKitを公開しています。</p>
+
+<h2>BlocksKitと一緒に使う場合</h2>
+
+<p>Overline-BlocksKitを利用します。Podfileはこんな感じ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod 'BlocksKit'
+</span><span class='line'>pod 'Overline-BlocksKit'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重複を解決するために、いくつかショートハンドのメソッドを削除しています。
+削除されているのは、<code>NSArray</code> <code>NSDictionary</code> <code>NSSet</code> にある以下のメソッドです。</p>
+
+<ul>
+<li><code>each:</code></li>
+<li><code>map:</code></li>
+<li><code>reduce:memo:</code></li>
+<li><code>filter:</code></li>
+<li><code>reject:</code></li>
+</ul>
+
+
+<p>ショートハンドは削除されますが、Objective-Cっぽい方はそのまま使えます。このあたりはBlocksKitが実装してくれているので、そちらをご利用ください。</p>
+
+<h2>追加された機能とか</h2>
+
+<p>たらたらと紹介していきます。全部書くのはだるいので全部じゃないです。0.1.0から0.2.0までの変更のうちいろいろという感じです。</p>
+
+<h3>NSArray arrayWithRange</h3>
+
+<p>指定した範囲のNSArrayを作ります、NSNumber自体が使いにくいので、あんまり使わないですかね。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="nl">arrayWithRangeFrom:</span><span class="mi">0</span> <span class="nl">to:</span><span class="mi">10</span><span class="p">];</span>
+</span><span class='line'><span class="c1">// @[@0, @1, @2, @3, @4, @5, @6, @7, @8, @9]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>逆方向にも行けます</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">array2</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="nl">arrayWithRangeFrom:</span><span class="mi">0</span> <span class="nl">to:</span><span class="o">-</span><span class="mi">10</span> <span class="nl">step:</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'><span class="c1">// @[@0, @-2, @-4, @-6, @-8]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>NSArray uniqueObjects</h3>
+
+<p>まんま、ユニークなものだけ返ってきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">uniqueObjects</span> <span class="o">=</span> <span class="p">[</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">1</span><span class="p">,</span> <span class="err">@</span><span class="mi">2</span><span class="p">,</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span> <span class="err">@</span><span class="mi">1</span><span class="p">,</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span> <span class="err">@</span><span class="mi">4</span><span class="p">,</span> <span class="err">@</span><span class="mi">5</span><span class="p">]</span> <span class="n">uniqueObjects</span><span class="p">];</span>
+</span><span class='line'><span class="c1">// @[@1, @2, @3, @4, @5]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>比較の部分をBlocksで書ける <code>uniqueObjectsUsingEqualsBlock:</code> もあります。</p>
+
+<h3>その他NSArray</h3>
+
+<p><code>subArray</code> <code>diffrence</code> <code>reversed</code> とかが地味に増えました。</p>
+
+<h3>NSDictionary arrayMap</h3>
+
+<p>そもそも<code>map</code>おかしくね？となって、追加した。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="err">@</span><span class="p">{</span>
+</span><span class='line'>    <span class="s">@&quot;a&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">@&quot;b&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">2</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">@&quot;c&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">@&quot;d&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">4</span>
+</span><span class='line'><span class="p">}</span> <span class="nl">mappedArrayUsingBlock:</span><span class="o">^</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="err">@</span><span class="p">([</span><span class="n">obj</span> <span class="n">integerValue</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="p">}];</span>
+</span><span class='line'><span class="c1">// @[@2,@4,@6,@8]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>NSDictionary objectForKey:transformBlock: pathForKey:</h3>
+
+<p><code>objectForKey:</code>したあとに変換してーというのが面倒なので、Blocksでまとめられるようにしました。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSDate</span> <span class="o">*</span><span class="n">date</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSON</span> <span class="nl">objectForKey:</span><span class="s">@&quot;date8601&quot;</span> <span class="nl">transformBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">NSDateFormatter</span> <span class="o">*</span><span class="n">formatter</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSDateFormatter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">formatter</span> <span class="nl">setDateFormat:</span><span class="s">@&quot;yyyy/MM/dd HH:mm:ss Z&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">formatter</span> <span class="nl">dateFromString:</span><span class="n">obj</span><span class="p">];</span>
+</span><span class='line'><span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか、あとは<code>stringForKey:</code> <code>dateForKey:usingFormat:</code> <code>bookForKey:withTrueValue:</code> <code>integerForKey:</code> などもろもろ。多いのでREADMEかテストを見てください。</p>
+
+<p><code>objectForPath:</code> は <code>hoge.fuga</code> みたいなので階層を辿れる。 <code>valueForKey</code> とか <code>valueForKeyPath</code> でも出来たはずだけど、本来その目的に使う物ではないはずなので、あんまり使っちゃ駄目だと思います。</p>
+
+<p>こっちの<code>transform</code>とかの対応そういえばやってなかった・・・</p>
+
+<p>多分大きめなのはこれくらいかと思います。はい。</p>
+
+<h2>よろしくね！</h2>
+
+<p><a href="https://github.com/yaakaito">Overline</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptの紹介的なプレゼンした]]></title>
@@ -2397,119 +2527,6 @@ FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>�
 <p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
 
 <iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Objective-CでRoleやってみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/01/31/objective-c-role/"/>
-    <updated>2013-01-31T01:38:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/01/31/objective-c-role</id>
-    <content type="html"><![CDATA[<p>こんにちは、うきょーです！
-Objective-C書いててふと、Role使いたいなー出来たっけーと、思ったのでやってみた。</p>
-
-<p>怪しいところもあるので、あんまり参考にならないかもですよと言っておく。</p>
-
-<h2>最終的にデータと振る舞いを合体させる</h2>
-
-<p>ってのができればいいと思うんだけど、Objective-Cならカテゴリで書いておけばよくね？と思ったり思わなかったり。
-けどちょっと違うよねーってことで、今回はそういうのはやめとく。</p>
-
-<p>で、実装としては<code>NSProxy</code>使えばそれっぽいものは割と簡単に出来た。</p>
-
-<p><a href="https://github.com/yaakaito/ObjCRoleSample">ObjCRoleSample</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">Book</span> : <span class="nc">NSObject</span>
-</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">strong</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">title</span><span class="p">;</span>
-</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">price</span><span class="p">;</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういうモデルに対して、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">BookPurchase</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">purchase</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">Book</span> <span class="o">*</span><span class="n">this</span> <span class="o">=</span> <span class="p">(</span><span class="n">Book</span> <span class="o">*</span><span class="p">)</span><span class="n">self</span><span class="p">.</span><span class="n">target</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Purchased! %@ %u&quot;</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">price</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じの振る舞いを、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">Book</span> <span class="o">*</span><span class="n">book</span> <span class="o">=</span> <span class="p">[[</span><span class="n">Book</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">@&quot;hoge&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">price</span> <span class="o">=</span> <span class="mi">420</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Book</span><span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">extended</span> <span class="o">=</span> <span class="p">[</span><span class="n">book</span> <span class="nl">roleExtended:</span><span class="n">BookPurchase</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">extended</span> <span class="n">purchase</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こう合成できるようにしてみた。</p>
-
-<p><code>Book&lt;BookPurchase&gt;</code>が気に入らないと人は、ちょっと微妙な感じがするんだけど、<code>Book</code>の定義の方に書いちゃえば省略はできる。</p>
-
-<p>実装としては基本的には<code>NSProxy</code>で自分にメッセージ送れなかったら流すようにしたものをベースクラスにしてあげて、<code>protocol</code>を使ってこんな感じでロールを定義する</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@protocol</span> <span class="nc">BookPurchase</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span>
-</span><span class='line'><span class="err">@</span><span class="n">optional</span>
-</span><span class='line'><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">purchase</span><span class="p">;</span>
-</span><span class='line'><span class="k">@end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">@interface</span> <span class="nc">BookPurchase</span> : <span class="nc">OCRole</span> <span class="o">&lt;</span><span class="n">BookPurchase</span><span class="o">&gt;</span>
-</span><span class='line'><span class="k">@end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうやると<code>BookPurchase</code>ロールと<code>Book</code>モデルで同じメッセージが送れるような(正確にはXCodeでコンパイル出来るような)感じになる。
-見た目はあんまりよくない。し、あんまり実用的でもないような感じがする。マクロとかで書きやすくしてあげるとちょっとは変わるかなー。</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="473" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
 ]]></content>
   </entry>
