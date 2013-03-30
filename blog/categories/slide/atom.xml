@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Slide | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/slide/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-03-30T18:48:57+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptの紹介的なプレゼンした]]></title>
+    <link href="http://yaakaito.org/blog/2013/03/30/typescript-introduction/"/>
+    <updated>2013-03-30T01:26:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/03/30/typescript-introduction</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+勉強会っぽいものがあったので、せっかくなのでTypeScriptどうよ的な話した。
+スライドはあくまで紹介程度に留めてて、どっちかと言えば後半のどうよ、どうよ的なやりとりが本体だったんですが、せっかくなのでSpeaker Deckにあげた。</p>
+
+<script async class="speakerdeck-embed" data-id="f9ddb2607a740130222e12313809347f" data-ratio="1.33333333333333" src="http://yaakaito.org//speakerdeck.com/assets/embed.js"></script>
+
+
+<h2>話した事</h2>
+
+<ul>
+<li>JavaScriptで書いてたのもをTypeScriptで書くとこんな感じですかね、的な流れです</li>
+<li>みなさんJavaScriptを殴りたくなることがあると思います、僕もそうです</li>
+<li>というわけでC#を作ったMicrosoft製のTypeScriptはどうなのか試しています</li>
+<li>簡単なJavaScriptがあります</li>
+<li>これをTypeScriptで書き直すとこうです、すてきですね！！！！</li>
+<li>というわけでTypeScriptはJavaScriptのスーパーセットです</li>
+<li>スーパーセットなので残念ながら、JavaScriptのトラップなどを解決することはできません</li>
+<li>その代わりにコンパイル時に型チェックを付ける事ができます</li>
+<li>ただし出てくるJavaScriptまではチェックできないので、注意しましょう</li>
+<li>書くのであれば全部tsで書くのが理想です</li>
+<li>型を工夫して書いていたいままでよりも、大分見やすく書けるのが多分一番のメリットです(closure compilerとか)</li>
+<li>他にもクラス、モジュール、インターフェイスみたいなものはあるので、一個ずつみていきます</li>
+<li>まずクラス、JavaScriptで書くとこんな感じですね、結構分かりにくいです</li>
+<li>TypeScriptで書くとこうです、全体としての見通しがよくなりました</li>
+<li>コンパイルするとでてくるJavaScriptも綺麗です</li>
+<li>次はモジュール、JavaScriptでもこういう感じに実装することはできますが・・・</li>
+<li>これがもっと書きやすくなります</li>
+<li>JavaScriptも綺麗です</li>
+<li>最後にインターフェイス、JavaやC#のインターフェイスとやれることは似ていますが、ものが違います</li>
+<li>公式のドキュメントから引用すると、あるオブジェクトに別名を与える、という機能です</li>
+<li><code>Programmer Interface</code>はこんな感じ、これはそのままオブジェクトの型としても使えますし、<code>implement</code>することもできます</li>
+<li>コンパイル時に必要な定義なので、JavaScriptになった段階では消えます</li>
+<li><code>Function</code>もオブジェクトなので、それを表すこともできます</li>
+<li>これはそれを利用してオーバーロードを実装してみた例です</li>
+<li>ただし残念ながら、定義上のオーバーロードなので、実装自体はJavaScriptと変わりません</li>
+<li>他にも機能はありますが・・・</li>
+<li>JavaScriptだけでも工夫すれば大体似たような感じで実装することはできますし、型チェックもコンパイラを使えば行う事が出来ます</li>
+<li>そしてJavaScriptのトラップを回避できるわけでもありません</li>
+<li>なので残念ながら、ソリューションというわけではなく</li>
+<li>いままでJavaScriptを書いていた人が、見通しよく、安全なコードを書きやすくなる言語という認識でよいと思います</li>
+<li>JavaScriptをしっかりと書けることが前提になる言語です</li>
+<li>いままで似たような事を、ちゃんとやっていたJavaScripterな方にはかなりおすすめです</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
