@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-30T19:41:56+09:00</updated>
+  <updated>2013-04-01T01:29:48+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,117 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[MagicalRecordの始め方忘れたので思い出しながら書く]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/01/magical-record-setup/"/>
+    <updated>2013-04-01T00:49:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/01/magical-record-setup</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a>使うかーと思ったけど、やりかた覚えてなかったので書く！やっぱブログ書かないと駄目ですね。</p>
+
+<h2>プロジェクト作る</h2>
+
+<p><code>Use Core Data</code> をチェックする</p>
+
+<h2>xcdatamodeldをいじる</h2>
+
+<p>とりあえずサンプルとして</p>
+
+<p>```
+Book:
+  name: string
+  bookId: integer 16
+  authors: [Author]</p>
+
+<p>Author:
+  name: string
+  type: string
+  book: [Book]
+```</p>
+
+<p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
+
+<p><img src="/images/mr-to-many.png"></p>
+
+<p><code>Class</code>とかも忘れずに設定する。</p>
+
+<p><img src="/images/mr-class.png" width="240"></p>
+
+<h2>エンティティのモデルクラス作る</h2>
+
+<p><a href="http://rentzsch.github.com/mogenerator/">mogenerator</a>を使うのが一般的っぽいですが、僕は別に使わなくていいかなーと思ってます。
+というのも、mogeneratorって「自動生成されるやつだと変更したあとにマージが大変・・・、なのでCoreDataとビジネスロジックをカテゴリで分ける」的な使われ方をするのかなーと思ってるんだけど、それってそりゃそーじゃね、と思うのです。</p>
+
+<p>僕は、CoreDataから出てきたものは、いうならJSON形式のレスポンスをそのまま<code>NSDicitionary</code>として使ってるのとそんなに違わないよなーと思っていて、なので内部的に<code>NSManagedObject</code>をもってるビジネスロジックを担当するクラスを作ればいいと思う。</p>
+
+<p>とはいえただの決めの問題だし、どっちにしろmogenerator使えば楽出来ることに変わりはないと思うので、mogenerator使っときます。(ていうかこれじゃないと駄目なんだっけ？大丈夫だよね？)</p>
+
+<p>(入ってない人は)<code>brew</code>でmogeneratorをインストールします。</p>
+
+<p><code>
+$ brew install mogenerator
+</code></p>
+
+<p>mogeneratorが吐き出すクラスを入れるディレクトリなんかを作る。とりあえず <code>CoreData</code> とかにしておく。</p>
+
+<p>準備したらmogeneratorでクラスを吐き出す。</p>
+
+<p><code>
+$ mogenerator -m [YourCoreData].xcdatamodeld/[YourCoreData].xcdatamodel -O CoreData/ --template-var arc=true
+</code></p>
+
+<p>こんな感じ！ <code>--template-var arc=true</code> 付けないとARC用のコードが出てこないっぽいので注意。</p>
+
+<h2>MagicalRecord入れる</h2>
+
+<p><code>
+pod `'MagicalRecord'
+</code></p>
+
+<p><code>
+$ pod install
+</code></p>
+
+<p>いい時代になりましたね。</p>
+
+<h2>MagicalRecord使う</h2>
+
+<p>インポートします。</p>
+
+<p>```objective-c</p>
+
+<h1>define MR_SHORTHAND 1</h1>
+
+<h1>import "CoreData+MagicalRecord.h"</h1>
+
+<p>```</p>
+
+<p>セットアップします。</p>
+
+<p><code>objective-c
+[MagicalRecord setupCoreDataStackWithStoreNamed:@"YourCoreData.sqlite"];
+</code></p>
+
+<p>使います。</p>
+
+<p>```objective-c
+MGBook *book = [MGBook createEntity];
+book.name = @"Objective-C";
+book.bookId = @(123);</p>
+
+<p>[context saveToPersistentStoreAndWait];
+```</p>
+
+<p>簡単ですね！</p>
+
+<p>いつの間にか <code>MR_save</code> じゃなくて、<code>MR_saveToPersistentStoreAndWait</code> と <code>MR_saveToPersistentStoreWithCompletion:</code> になったんですね。こっちの方がいいと思います！！！！</p>
+
+<h2>sqliteのビュアーとか</h2>
+
+<p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
@@ -364,82 +475,6 @@ NSLog([[error userInfo] objectForKey:@"msg"]); // えらー
 <p>というわけで、簡単ですが一旦の挨拶とさせて頂きます。みなさん、ありがとうございました！</p>
 
 <p>「次回にご期待ください！」</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/12/stubbilino/"/>
-    <updated>2013-02-12T04:28:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/12/stubbilino</id>
-    <content type="html"><![CDATA[<p>こんにちは、うきょーです。
-<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
-
-<p>```objective-c
-SEHoge <em>hoge = [[SEHoge alloc] init];
-NSObject<SBStub> </em>stub = [Stubbilino stubObject:hoge];
-[stub stubMethod:@selector(intMethod) withBlock:^ {</p>
-
-<pre><code>return 10;
-</code></pre>
-
-<p>}];</p>
-
-<p>NSLog(@"%d", [hoge intMethod]);
-```</p>
-
-<p>みたいにselectorとBlocksを使って書きます。
-このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
-
-<p>```objective-c
-[stub stubMethod:@selector(stringMethod) withBlock:<sup>(){</sup></p>
-
-<pre><code>return @"string";
-</code></pre>
-
-<p>}];
-```</p>
-
-<p>こういうのもいける、超便利。
-OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
-Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
-
-<p>あとはクラスメソッドのスタブも出来るみたいです。
-こっちはまだ使ってないのでREADMEからの引用ですが、</p>
-
-<p>```objective-c
-// https://github.com/robb/Stubbilino/blob/master/README.md
-Class<SBClassStub> uiimage = [Stubbilino stubClass:UIImage.class];</p>
-
-<p>[uiimage stubMethod:@selector(imageNamed:)</p>
-
-<pre><code>      withBlock:^(NSString *name) { return myImage; }];
-</code></pre>
-
-<p>```</p>
-
-<p>こういう感じで書けるみたいです。
-クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
-
-<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
-なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
-
-<p>　</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
 ]]></content>
   </entry>
   

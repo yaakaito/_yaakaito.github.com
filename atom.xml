@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-03-30T19:41:56+09:00</updated>
+  <updated>2013-04-01T01:29:48+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,132 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[MagicalRecordの始め方忘れたので思い出しながら書く]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/01/magical-record-setup/"/>
+    <updated>2013-04-01T00:49:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/01/magical-record-setup</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a>使うかーと思ったけど、やりかた覚えてなかったので書く！やっぱブログ書かないと駄目ですね。</p>
+
+<h2>プロジェクト作る</h2>
+
+<p><code>Use Core Data</code> をチェックする</p>
+
+<h2>xcdatamodeldをいじる</h2>
+
+<p>とりあえずサンプルとして</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Book:
+</span><span class='line'>  name: string
+</span><span class='line'>  bookId: integer 16
+</span><span class='line'>  authors: [Author]
+</span><span class='line'>
+</span><span class='line'>Author:
+</span><span class='line'>  name: string
+</span><span class='line'>  type: string
+</span><span class='line'>  book: [Book]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
+
+<p><img src="http://yaakaito.org/images/mr-to-many.png"></p>
+
+<p><code>Class</code>とかも忘れずに設定する。</p>
+
+<p><img src="http://yaakaito.org/images/mr-class.png" width="240"></p>
+
+<h2>エンティティのモデルクラス作る</h2>
+
+<p><a href="http://rentzsch.github.com/mogenerator/">mogenerator</a>を使うのが一般的っぽいですが、僕は別に使わなくていいかなーと思ってます。
+というのも、mogeneratorって「自動生成されるやつだと変更したあとにマージが大変・・・、なのでCoreDataとビジネスロジックをカテゴリで分ける」的な使われ方をするのかなーと思ってるんだけど、それってそりゃそーじゃね、と思うのです。</p>
+
+<p>僕は、CoreDataから出てきたものは、いうならJSON形式のレスポンスをそのまま<code>NSDicitionary</code>として使ってるのとそんなに違わないよなーと思っていて、なので内部的に<code>NSManagedObject</code>をもってるビジネスロジックを担当するクラスを作ればいいと思う。</p>
+
+<p>とはいえただの決めの問題だし、どっちにしろmogenerator使えば楽出来ることに変わりはないと思うので、mogenerator使っときます。(ていうかこれじゃないと駄目なんだっけ？大丈夫だよね？)</p>
+
+<p>(入ってない人は)<code>brew</code>でmogeneratorをインストールします。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install mogenerator</span></code></pre></td></tr></table></div></figure>
+
+
+<p>mogeneratorが吐き出すクラスを入れるディレクトリなんかを作る。とりあえず <code>CoreData</code> とかにしておく。</p>
+
+<p>準備したらmogeneratorでクラスを吐き出す。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ mogenerator -m [YourCoreData].xcdatamodeld/[YourCoreData].xcdatamodel -O CoreData/ --template-var arc=true</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ！ <code>--template-var arc=true</code> 付けないとARC用のコードが出てこないっぽいので注意。</p>
+
+<h2>MagicalRecord入れる</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pod `'MagicalRecord'</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ pod install</span></code></pre></td></tr></table></div></figure>
+
+
+<p>いい時代になりましたね。</p>
+
+<h2>MagicalRecord使う</h2>
+
+<p>インポートします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#define MR_SHORTHAND 1</span>
+</span><span class='line'><span class="cp">#import &quot;CoreData+MagicalRecord.h&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>セットアップします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">MagicalRecord</span> <span class="nl">setupCoreDataStackWithStoreNamed:</span><span class="s">@&quot;YourCoreData.sqlite&quot;</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使います。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">MGBook</span> <span class="o">*</span><span class="n">book</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGBook</span> <span class="n">createEntity</span><span class="p">];</span>
+</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">@&quot;Objective-C&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">bookId</span> <span class="o">=</span> <span class="err">@</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">context</span> <span class="n">saveToPersistentStoreAndWait</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>簡単ですね！</p>
+
+<p>いつの間にか <code>MR_save</code> じゃなくて、<code>MR_saveToPersistentStoreAndWait</code> と <code>MR_saveToPersistentStoreWithCompletion:</code> になったんですね。こっちの方がいいと思います！！！！</p>
+
+<h2>sqliteのビュアーとか</h2>
+
+<p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
@@ -2397,137 +2523,6 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
 
 
 <p>こういう感じにいける、こっちのがよさげ。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[UINib知らずにCellが作れなくて人生半分くらい損した話]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei/"/>
-    <updated>2013-02-10T16:32:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/10/uinib-lost-jinsei</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-僕は<code>UIView</code>とか<code>UITableViewCell</code>を継承してかっちょいいビューを作ろうとすると3分でやる気が消える人なのですが、
-最近UINibというものを知りました、創作意欲を返してほしいと思います！！！！</p>
-
-<h3>追記しました</h3>
-
-<p><a href="http://yaakaito.github.com/blog/2013/02/11/register-nib/">続き</a></p>
-
-<p>みなさん<code>UITableViewCell</code>のサブクラス作りますよね。
-そしてそのままコーディングしていくと非常にだるく、3秒でモチベーションがなくなるので、
-Interface Builderを使いたい！と思うわけですが、<code>UITableViewCell</code>用のxibファイル作るのは30秒で心が折れる。
-(というかいつも忘れるしXcodeのバージョンあがると分からなくなる)</p>
-
-<h2>UINibを使う</h2>
-
-<p>おもむろにxibファイルを作ります。</p>
-
-<p><img src="http://yaakaito.org/images/uinib_1.png" width="320"></p>
-
-<p>UIViewを消します。</p>
-
-<p><img src="http://yaakaito.org/images/uinib_2.png" width="320"></p>
-
-<p>UITableViewCellをおきます。</p>
-
-<p><img src="http://yaakaito.org/images/uinib_3.png" width="320"></p>
-
-<p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
-FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>
-
-<p>あとはこれをdatasource側で</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">HogeCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="n">kHogeCellReuseIdentifier</span><span class="p">];</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">UINib</span> <span class="o">*</span><span class="n">nib</span> <span class="o">=</span> <span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">];</span>
-</span><span class='line'>    <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">nib</span> <span class="nl">instantiateWithOwner:</span><span class="nb">nil</span> <span class="nl">options:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">objectAtIndex:</span><span class="mi">0</span><span class="p">];</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">updateCell:</span><span class="n">cell</span> <span class="nl">indexPath:</span><span class="n">indexPath</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とかすれば使えた、泣いた。いままでのよくわからん！はなんだったのか。</p>
-
-<h2>細かいところはコードで制御したい</h2>
-
-<p>ざっくりとしたレイアウトとかを決めるのはxibで大分楽できるんですが、
-もっと細かいところとか、同じようなのだし、まとめて処理してほしい(背景とか)ってときに、毎回xibいじるのはだるいですね。</p>
-
-<p>まあなんだかんだでいろいろコードで弄りたいこととか、コードから追加したい要素とかもあると思うんですが、
-これをビューコントローラーからやったりするとゴミみたいなコードになるので、あまりやりたくないわけです。</p>
-
-<p>が、しかしこれは<code>willMoveToSuperview:</code>あたりをうまく使えば解決できることに気づいて</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">willMoveToSuperview:</span><span class="p">(</span><span class="n">UIView</span> <span class="o">*</span><span class="p">)</span><span class="nv">newSuperview</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="p">[</span><span class="n">super</span> <span class="nl">willMoveToSuperview:</span><span class="n">newSuperview</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// 共通のスタイルとかコードでやりたい処理書く</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ってやればあっさりできた、全俺が号泣した。</p>
-
-<h2>次にだるいのが</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setHoge:</span><span class="p">(</span><span class="n">Hoge</span> <span class="o">*</span><span class="p">)</span><span class="nv">hoge</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">hoge</span> <span class="o">!=</span> <span class="n">hoge</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">_hoge</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">thumbnail</span><span class="p">;</span>
-</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">message</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">hoge</span><span class="p">.</span><span class="n">message</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういうの、あると思います。(updateCellとか)</p>
-
-<p>Model-View-Binder使えばうまくいけそうですが、メジャーなの知らないので教えてください。</p>
-
-<p>けど多分ないような気がするので作ります。</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
 ]]></content>
   </entry>
   
