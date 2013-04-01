@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-01T01:29:48+09:00</updated>
+  <updated>2013-04-02T02:48:30+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,136 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[半周遅れでBower使ってみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/02/hello-bower/"/>
+    <updated>2013-04-02T02:12:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/02/hello-bower</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！curlしにいくのがだるいです。
+そういや<a href="http://twitter.github.com/bower/">bower</a>ってあったなと思ったので試してみたメモ。といってもまだ使ってみたレベルなので使い方くらいです。</p>
+
+<h2>bower をインストール</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g bower</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やりましたね！</p>
+
+<h2>どんな品揃えかみてみる</h2>
+
+<p><code>search</code>を引数なしでやると全部出てきます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower search</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ドドドドドドドーーーー！！！ときて僕のScrollback Linesが足りなくなりました。行数でも数えてみます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower search | wc -l
+</span><span class='line'>1505</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すごい！むかし30個くらいしかなかった気がする！！！
+jQuery PlugingとかBackboneの拡張とか、Angularの拡張はたくさんありました。(関係ないけどBackboke Pluginとか名前になってるか分からないのでこう書いてる)</p>
+
+<p>で、大体有名どころとそのプラグインはあるし、<code>npm</code>も組み合わせればほとんど大丈夫だろなーという感じでした。</p>
+
+<h2>使ってみる</h2>
+
+<p>大体npmと似たような感じで使います。例えばjQueryほしいなーと思ったら、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install jquery</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで <code>components</code> というディレクトリが出来るので、ここにjQueryが入ってます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ tree
+</span><span class='line'>.
+</span><span class='line'>└── components
+</span><span class='line'>    └── jquery
+</span><span class='line'>        ├── component.json
+</span><span class='line'>        ├── composer.json
+</span><span class='line'>        ├── jquery-migrate.js
+</span><span class='line'>        ├── jquery-migrate.min.js
+</span><span class='line'>        ├── jquery.js
+</span><span class='line'>        └── jquery.min.js</span></code></pre></td></tr></table></div></figure>
+
+
+<p>npmでいうところの<code>node_modules</code>ですね。あとはほしいものをどんどん突っ込んでいけば</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install jasmine
+</span><span class='line'>$ bower install backbone
+</span><span class='line'>$ tree -L 2
+</span><span class='line'>.
+</span><span class='line'>└── components
+</span><span class='line'>    ├── backbone
+</span><span class='line'>    ├── jasmine
+</span><span class='line'>    └── jquery</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じに揃っていきます。便利ですね。</p>
+
+<h2>component.json</h2>
+
+<p>npmで言うところの<code>package.json</code>ですね。中身もほぼ一緒です。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  "name" : "thogehoge",
+</span><span class='line'>  "version" : "0.0.0",
+</span><span class='line'>  "dependencies" : {
+</span><span class='line'>    "backbone" : "~1.0.0",
+</span><span class='line'>    "jquery" : "~1.9.1",
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいに書いておいて、</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すれば<code>dependencies</code>が全部<code>components</code>に入ります。</p>
+
+<h2>便利そうかどうか</h2>
+
+<p>まあ便利なんじゃないでしょうか、ロードするときにパスが長くなるのがちょっと面倒くらいですね。
+この辺は多分<code>git clone</code>してきてるだけなので、元のリポジトリ依存っぽいような臭いがします。(たいして調べてないのでテキトーです。)</p>
+
+<p>ただでさえ汚くなりがちなJavaScriptのリポジトリですが、<code>components</code>をgitignoreしておけばちょっとは綺麗になりそうですね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[MagicalRecordの始め方忘れたので思い出しながら書く]]></title>
@@ -2478,51 +2608,6 @@ Blocks使ってるので、ちょっと生成がめんどいオブジェクト�
 
 <iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[registerNibを使うとさらによいらしいです]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/11/register-nib/"/>
-    <updated>2013-02-11T02:51:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/11/register-nib</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://yaakaito.github.com/blog/2013/02/10/uinib-lost-jinsei/">前の続きです</a></p>
-
-<p>UINibで楽チンに<code>UITableViewCell</code>をxibで作れることは分かったけど、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">UINib</span> <span class="o">*</span><span class="n">nib</span> <span class="o">=</span> <span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">];</span>
-</span><span class='line'><span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">nib</span> <span class="nl">instantiateWithOwner:</span><span class="nb">nil</span> <span class="nl">options:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">objectAtIndex:</span><span class="mi">0</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>このコードはぶっちゃけ微妙だよね。</p>
-
-<p>で、iOS5~だと<code>registerNib</code>というものがあるらしく</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">registerNib:</span><span class="p">[</span><span class="n">UINib</span> <span class="nl">nibWithNibName:</span><span class="s">@&quot;HogeCell&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">]</span> <span class="nl">forCellReuseIdentifier:</span><span class="n">kHogeCellReuseIdentifier</span><span class="p">];</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じに書いておくと、さっきの生成部分が</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">HogeCell</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithStyle:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier:</span><span class="n">kBGHogeCellReuseIdentifier</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じにいける、こっちのがよさげ。</p>
 ]]></content>
   </entry>
   

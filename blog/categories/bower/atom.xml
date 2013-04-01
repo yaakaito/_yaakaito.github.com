@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Bower | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/bower/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-04-02T02:48:30+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[半周遅れでBower使ってみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/02/hello-bower/"/>
+    <updated>2013-04-02T02:12:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/02/hello-bower</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！curlしにいくのがだるいです。
+そういや<a href="http://twitter.github.com/bower/">bower</a>ってあったなと思ったので試してみたメモ。といってもまだ使ってみたレベルなので使い方くらいです。</p>
+
+<h2>bower をインストール</h2>
+
+<p><code>
+$ npm install -g bower
+</code></p>
+
+<p>やりましたね！</p>
+
+<h2>どんな品揃えかみてみる</h2>
+
+<p><code>search</code>を引数なしでやると全部出てきます。</p>
+
+<p><code>
+$ bower search
+</code></p>
+
+<p>ドドドドドドドーーーー！！！ときて僕のScrollback Linesが足りなくなりました。行数でも数えてみます。</p>
+
+<p><code>
+$ bower search | wc -l
+1505
+</code></p>
+
+<p>すごい！むかし30個くらいしかなかった気がする！！！
+jQuery PlugingとかBackboneの拡張とか、Angularの拡張はたくさんありました。(関係ないけどBackboke Pluginとか名前になってるか分からないのでこう書いてる)</p>
+
+<p>で、大体有名どころとそのプラグインはあるし、<code>npm</code>も組み合わせればほとんど大丈夫だろなーという感じでした。</p>
+
+<h2>使ってみる</h2>
+
+<p>大体npmと似たような感じで使います。例えばjQueryほしいなーと思ったら、</p>
+
+<p><code>
+$ bower install jquery
+</code></p>
+
+<p>これで <code>components</code> というディレクトリが出来るので、ここにjQueryが入ってます。</p>
+
+<p>```
+$ tree
+.
+└── components</p>
+
+<pre><code>└── jquery
+    ├── component.json
+    ├── composer.json
+    ├── jquery-migrate.js
+    ├── jquery-migrate.min.js
+    ├── jquery.js
+    └── jquery.min.js
+</code></pre>
+
+<p>```</p>
+
+<p>npmでいうところの<code>node_modules</code>ですね。あとはほしいものをどんどん突っ込んでいけば</p>
+
+<p>```
+$ bower install jasmine
+$ bower install backbone
+$ tree -L 2
+.
+└── components</p>
+
+<pre><code>├── backbone
+├── jasmine
+└── jquery
+</code></pre>
+
+<p>```</p>
+
+<p>という感じに揃っていきます。便利ですね。</p>
+
+<h2>component.json</h2>
+
+<p>npmで言うところの<code>package.json</code>ですね。中身もほぼ一緒です。</p>
+
+<p>```
+{
+  "name" : "thogehoge",
+  "version" : "0.0.0",
+  "dependencies" : {</p>
+
+<pre><code>"backbone" : "~1.0.0",
+"jquery" : "~1.9.1",
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>みたいに書いておいて、</p>
+
+<p><code>
+$ bower install
+</code></p>
+
+<p>すれば<code>dependencies</code>が全部<code>components</code>に入ります。</p>
+
+<h2>便利そうかどうか</h2>
+
+<p>まあ便利なんじゃないでしょうか、ロードするときにパスが長くなるのがちょっと面倒くらいですね。
+この辺は多分<code>git clone</code>してきてるだけなので、元のリポジトリ依存っぽいような臭いがします。(たいして調べてないのでテキトーです。)</p>
+
+<p>ただでさえ汚くなりがちなJavaScriptのリポジトリですが、<code>components</code>をgitignoreしておけばちょっとは綺麗になりそうですね。</p>
+]]></content>
+  </entry>
+  
+</feed>
