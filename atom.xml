@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-02T02:48:30+09:00</updated>
+  <updated>2013-04-04T06:27:09+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,210 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[SublimeText入れたあとにやること]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/04/sublime-text-setup/"/>
+    <updated>2013-04-04T05:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/04/sublime-text-setup</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+ずいぶん前にVimからSublimeTextに変えたんですが、設定覚えられないので、いれたらやることのメモです。</p>
+
+<p>バージョン番号とかは適当に補完して読んでください。</p>
+
+<h2>Package Control 入れる</h2>
+
+<p>とりあえずないと始まらないので入れます。</p>
+
+<p><a href="http://wbond.net/sublime_packages/package_control/installation">Sublime Package Control : Installation</a></p>
+
+<p>control+` でコンソールを呼びます。そして流し込みます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib2</span><span class="o">,</span><span class="nn">os</span><span class="p">;</span> <span class="n">pf</span><span class="o">=</span><span class="s">&#39;Package Control.sublime-package&#39;</span><span class="p">;</span> <span class="n">ipp</span><span class="o">=</span><span class="n">sublime</span><span class="o">.</span><span class="n">installed_packages_path</span><span class="p">();</span> <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">ipp</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ipp</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span><span class="p">;</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">()));</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ipp</span><span class="p">,</span><span class="n">pf</span><span class="p">),</span><span class="s">&#39;wb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://sublime.wbond.net/&#39;</span><span class="o">+</span><span class="n">pf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="s">&#39;%20&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">());</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Please restart Sublime Text to finish installation&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>キーバインドを変える</h2>
+
+<p>変えます。といってもそんなに変えません。</p>
+
+<p>まず、Macの方のSystem Preferencesから(こっちからやるのが重要)、キーバインドに <code>Command+Option+Q</code>で<code>Quit Sublime Text</code>するようにします。
+こうするとcmd+Qで間違って殺してしまう心配もなくなりますし、Sublime Textが<code>Command+Option+Q</code>を使っているので、実質死ななくなります。</p>
+
+<p>え、死ななくなっても困らないですよね？それよりミスって殺さない事の方が大事っていうか・・・。(僕はAppCodeとかXcodeとかChromeとかもこうなってる)</p>
+
+<p>もっとも重要なキーバインドを変えたので、残りを変えます。こっちはSublime Textから。</p>
+
+<p>Preferences -> Key Bindings - User を開いて</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span>
+</span><span class='line'>  <span class="p">{</span> <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;super+shift+p&quot;</span><span class="p">],</span> <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;show_overlay&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;overlay&quot;</span><span class="o">:</span> <span class="s2">&quot;goto&quot;</span><span class="p">,</span> <span class="s2">&quot;show_files&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span> <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;super+p&quot;</span><span class="p">],</span> <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;show_overlay&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;overlay&quot;</span><span class="o">:</span> <span class="s2">&quot;command_palette&quot;</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>として Command Palette と Goto を入れ替えます。これで Command+P でコマンド打てるようになります。便利ですね。(圧倒的にこっちのほうが使うので)</p>
+
+<h2>パッケージを取りにいく</h2>
+
+<p>あんまりいれてないですけどね！テーマとかもまとめてとります。</p>
+
+<p>Command+P -> Package Controll : Install Package</p>
+
+<ul>
+<li>Phoenix theme</li>
+<li>TypeScript</li>
+<li>CoffeeScript</li>
+<li>jQuery</li>
+<li>Markdown Preview</li>
+</ul>
+
+
+<p>あとはス二ペットとか、使う物によると思うけど、最近いれたのは</p>
+
+<ul>
+<li>jQuery</li>
+<li>Mocha</li>
+<li>Backbone</li>
+</ul>
+
+
+<p>とか。すきなの入れればいいと思う。スニペットも Command+P からそれっぽく呼び出せる。</p>
+
+<h2>テーマの設定する</h2>
+
+<p>さっきとってきた Phoenix theme をあてる。</p>
+
+<p>Preferences -> Settings - User に</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;color_scheme&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/Theme - Phoenix/Color Scheme/Tomorrow-Night.tmTheme&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;font_size&quot;</span><span class="o">:</span> <span class="mf">14.0</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_color_expanded_folder&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_color_orange&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_dirty_bottom_bar&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_dirty_bottom_bar_red&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_highlight_current_tab&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;phoenix_sidebar_tree_large&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;theme&quot;</span><span class="o">:</span> <span class="s2">&quot;Phoenix Dark.sublime-theme&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じで書いておわり。</p>
+
+<p>やってるのは上からカラースキームの設定、フォントサイズの設定、あとはPhoenix themeの設定。</p>
+
+<h2>インデントとか調整する</h2>
+
+<p>こっちは</p>
+
+<p>Preferences -> Settings - Defaults でやっていいと思う。どうせ変えない。</p>
+
+<p>デフォルト覚えてないけど多分、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Set to true to turn spell checking on by default</span>
+</span><span class='line'><span class="s2">&quot;spell_check&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// The number of spaces a tab is considered equal to</span>
+</span><span class='line'><span class="s2">&quot;tab_size&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Set to true to insert spaces when tab is pressed</span>
+</span><span class='line'><span class="s2">&quot;translate_tabs_to_spaces&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このあたり設定すれば、他のめぼしいのは全部ついてるはず。</p>
+
+<h2>Markdown pluginを複製する</h2>
+
+<p>Preference -> Browse Packages&#8230; を選択するとディレクトリが開くので、ここでmarkdownをおもむろに複製する。
+で、これをMarkdownJPとかにしておく。<code>.tmLanuage</code>を開いて、JPのサフィックスを付ける。</p>
+
+<p>なんでやるかって、スペルチェックのせいさ！</p>
+
+<h2>言語毎に設定変える</h2>
+
+<p>変え方は、エディターで対象を適用した状態で、 Preferences -> Settings - More -> Syntax Specific。</p>
+
+<h3>MarkdownJP</h3>
+
+<p>さっき設定した<code>spell_check</code>はブログとか書くmarkdownモードだと日本語が警告されまくってうざいので消す。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;spell_check&quot;</span><span class="o">:</span> <span class="kc">false</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>JavaScript, CoffeeScript</h3>
+
+<p>この二つだけインデントを4にする。(ネストしだすと見にくい)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;tab_size&quot;</span> <span class="o">:</span> <span class="mi">4</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ファイル開いたときは空気読んでこのあたりを設定してくれるので安心ですね。</p>
+
+<h2>エイリアスを設定する</h2>
+
+<p>open経由で開けるようにする。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">alias</span> <span class="nx">sb</span><span class="o">=</span><span class="s2">&quot;open -a Sublime\Text&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">cd</span> <span class="nx">hoge</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">sb</span> <span class="p">.</span> <span class="c1">// SublimeがFoldersにカレントセットした状態で開くヤッターーーーーー！！！</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h2>おわり</h2>
+
+<p>Sublime Text良いですね。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[半周遅れでBower使ってみる]]></title>
@@ -2526,88 +2730,6 @@ BusterJSはデフォルトでいい感じのHTMLを作って使ってくれる�
 <p>というわけで、簡単ですが一旦の挨拶とさせて頂きます。みなさん、ありがとうございました！</p>
 
 <p>「次回にご期待ください！」</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Stubbilinoというスタブライブラリがよさげです]]></title>
-    <link href="http://yaakaito.org/blog/2013/02/12/stubbilino/"/>
-    <updated>2013-02-12T04:28:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/02/12/stubbilino</id>
-    <content type="html"><![CDATA[<p>こんにちは、うきょーです。
-<a href="https://github.com/robb/Stubbilino">Stubbilino</a> というスタブライブラリをみけたのですが、結構良さげです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">SEHoge</span> <span class="o">*</span><span class="n">hoge</span> <span class="o">=</span> <span class="p">[[</span><span class="n">SEHoge</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-</span><span class='line'><span class="n">NSObject</span><span class="o">&lt;</span><span class="n">SBStub</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">stub</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubObject:</span><span class="n">hoge</span><span class="p">];</span>
-</span><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">intMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%d&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">hoge</span> <span class="n">intMethod</span><span class="p">]);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいにselectorとBlocksを使って書きます。
-このBlocksはオブジェクトとか気にせず返せるみたいで、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">stub</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="n">stringMethod</span><span class="p">)</span> <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(){</span>
-</span><span class='line'>    <span class="k">return</span> <span class="s">@&quot;string&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういうのもいける、超便利。
-OCMockとかだと<code>OCValue</code>がどうたらとか出てくるので、非常に楽チンに書ける。
-Blocks使ってるので、ちょっと生成がめんどいオブジェクトとかも、押し込んでおけるのでよい。</p>
-
-<p>あとはクラスメソッドのスタブも出来るみたいです。
-こっちはまだ使ってないのでREADMEからの引用ですが、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="c1">// https://github.com/robb/Stubbilino/blob/master/README.md</span>
-</span><span class='line'><span class="n">Class</span><span class="o">&lt;</span><span class="n">SBClassStub</span><span class="o">&gt;</span> <span class="n">uiimage</span> <span class="o">=</span> <span class="p">[</span><span class="n">Stubbilino</span> <span class="nl">stubClass:</span><span class="n">UIImage</span><span class="p">.</span><span class="n">class</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">uiimage</span> <span class="nl">stubMethod:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">imageNamed:</span><span class="p">)</span>
-</span><span class='line'>          <span class="nl">withBlock:</span><span class="o">^</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">myImage</span><span class="p">;</span> <span class="p">}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じで書けるみたいです。
-クラスメソッドのスタブは往々にしてだるいという感じだったので、良い。</p>
-
-<p>OCMockなんかは<code>NSProxy</code>を使った実装ですが、こっちは<code>objc/runtime.h</code>使っています。
-なのでちょっとコード追うのはしんどいですが、読んでみるとよいと思います。</p>
-
-<p>　</p>
-
-<h2>宣伝:2/23に東京でiOSカンファレンスを開催します！</h2>
-
-<p>「conferenceWithDevelopers」というタイトルです。</p>
-
-<p><a href="http://conference-with-developers.info/">公式サイト</a></p>
-
-<p><a href="http://peatix.com/event/9727">チケットをゲットはこちらから</a></p>
-
-<p>無料です！</p>
-
-<p>豪華スピーカーでお送りしますので、みなさん是非ご参加ください！LT発表者も募集してますよ！</p>
-
-<iframe frameborder="0" width="400" height="460" src="http://peatix.com/event/9727/share/widget?z=1&c=dark&t=1&a=1"></iframe>
-
 ]]></content>
   </entry>
   

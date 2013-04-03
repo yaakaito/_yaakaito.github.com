@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: SublimeText | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/sublimetext/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-04-04T06:27:09+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[SublimeText入れたあとにやること]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/04/sublime-text-setup/"/>
+    <updated>2013-04-04T05:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/04/sublime-text-setup</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+ずいぶん前にVimからSublimeTextに変えたんですが、設定覚えられないので、いれたらやることのメモです。</p>
+
+<p>バージョン番号とかは適当に補完して読んでください。</p>
+
+<h2>Package Control 入れる</h2>
+
+<p>とりあえずないと始まらないので入れます。</p>
+
+<p><a href="http://wbond.net/sublime_packages/package_control/installation">Sublime Package Control : Installation</a></p>
+
+<p>control+` でコンソールを呼びます。そして流し込みます。</p>
+
+<p><code>python
+import urllib2,os; pf='Package Control.sublime-package'; ipp=sublime.installed_packages_path(); os.makedirs(ipp) if not os.path.exists(ipp) else None; urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler())); open(os.path.join(ipp,pf),'wb').write(urllib2.urlopen('http://sublime.wbond.net/'+pf.replace(' ','%20')).read()); print('Please restart Sublime Text to finish installation')
+</code></p>
+
+<h2>キーバインドを変える</h2>
+
+<p>変えます。といってもそんなに変えません。</p>
+
+<p>まず、Macの方のSystem Preferencesから(こっちからやるのが重要)、キーバインドに <code>Command+Option+Q</code>で<code>Quit Sublime Text</code>するようにします。
+こうするとcmd+Qで間違って殺してしまう心配もなくなりますし、Sublime Textが<code>Command+Option+Q</code>を使っているので、実質死ななくなります。</p>
+
+<p>え、死ななくなっても困らないですよね？それよりミスって殺さない事の方が大事っていうか・・・。(僕はAppCodeとかXcodeとかChromeとかもこうなってる)</p>
+
+<p>もっとも重要なキーバインドを変えたので、残りを変えます。こっちはSublime Textから。</p>
+
+<p>Preferences -> Key Bindings - User を開いて</p>
+
+<p><code>javascript
+[
+  { "keys": ["super+shift+p"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+  { "keys": ["super+p"], "command": "show_overlay", "args": {"overlay": "command_palette"} },
+]
+</code></p>
+
+<p>として Command Palette と Goto を入れ替えます。これで Command+P でコマンド打てるようになります。便利ですね。(圧倒的にこっちのほうが使うので)</p>
+
+<h2>パッケージを取りにいく</h2>
+
+<p>あんまりいれてないですけどね！テーマとかもまとめてとります。</p>
+
+<p>Command+P -> Package Controll : Install Package</p>
+
+<ul>
+<li>Phoenix theme</li>
+<li>TypeScript</li>
+<li>CoffeeScript</li>
+<li>jQuery</li>
+<li>Markdown Preview</li>
+</ul>
+
+
+<p>あとはス二ペットとか、使う物によると思うけど、最近いれたのは</p>
+
+<ul>
+<li>jQuery</li>
+<li>Mocha</li>
+<li>Backbone</li>
+</ul>
+
+
+<p>とか。すきなの入れればいいと思う。スニペットも Command+P からそれっぽく呼び出せる。</p>
+
+<h2>テーマの設定する</h2>
+
+<p>さっきとってきた Phoenix theme をあてる。</p>
+
+<p>Preferences -> Settings - User に</p>
+
+<p><code>
+{
+  "color_scheme": "Packages/Theme - Phoenix/Color Scheme/Tomorrow-Night.tmTheme",
+  "font_size": 14.0,
+  "phoenix_color_expanded_folder": true,
+  "phoenix_color_orange": true,
+  "phoenix_dirty_bottom_bar": true,
+  "phoenix_dirty_bottom_bar_red": true,
+  "phoenix_highlight_current_tab": true,
+  "phoenix_sidebar_tree_large": true,
+  "theme": "Phoenix Dark.sublime-theme"
+}
+</code>
+こんな感じで書いておわり。</p>
+
+<p>やってるのは上からカラースキームの設定、フォントサイズの設定、あとはPhoenix themeの設定。</p>
+
+<h2>インデントとか調整する</h2>
+
+<p>こっちは</p>
+
+<p>Preferences -> Settings - Defaults でやっていいと思う。どうせ変えない。</p>
+
+<p>デフォルト覚えてないけど多分、</p>
+
+<p>```
+// Set to true to turn spell checking on by default
+"spell_check": true,</p>
+
+<p>// The number of spaces a tab is considered equal to
+"tab_size": 2,</p>
+
+<p>// Set to true to insert spaces when tab is pressed
+"translate_tabs_to_spaces": true,
+```</p>
+
+<p>このあたり設定すれば、他のめぼしいのは全部ついてるはず。</p>
+
+<h2>Markdown pluginを複製する</h2>
+
+<p>Preference -> Browse Packages... を選択するとディレクトリが開くので、ここでmarkdownをおもむろに複製する。
+で、これをMarkdownJPとかにしておく。<code>.tmLanuage</code>を開いて、JPのサフィックスを付ける。</p>
+
+<p>なんでやるかって、スペルチェックのせいさ！</p>
+
+<h2>言語毎に設定変える</h2>
+
+<p>変え方は、エディターで対象を適用した状態で、 Preferences -> Settings - More -> Syntax Specific。</p>
+
+<h3>MarkdownJP</h3>
+
+<p>さっき設定した<code>spell_check</code>はブログとか書くmarkdownモードだと日本語が警告されまくってうざいので消す。</p>
+
+<p><code>
+{
+  "spell_check": false
+}
+</code></p>
+
+<h3>JavaScript, CoffeeScript</h3>
+
+<p>この二つだけインデントを4にする。(ネストしだすと見にくい)</p>
+
+<p><code>
+{
+  "tab_size" : 4
+}
+</code></p>
+
+<p>ファイル開いたときは空気読んでこのあたりを設定してくれるので安心ですね。</p>
+
+<h2>エイリアスを設定する</h2>
+
+<p>open経由で開けるようにする。</p>
+
+<p><code>
+alias sb="open -a Sublime\Text"
+</code></p>
+
+<p><code>
+$ cd hoge
+$ sb . // SublimeがFoldersにカレントセットした状態で開くヤッターーーーーー！！！
+</code></p>
+
+<h2>おわり</h2>
+
+<p>Sublime Text良いですね。</p>
+]]></content>
+  </entry>
+  
+</feed>
