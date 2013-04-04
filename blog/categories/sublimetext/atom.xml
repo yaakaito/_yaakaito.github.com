@@ -4,7 +4,7 @@
   <title><![CDATA[Category: SublimeText | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/sublimetext/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-04T06:27:09+09:00</updated>
+  <updated>2013-04-04T10:20:41+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -140,13 +140,15 @@ import urllib2,os; pf='Package Control.sublime-package'; ipp=sublime.installed_p
 
 <h3>MarkdownJP</h3>
 
-<p>さっき設定した<code>spell_check</code>はブログとか書くmarkdownモードだと日本語が警告されまくってうざいので消す。</p>
+<p>さっき設定した<code>spell_check</code>はブログとか書くmarkdownモードだと日本語が警告されまくってうざいのでJPの方は消す。</p>
 
 <p><code>
 {
   "spell_check": false
 }
 </code></p>
+
+<p>普通の方はREADMEとかも書くのでそのまま。日本語書く時だけスイッチする。</p>
 
 <h3>JavaScript, CoffeeScript</h3>
 
