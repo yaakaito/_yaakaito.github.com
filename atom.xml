@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-04T10:29:00+09:00</updated>
+  <updated>2013-04-04T10:29:32+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -54,7 +54,7 @@
 
 <p>さらにそれを生成した、というイベントをリスナーに通知する、この辺のパターンはUI書くならキモになってくる部分だし、すごい、簡潔に表現されている・・・。</p>
 
-<p>そして保存する。JavaScriptだとLcoalStorageが多いけど、サーバーに送ったりとか、iOSならCoreDataに保存する見たいなサンプルにちゃんとなってる・・・。</p>
+<p>そして保存する。JavaScriptだとLocalStorageが多いけど、サーバーに送ったりとか、iOSならCoreDataに保存する見たいなサンプルにちゃんとなってる・・・。</p>
 
 <h3>タスクがリストに追加される</h3>
 
