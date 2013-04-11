@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JavaScriptの似非オーバーロードが気に入らない - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです。
+なんかJavaScriptで似非オーバーロードとか省略可能引数使う人結構いますよね。かっこいいですか、そうですか。
+僕これ嫌いなんで、書いておこうと思います。 実際によくあるコード こういうコードがよくありますかね、BackboneとかでもEvents. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/04/11/javascript-overload/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">JavaScriptの似非オーバーロードが気に入らない</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T22:36:00+09:00" pubdate data-updated="true">Apr 11<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>JavaScript</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです。
+なんかJavaScriptで似非オーバーロードとか省略可能引数使う人結構いますよね。かっこいいですか、そうですか。
+僕これ嫌いなんで、書いておこうと思います。</p>
+
+<h2>実際によくあるコード</h2>
+
+<p>こういうコードがよくありますかね、Backboneとかでも<code>Events.off</code>とかがこうなってます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// aを使った処理</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// 引数がないと判定された時の処理</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>他にも、引数によって挙動が違うのたくさんありますよね、jQueryとかjQueryとかjQueryとか。</p>
+
+<h2>まずもって間違っている</h2>
+
+<p>上の例の場合、<code>f()</code> と <code>f(undefined)</code> を区別する事は出来ません。
+<code>f()</code> で期待される挙動は <code>f(undefinedObject)</code> で期待される挙動とは、異なるはずですよね。</p>
+
+<p>これは<code>arguments</code>を見る事である程度解決できます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">argument</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// 引数がないときの処理</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="c1">// その他</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>この件に関して、ちょうどSpineのコードを読んでいて、イラッとしたのでプルリクしました。
+無事にdevにマージされたみたいなので良かったですね。</p>
+
+<h2>挙動を変えないでください</h2>
+
+<p>そもそも同じ関数で複数の挙動を持つなと言いたい。
+少なくとも僕は、そんな挙動を信じられるほど頭がよくない。</p>
+
+<p>jQueryでよくあるけど、<code>$</code>がいろいろ出来すぎて、XSS出してますよね。</p>
+
+<p>他にも、省略することで返ってくるもののスコープが大きくなっていく関数とかよくありますよね、嫌いです。</p>
+
+<h2>別にかっこよくも見やすくもないです</h2>
+
+<p>なんでこうやってるのか知らないですけど、ダサいと思ってます。
+<code>off</code>とか、<code>offAll</code>と<code>off</code>に分けてもらった方が分かりやすいです。
+<code>$</code>もセレクトだけでいいです。作らないでください。</p>
+
+<h2>省略可能引数はオブジェクトを渡してください</h2>
+
+<p>省略可能引数は、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">c</span> <span class="o">:</span> <span class="nx">c</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">d</span> <span class="o">:</span> <span class="nx">d</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という形式で書かれるべきです。</p>
+
+<h2>挙動が異なる関数は分けください</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$select</span><span class="p">();</span>
+</span><span class='line'><span class="nx">$create</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">html</span><span class="p">();</span>
+</span><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">setHtml</span><span class="p">()</span><span class="o">:</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Events</span><span class="p">.</span><span class="nx">unbind</span><span class="p">();</span>
+</span><span class='line'><span class="nx">Events</span><span class="p">.</span><span class="nx">unbindAll</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>にしてください。</p>
+
+<p>どっちの方が挙動を推測しやすいかは一目瞭然だと思いますし、僕はコードゴルフがしたいわけじゃありません。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T22:36:00+09:00" pubdate data-updated="true">Apr 11<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/04/11/javascript-overload/" data-via="" data-counturl="http://yaakaito.org/blog/2013/04/11/javascript-overload/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/04/06/not-head-first-backbone-and-spine-events/" title="Previous Post: 体感的には学ばないBackboneとSpine: Events編">&laquo; 体感的には学ばないBackboneとSpine: Events編</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/04/11/javascript-overload/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/04/11/javascript-overload/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

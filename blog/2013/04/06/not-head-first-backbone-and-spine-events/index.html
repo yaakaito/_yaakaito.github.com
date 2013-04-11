@@ -1,0 +1,635 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>体感的には学ばないBackboneとSpine: Events編 - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！頭と体でも学びません。
+というわけでBackboneとSpineコードを写経しましょう、根気で覚えます。
+そしてヘタクソなりにブログにまとめることで精進します。ショージンショージン。
+暇な人は是非一緒にやりましょう！ 今回はEvents編です。中核ですね、やりましたね！ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/04/06/not-head-first-backbone-and-spine-events/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">体感的には学ばないBackboneとSpine: Events編</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-06T09:42:00+09:00" pubdate data-updated="true">Apr 6<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/backbonejs/'>BackboneJS</a>, <a class='category' href='/blog/categories/coffeescript/'>CoffeeScript</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/spine/'>Spine</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！頭と体でも学びません。
+というわけでBackboneとSpineコードを写経しましょう、根気で覚えます。
+そしてヘタクソなりにブログにまとめることで精進します。ショージンショージン。
+暇な人は是非一緒にやりましょう！</p>
+
+<p>今回はEvents編です。中核ですね、やりましたね！
+Eventsを押さえればMVCなど理解したも当然・・・という訳ではないですが、重要な部類だし、APIの差がほとんどないので読みやすいところです。</p>
+
+<p>写経したコードにはゴミみたいな日本語で解説が書いてあるので、見たい人は合わせてお読みください。(逆に混乱する可能性があるので本家を見た方がいいです)</p>
+
+<p>本家 <a href="https://github.com/documentcloud/backbone/blob/master/backbone.js#L78">Backbone.Events</a> | <a href="https://github.com/spine/spine/blob/master/src/spine.coffee">Spine.Events</a></p>
+
+<p>僕 <a href="https://github.com/yaakaito/Syakyo/blob/master/backbone/events.js">Backbone.Events</a> | <a href="https://github.com/yaakaito/Syakyo/blob/master/spine/events.coffee">Spine.Events</a></p>
+
+<h2>Eventsってなに</h2>
+
+<p>要はObserverパターンです。</p>
+
+<p>BackboneとSpineの間でEventsのAPIの差は、名前が違うくらいでほとんどないです。
+どちらも <code>on</code>/<code>bind</code> でイベントをはって、<code>trigger</code>で通知します、簡単ですね。</p>
+
+<p>あとは書いて覚えろ！</p>
+
+<h2>実装方法について</h2>
+
+<p>どちらも<code>this</code>に対して特定のオブジェクトを生成して、そこにイベント情報を突っ込んでいく形です。
+オブジェクトとして吐き出されているので、使いたいときは<code>extend</code>して使います。</p>
+
+<p>Backboneは、引数としてthisにバインディングするオブジェクトを取ることができるので、その分複雑になっています。
+一方でSpineはそれを取らずに、単純なコールバックのリストして管理しています。<code>=&gt;</code>を使えばよいのでは、ってことだと思う。</p>
+
+<h2>ボリューム感</h2>
+
+<p>さっきも書きましたが、Backboneの方がちょっと複雑です。
+コードはJavaScriptとCoffeeScriptなのであれですが、Spineの方がすっきりします。
+読むならSpineからがいいかなと思います。</p>
+
+<h2>というわけでいってみよー</h2>
+
+<p>僕が写経したやつを整理して貼っていきます。</p>
+
+<h3>on / bind</h3>
+
+<p>Backbone:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// eventsApiに聞いてみて、オーバーロードされてる形ならあとはeventsApiに任せる</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">eventsApi</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="p">[</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">])</span> <span class="o">||</span> <span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// eventsApiか、きれいな形で呼び出されたとき (not 複数 and マップ)</span>
+</span><span class='line'>    <span class="c1">// イベントを登録する</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_events</span> <span class="o">||</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_events</span> <span class="o">=</span> <span class="p">{});</span> <span class="c1">// _eventsなかったら作る</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// すでに同じ名前のイベントがあったらそのArray、なければその名前で新しいArrayを作ってアサイン </span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// イベントを登録</span>
+</span><span class='line'>    <span class="nx">events</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">callback</span><span class="o">:</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="o">:</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">ctx</span><span class="o">:</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Spine:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">bind: </span><span class="nf">(ev, callback) -&gt;</span>
+</span><span class='line'>    <span class="c1"># 複数登録のパターンなら分割して一個ずつ ex: &#39;a b c&#39;</span>
+</span><span class='line'>    <span class="nv">evs     = </span><span class="nx">ev</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1"># なかったら作ってから取得</span>
+</span><span class='line'>    <span class="nv">calls   = </span><span class="nx">@hasOwnProperty</span><span class="p">(</span><span class="s">&#39;_callbacks&#39;</span><span class="p">)</span> <span class="o">and</span> <span class="nx">@_callbacks</span> <span class="o">or=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">evs</span>
+</span><span class='line'>        <span class="c1"># 対応するものがなければ作る</span>
+</span><span class='line'>        <span class="nx">calls</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">or</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>        <span class="c1"># 登録</span>
+</span><span class='line'>        <span class="nx">calls</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Bacbkoneの方で<code>eventsApi</code>というのが登場してますね！
+これはBackbone特有の疑似オーバーロードを実装するためのものです。Backboneは結構これがキモですね。
+Backboneは以下のようなパターンでイベントを登録することができます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event event2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event event2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+</span><span class='line'>  <span class="s1">&#39;event&#39;</span> <span class="o">:</span> <span class="nx">callback</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;event2&#39;</span> <span class="o">:</span> <span class="nx">callback</span>
+</span><span class='line'><span class="p">},</span> <span class="nx">context</span><span class="p">);</span>
+</span><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+</span><span class='line'>  <span class="s1">&#39;event event2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;event3 event4&#39;</span><span class="p">,</span> <span class="nx">callback</span>
+</span><span class='line'><span class="p">}</span> <span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>結構複雑ですね。これを解釈していって、最終的に</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>この形式になるようにして、必要な回数呼び直すのが<code>eventsApi</code>です。したのは、<code>on</code>から呼ばれたことを前提に説明しています。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">eventsApi</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">rest</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// 名前ないとか論外</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// マップ形式だったら</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="cm">/*</span>
+</span><span class='line'><span class="cm">            自身の on を呼び直す</span>
+</span><span class='line'><span class="cm">            マップ形式</span>
+</span><span class='line'><span class="cm">            {</span>
+</span><span class='line'><span class="cm">                &#39;name&#39; : callback </span>
+</span><span class='line'><span class="cm">            }</span>
+</span><span class='line'><span class="cm">            なので on(name , callback , context) となるようにして全部呼び直す </span>
+</span><span class='line'><span class="cm">            この場合はonのcallbackにはcontextが入っているはずなので(わたってくるのが[context, undefned])、</span>
+</span><span class='line'><span class="cm">            結果として on(name , callback , context, undefined) が on(name , callback , context) になる。</span>
+</span><span class='line'><span class="cm">            ちょっとトリッキー</span>
+</span><span class='line'><span class="cm">            */</span>
+</span><span class='line'>            <span class="nx">obj</span><span class="p">[</span><span class="nx">action</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="p">[</span><span class="nx">key</span><span class="p">,</span> <span class="nx">name</span><span class="p">[</span><span class="nx">key</span><span class="p">]].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">rest</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// マップ形式だったので失敗 == 呼び直した、と返す</span>
+</span><span class='line'>            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// 複数名前が (&quot;hoge fuga piyo&quot;) 含まれているときは</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nx">eventSplitter</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">names</span> <span class="o">=</span> <span class="nx">name</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">eventSplitter</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">names</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="cm">/*</span>
+</span><span class='line'><span class="cm">            自身の on を呼び出す</span>
+</span><span class='line'><span class="cm">            複数なのでsplitして１個づつ呼び直す</span>
+</span><span class='line'><span class="cm">            この場合はcallbackはrestに含まれているので、nameだけ設定してconcatすると</span>
+</span><span class='line'><span class="cm">            on(name, callback, context) となる</span>
+</span><span class='line'><span class="cm">            */</span>
+</span><span class='line'>            <span class="nx">obj</span><span class="p">[</span><span class="nx">action</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="p">[</span><span class="nx">names</span><span class="p">[</span><span class="nx">i</span><span class="p">]].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">rest</span><span class="p">));</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ここまできた場合は一番シンプルな形 on(&#39;hoge&#39;, callback, context) で呼び出されているときなので、</span>
+</span><span class='line'>    <span class="c1">// それぞれの処理をお願いするために成功させる</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これは他のメソッドの実装でも使われる物なので、最初にどういう動きをするか抑えておきましょう。</p>
+
+<p>spineは結構シンプルで、<code>"event event2"</code>の形にだけ対応しています。</p>
+
+<p>Backboneは<code>context</code>というのがあるので、その分イベントの登録が複雑です。</p>
+
+<p>Backbone:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">events</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">callback</span><span class="o">:</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">context</span><span class="o">:</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">ctx</span><span class="o">:</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Spine:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">calls</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>on</code> / <code>bind</code> はこんな感じです。疑似オーバーロードが面倒ですね。</p>
+
+<h3>trigger</h3>
+
+<p>次にイベントを発火させる<code>trigger</code></p>
+
+<p>Backbone:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">trigger</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_events</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="c1">// イベントなんてなかった</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 通常発火用の引数取り出し</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// オーバーロード (onを参照)</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">eventsApi</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;trigger&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">args</span><span class="p">))</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// 対象になるイベントとってくる</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_events</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">allEvents</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_events</span><span class="p">.</span><span class="nx">all</span><span class="p">;</span> <span class="c1">// &#39;all&#39;で登録されたもの</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// nameに該当するイベントを発火 引数にイベント名なし</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nx">events</span><span class="p">)</span> <span class="nx">triggerEvents</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// allのイベントを発火 出元を知る為に引数にイベント名を含める</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nx">allEvents</span><span class="p">)</span> <span class="nx">triggerEvents</span><span class="p">(</span><span class="nx">allEvents</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">triggerEvents</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span><span class="p">(</span><span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// _.each じゃ駄目なんだろうか</span>
+</span><span class='line'>        <span class="p">(</span><span class="nx">ev</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">]).</span><span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ev</span><span class="p">.</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Spine:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">trigger: </span><span class="nf">(args...) -&gt;</span>
+</span><span class='line'>    <span class="c1"># 一つ目にイベント名が入っている</span>
+</span><span class='line'>    <span class="nv">ev = </span><span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># _callbacksからcallbackのリストを取ってくる、無かったら何もしない</span>
+</span><span class='line'>    <span class="nv">list = </span><span class="nx">@hasOwnProperty</span><span class="p">(</span><span class="s">&#39;_callbacks&#39;</span><span class="p">)</span> <span class="o">and</span> <span class="nx">@_callbacks</span><span class="o">?</span><span class="p">[</span><span class="nx">ev</span><span class="p">]</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">unless</span> <span class="nx">list</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="nx">callback</span> <span class="k">in</span> <span class="nx">list</span>
+</span><span class='line'>        <span class="c1"># 失敗したらやめる</span>
+</span><span class='line'>        <span class="k">if</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">is</span> <span class="kc">false</span>
+</span><span class='line'>            <span class="k">break</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基本は一緒ですが、<code>all</code>と引数の扱い方が違います。
+Backboneは<code>all</code>として登録されたものも、同時に発火させます。
+この時に渡される引数が、イベント名を含めたものになるので、<code>all</code>以外で登録されたものとは引数が異なります。どうなのこれ。</p>
+
+<p>Backboneは<code>context</code>に指定されているものを<code>this</code>にバインドして発火させます。</p>
+
+<h2>off / unbind</h2>
+
+<h2>気になるところがあってですね</h2>
+
+<p>どっちもそうなんだけど、<code>off</code>/<code>unbind</code>、とあと<code>stopListening</code>する時にすべての引数を省略すると全部消す、って動きをする。
+要するに疑似オーバーロードなんだけど、これが、一番目の引数のbooleanで分岐してる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="c1"># Spine</span>
+</span><span class='line'><span class="nv">stopListening: </span><span class="nf">(obj, ev, callback) -&gt;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="nx">obj</span>
+</span><span class='line'>    <span class="c1"># ....</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="c1"># unbind all</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>つまりは、現実的に起こる/起こすようなコードを書くのか、というのは置いておいて、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">stopListening</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ってなったときに、イベントが全部消える。実装的に <code>f()</code> と <code>f(undefined)</code> の区別を付ける事が出来ない。
+で、これって、<code>arguments.length</code>とかを見るべきだと思うんだけど、どうなんだろ、という疑問。
+僕は、メソッド単体としてみたときに上の例は、オブジェクトを元にした<code>unbind</code>/<code>stop</code>であって、オブジェクトがないので、何も出来ない or エラーであってほしいと思う。</p>
+
+<p>正直なところ、こういう挙動をするJavaScriptを、自分では絶対に書かない(書きたくない)ので、よくわからない。
+なんで<code>stopListeningAll</code>みたいにメソッド切り分けないの、事故らないしそれでいいじゃん、とか、
+引数を全部Objectにして</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">obj</span><span class="p">.</span><span class="nx">stopListening</span><span class="p">({</span><span class="nx">all</span> <span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とかで、いいじゃん感。こっちのがずいぶん楽だし、コードもすっきりすると思うんだけども。</p>
+
+<p>まあよく分からんとか言ってて助けを待っててもこないので、
+Spineに<a href="https://github.com/spine/spine/pull/450">ゴミ屑みたいな英語とともにプルリク</a>してみた。
+タイトルはあとで表現がよくなかったことに気づいたので、アテにはしないほうがいい。
+Yahoo翻訳を片手に糞英語を書いた結果、とりあえずやりたいことは分かってもらえたっぽい。
+で、まあ当然なんだけど、最初に書いたようにコア部分なので、慎重に考えないとね・・・、みたいな感じ。</p>
+
+<p>これ系の実装は気に入らないなーと思ってるし、自分では絶対に作らないので、
+僕はこう思うんだけど、というのはすごい勉強になる。的外れな意見でもないっぽいし、とりあえずよかった。
+僕はマージされれば嬉しいけど、テストは通ってるとはいえ、変えるのは影響範囲でかいだろうというのも分かってるつもりなので、結構駄目元。</p>
+
+<p>(ぶっちゃけ、Backboneの方はコントリビューターも多すぎるし流速も速いし、そもそも無理だろ。というのはあったのでSpineにしたみたいなところはある。)</p>
+
+<p>あいや、てゆーか、jQueryとかもなんすけどね。セレクトと生成分けろ感とかすごい。
+ぼくはあーゆーいんたーふぇいすがきれいとかつかいやすいとはあんまりおもわないな。
+(作る方が非現実的だから使うけど)</p>
+
+<h2>次回</h2>
+
+<p>Modelとかやると思います。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-06T09:42:00+09:00" pubdate data-updated="true">Apr 6<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/04/06/not-head-first-backbone-and-spine-events/" data-via="" data-counturl="http://yaakaito.org/blog/2013/04/06/not-head-first-backbone-and-spine-events/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/04/04/todo-is-good-app/" title="Previous Post: 世の中のサンプルがTODOアプリなのは案外理にかなってる気がした">&laquo; 世の中のサンプルがTODOアプリなのは案外理にかなってる気がした</a>
+  
+  
+    <a class="basic-alignment right" href="/blog/2013/04/11/javascript-overload/" title="Next Post: JavaScriptの似非オーバーロードが気に入らない">JavaScriptの似非オーバーロードが気に入らない &raquo;</a>
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/04/06/not-head-first-backbone-and-spine-events/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/04/06/not-head-first-backbone-and-spine-events/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
