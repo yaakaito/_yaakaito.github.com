@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-12T13:46:17+09:00</updated>
+  <updated>2013-04-12T20:02:30+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -18,7 +18,9 @@
     <link href="http://yaakaito.org/blog/2013/04/11/javascript-overload/"/>
     <updated>2013-04-11T22:36:00+09:00</updated>
     <id>http://yaakaito.org/blog/2013/04/11/javascript-overload</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
+    <content type="html"><![CDATA[<p>【補足】あんまり良い文章ではないので、僕はこう思ってるよ、くらいで読んでください。</p>
+
+<p>こんにちは！うきょーです。
 なんかJavaScriptで似非オーバーロードとか省略可能引数使う人結構いますよね。かっこいいですか、そうですか。
 僕これ嫌いなんで、書いておこうと思います。</p>
 
