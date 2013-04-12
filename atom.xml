@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-11T23:07:09+09:00</updated>
+  <updated>2013-04-12T10:15:47+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -50,7 +50,7 @@
 <h2>まずもって間違っている</h2>
 
 <p>上の例の場合、<code>f()</code> と <code>f(undefined)</code> を区別する事は出来ません。
-<code>f()</code> で期待される挙動は <code>f(undefinedObject)</code> で期待される挙動とは、異なるはずですよね。</p>
+<code>f()</code> で期待される挙動は <code>f(undefined)</code> で期待される挙動とは、異なるはずですよね。</p>
 
 <p>これは<code>arguments</code>を見る事である程度解決できます。</p>
 
@@ -71,6 +71,22 @@
 
 <p>この件に関して、ちょうどSpineのコードを読んでいて、イラッとしたのでプルリクしました。
 無事にdevにマージされたみたいなので良かったですね。</p>
+
+<h3>【補足】勘違いのないように</h3>
+
+<p>@kazuhoさんからこんなコメントをもらって、確かにそう読めると思ったので補足する。</p>
+
+<blockquote><p>正論なんだけど、それ以前に、そもそも引数としてundefined渡すのが間違い。null使うべき</p><footer><strong>@kazuho</strong> <cite><a href='https://twitter.com/kazuho/status/322496581867810816'>twitter.com/kazuho/status/&hellip;</a></cite></footer></blockquote>
+
+
+<p>これは、<code>f()</code>と<code>f(hoge)</code>で挙動が違うことを前提にしているのであれば、その実装は正確には間違っている(<code>f(undefined)</code>も引数一つとして扱われるべき)、という主張です。
+<code>undefined</code>を使って書いているのは、省略されたときにその引数は<code>undefined</code>になるのだから、
+その方が問題としていることが分かりやすいだろう、という意図があってです。</p>
+
+<p>@kazuhoさんがおっしゃっているように、そもそも<code>undefined</code>を入れない事が前提があって、
+だから<code>undefined</code>であると判定することにメリットがある、というのはもちろんその通りだと思います。</p>
+
+<p>単純に、僕が嫌だなーと思っていることなので、そこで勘違いが起こってしまっても意味はないなーと思うので、補足しました。</p>
 
 <h2>挙動を変えないでください</h2>
 
