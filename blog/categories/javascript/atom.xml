@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-12T10:15:47+09:00</updated>
+  <updated>2013-04-12T10:19:45+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -80,7 +80,7 @@ function(a) {
 <p>@kazuhoさんがおっしゃっているように、そもそも<code>undefined</code>を入れない事が前提があって、
 だから<code>undefined</code>であると判定することにメリットがある、というのはもちろんその通りだと思います。</p>
 
-<p>単純に、僕が嫌だなーと思っていることなので、そこで勘違いが起こってしまっても意味はないなーと思うので、補足しました。</p>
+<p>単純に、僕が嫌だなーと思っていることなので、そこで勘違いが起こってしまっても意味はないなと思うので、補足しました。</p>
 
 <h2>挙動を変えないでください</h2>
 
