@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-12T20:02:30+09:00</updated>
+  <updated>2013-04-16T02:13:34+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,227 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CoffeeLintの設定をやってみるなど]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/"/>
+    <updated>2013-04-16T01:32:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/16/coffee-lint-setting</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="http://www.coffeelint.org/">CoffeeLint</a>の設定をしてプロジェクトに幸せをもたらそう(コーディング規約にそってないプルリクはリジェクト)としてちょっと調べてみたのでメモ。</p>
+
+<h2>コンフィグファイルを作る</h2>
+
+<p>公式サイトいわく</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すると設定ファイルのテンプレが作れるらしい！やってみよう！</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig
+</span><span class='line'>Usage: coffeelint [options] source [...]
+</span><span class='line'>
+</span><span class='line'>Options:
+</span><span class='line'>  -f, --file     Specify a custom configuration file.             
+</span><span class='line'>  -h, --help     Print help information.                          
+</span><span class='line'>  -v, --version  Print current version number.                    
+</span><span class='line'>  -r             Recursively lint .coffee files in subdirectories.  [boolean]
+</span><span class='line'>  --csv          Use the csv reporter.                              [boolean]
+</span><span class='line'>  --jslint       Use the JSLint XML reporter.                       [boolean]
+</span><span class='line'>  --nocolor      Don't colorize the output                          [boolean]
+</span><span class='line'>  -s, --stdin    Lint the source from stdin                         [boolean]
+</span><span class='line'>  -q, --quiet    Only print errors.                                 [boolean]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったーそんなコマンドないよーーーーーー＾ー＾
+5.5(2013.03.02~)かららしいです</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm search coffeelint
+</span><span class='line'>// ...
+</span><span class='line'>coffeelint  Lint your CoffeeScript  =clutchski =thomas.frossman 2012-11-30 ...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったーアップデートされてないよーーーーー＾ー＾</p>
+
+<h2>しょうがないのでlinkします</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/clutchski/coffeelint.git .coffeelint
+</span><span class='line'>$ cd .coffeelint
+</span><span class='line'>$ npm link</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint -v
+</span><span class='line'>0.5.4</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったー5.4だよーーーーー＾ー＾</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig
+</span><span class='line'>{
+</span><span class='line'>    "no_tabs": {
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    "no_trailing_whitespace": {
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    "max_line_length": {
+</span><span class='line'>        "value": 80,
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    // ....</span></code></pre></td></tr></table></div></figure>
+
+
+<p>でもでたよやったーーーーーー＾ー＾ バージョンあげてーーーー＾ー＾</p>
+
+<h2>書いてみた</h2>
+
+<p>どうやら差分だけ書けば良さげなので、こんな感じで</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  "max_line_length" : {
+</span><span class='line'>    "value": 79,
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "indentation" : {
+</span><span class='line'>    "value" : 4,
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_implicit_parens" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_plusplus" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_stand_alone_at" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  }
+</span><span class='line'> 
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>設定項目は公式サイトに書いてあるのでそちらを参考にしていただきたく。
+けど、何個か動いてないのとおかしい気がするよ！！！</p>
+
+<p>軽く書いておくと</p>
+
+<ul>
+<li><p><code>max_line_length</code> :
+一行の文字数で、デフォルトは80だけど、79にしました。まあこれは好みの問題ですね。</p></li>
+<li><p><code>indentation</code> :
+2だと見難い場面が多いので僕は最近4にしてます。</p></li>
+<li><p><code>no_implicit_parens</code> :
+関数呼び出すときとかに<code>()</code>を省略できなくする。0個のときはどうせ必要だし、僕はある方にそろえるのが好きですかね。
+BDD系のフレームワーク使うときはこれが邪魔なので、テストだけ別にしてますというかテストは別にlint通してないですね。</p></li>
+<li><p><code>no_plusplus</code> :
+<code>++</code> と <code>--</code> を無効にする。あんまり好きではない。</p></li>
+<li><p><code>no_stand_alone_at</code> :
+関数とかに <code>f @</code> みたいに渡せないようにする。暗黙のリターンも同じ</p></li>
+</ul>
+
+
+<p>とりあえずこんな感じ。</p>
+
+<h2>実行</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint -f config.json hoge.coffee</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>暗黙のりたーん</h2>
+
+<p>なんで暗黙の<code>return</code>を無効にするオプションがないのかよくわからないですね。
+暗黙の<code>return</code>使いたくない人なので、これ設定できるようにしてほしいとお願いしてみる。</p>
+
+<p>あと<code>no-try-catch</code>とかもほしいですね。
+なにやらCoffeeScriptの<code>try</code>は、<code>try</code>だけ書くと</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="k">try</span>
+</span><span class='line'>    <span class="nx">hoge</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これが</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">hoge</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span> <span class="k">catch</span><span class="p">()</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>となるようです。ナイスキャッチ！ (- o ^)b</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JavaScriptの似非オーバーロードが気に入らない]]></title>
@@ -2528,215 +2749,6 @@ phantomjs使いたいときは、</p>
 
 <p>となります、やりましたね！！！！！
 コレクションっぽいのがほしかったら、ジェネレーターとかサクっと書けばよいだけなので、楽チンですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[buster-html-docとあとcoffee]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee/"/>
-    <updated>2013-03-02T14:40:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/02/buster-html-doc-and-coffee</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-<a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
-
-<blockquote><p>@yaakaito HTMLを用意するまでもない場合は buster-html-doc とかも良いと思いますがどうでしょう！</p><footer><strong>@y_imaya</strong> <cite><a href='https://twitter.com/y_imaya/status/307347977712848896'>twitter.com/y_imaya/status/&hellip;</a></cite></footer></blockquote>
-
-
-<p>という意見をもらったので、こっちのことも書いておこうと思いました。</p>
-
-<h2>そもそもbuster-html-docって何</h2>
-
-<p>BusterJSはJSTestDriver形式で書かれたテストケースの実行をサポートしているのですが、JSTestDriverに<a href="http://code.google.com/p/js-test-driver/wiki/HtmlDoc">HTML Doc</a>という昨日があります。
-この部分だけをBusterJS用に切り出したのがbuster-html-docで、前回のようにHTMLを用意するまでもない場合に</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という風にテスト毎にエレメントを生成することができます。</p>
-
-<h2>使い方</h2>
-
-<p><code>buster-html-doc</code>をnpmからインストールします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">html</span><span class="o">-</span><span class="nx">doc</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>buster.js</code>でbuster-html-docを読み込むようにします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;test.js&quot;</span>
-</span><span class='line'>  <span class="p">],</span>
-</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span> <span class="c1">// これ</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じにテストを書きます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span class='line'>  <span class="s1">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>      <span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これでテストを実行すると、テスト時に<code>/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;*/</code>の部分が、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">element</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="nx">element</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;p&gt;aaaa&lt;/p&gt;&quot;</span><span class="p">;</span><span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;HTML doc expected to only contain one root node, found &quot;</span> <span class="o">+</span> <span class="nx">element</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nx">element</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
-</span><span class='line'><span class="p">}());</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という感じに変換されます。
-あとはこのエレメントを使ってアサーションするなりできます。</p>
-
-<p>上の例では<code>this.hoge</code>に対してエレメントを生成していますが、
-そうではなく<code>body</code>とかに突っ込んでほしい場合は、<code>+=</code>を使って書く事もできます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC += &lt;p id=&quot;hoge&quot;&gt;aaaa&lt;/p&gt;*/</span>
-</span><span class='line'><span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という感じなのがbuster-html-docプラグインです。</p>
-
-<h2>buster-coffee</h2>
-
-<p>続いてbuster-coffeeなのですが、名前の通りテスト実行時にCoffeeScriptをコンパイルしてくれるので、コードをCoffeeScriptで書けるよ、というものです。
-これ自体は特にめんどくさくなくて、npmでインストールして、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">buster</span><span class="o">-</span><span class="nx">coffee</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">runner</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">runner</span><span class="p">[</span><span class="s2">&quot;browser test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">env</span> <span class="o">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">tests</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;test.coffee&quot;</span> <span class="c1">// coffee</span>
-</span><span class='line'>  <span class="p">],</span>
-</span><span class='line'>  <span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">)]</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という風に使えばよいのですが、buster-html-docと少し相性の問題があるみたいで、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">extensions</span><span class="o">:</span> <span class="p">[</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-coffee&quot;</span><span class="p">),</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster-html-doc&quot;</span><span class="p">)]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じにして、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span> <span class="s">&#39;hoge&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="s">&#39;test html doc&#39;</span> <span class="o">:</span> <span class="o">-&gt;</span>
-</span><span class='line'>      <span class="cm">###:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;###</span>
-</span><span class='line'>      <span class="nx">assert</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hoge</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span> <span class="s">&#39;aaaa&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こう書いても、</p>
-
-<blockquote><p>TypeError: Cannot read property &#8216;innerHTML&#8217; of undefined</p></blockquote>
-
-<p>となります。</p>
-
-<p>コンパイルされるとHTML Docの部分は</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/*:DOC hoge = &lt;p&gt;aaaa&lt;/p&gt;</span>
-</span><span class='line'><span class="cm">*/</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうなるはずなので、一見大丈夫そうに思えるんですが、うまくいきません。
-というか自分でコンパイルするとちゃんと動くので、プラグインの実行順か、それぞれの実行タイミングが悪いのかみたいな話だと思います。</p>
-
-<p>ハマりやすいので気をつけましょう。</p>
-
-<p>回避策としてはプラグインのところ見直してプルリクエストが一番早そうなんですが、
-僕は他の理由もあって先にcoffeeを別にコンパイルするようにしてしまいました。</p>
-
-<h2>おまけ</h2>
-
-<p>HTML Doc形式の書式が結構便利で、最近関わっているプロダクトだと</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="cm">###:XHR /hoge = {</span>
-</span><span class='line'><span class="cm"> fuga : &#39;fuga&#39;,</span>
-</span><span class='line'><span class="cm"> piyo : &#39;piyo&#39;</span>
-</span><span class='line'><span class="cm">} </span>
-</span><span class='line'><span class="cm">###</span>
-</span><span class='line'><span class="c1"># /hoge にアクセスしたらこのレスポンスが返ってくる (XHR部分のラッパー有)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいにして通信部分をモックできるようしてみた、便利。</p>
 ]]></content>
   </entry>
   

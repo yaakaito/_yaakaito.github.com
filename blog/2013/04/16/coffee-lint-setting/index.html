@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>CoffeeLintの設定をやってみるなど - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！
+CoffeeLintの設定をしてプロジェクトに幸せをもたらそう(コーディング規約にそってないプルリクはリジェクト)としてちょっと調べてみたのでメモ。 コンフィグファイルを作る 公式サイトいわく 1
+$ coffeelint --makeconfig &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">CoffeeLintの設定をやってみるなど</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-16T01:32:00+09:00" pubdate data-updated="true">Apr 16<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/coffeescript/'>CoffeeScript</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！
+<a href="http://www.coffeelint.org/">CoffeeLint</a>の設定をしてプロジェクトに幸せをもたらそう(コーディング規約にそってないプルリクはリジェクト)としてちょっと調べてみたのでメモ。</p>
+
+<h2>コンフィグファイルを作る</h2>
+
+<p>公式サイトいわく</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すると設定ファイルのテンプレが作れるらしい！やってみよう！</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig
+</span><span class='line'>Usage: coffeelint [options] source [...]
+</span><span class='line'>
+</span><span class='line'>Options:
+</span><span class='line'>  -f, --file     Specify a custom configuration file.             
+</span><span class='line'>  -h, --help     Print help information.                          
+</span><span class='line'>  -v, --version  Print current version number.                    
+</span><span class='line'>  -r             Recursively lint .coffee files in subdirectories.  [boolean]
+</span><span class='line'>  --csv          Use the csv reporter.                              [boolean]
+</span><span class='line'>  --jslint       Use the JSLint XML reporter.                       [boolean]
+</span><span class='line'>  --nocolor      Don't colorize the output                          [boolean]
+</span><span class='line'>  -s, --stdin    Lint the source from stdin                         [boolean]
+</span><span class='line'>  -q, --quiet    Only print errors.                                 [boolean]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったーそんなコマンドないよーーーーーー＾ー＾
+5.5(2013.03.02~)かららしいです</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm search coffeelint
+</span><span class='line'>// ...
+</span><span class='line'>coffeelint  Lint your CoffeeScript  =clutchski =thomas.frossman 2012-11-30 ...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったーアップデートされてないよーーーーー＾ー＾</p>
+
+<h2>しょうがないのでlinkします</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/clutchski/coffeelint.git .coffeelint
+</span><span class='line'>$ cd .coffeelint
+</span><span class='line'>$ npm link</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint -v
+</span><span class='line'>0.5.4</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったー5.4だよーーーーー＾ー＾</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint --makeconfig
+</span><span class='line'>{
+</span><span class='line'>    "no_tabs": {
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    "no_trailing_whitespace": {
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    "max_line_length": {
+</span><span class='line'>        "value": 80,
+</span><span class='line'>        "level": "error"
+</span><span class='line'>    },
+</span><span class='line'>    // ....</span></code></pre></td></tr></table></div></figure>
+
+
+<p>でもでたよやったーーーーーー＾ー＾ バージョンあげてーーーー＾ー＾</p>
+
+<h2>書いてみた</h2>
+
+<p>どうやら差分だけ書けば良さげなので、こんな感じで</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  "max_line_length" : {
+</span><span class='line'>    "value": 79,
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "indentation" : {
+</span><span class='line'>    "value" : 4,
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_implicit_parens" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_plusplus" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  },
+</span><span class='line'> 
+</span><span class='line'>  "no_stand_alone_at" : {
+</span><span class='line'>    "level" : "error"
+</span><span class='line'>  }
+</span><span class='line'> 
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>設定項目は公式サイトに書いてあるのでそちらを参考にしていただきたく。
+けど、何個か動いてないのとおかしい気がするよ！！！</p>
+
+<p>軽く書いておくと</p>
+
+<ul>
+<li><p><code>max_line_length</code> :
+一行の文字数で、デフォルトは80だけど、79にしました。まあこれは好みの問題ですね。</p></li>
+<li><p><code>indentation</code> :
+2だと見難い場面が多いので僕は最近4にしてます。</p></li>
+<li><p><code>no_implicit_parens</code> :
+関数呼び出すときとかに<code>()</code>を省略できなくする。0個のときはどうせ必要だし、僕はある方にそろえるのが好きですかね。
+BDD系のフレームワーク使うときはこれが邪魔なので、テストだけ別にしてますというかテストは別にlint通してないですね。</p></li>
+<li><p><code>no_plusplus</code> :
+<code>++</code> と <code>--</code> を無効にする。あんまり好きではない。</p></li>
+<li><p><code>no_stand_alone_at</code> :
+関数とかに <code>f @</code> みたいに渡せないようにする。暗黙のリターンも同じ</p></li>
+</ul>
+
+
+<p>とりあえずこんな感じ。</p>
+
+<h2>実行</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ coffeelint -f config.json hoge.coffee</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>暗黙のりたーん</h2>
+
+<p>なんで暗黙の<code>return</code>を無効にするオプションがないのかよくわからないですね。
+暗黙の<code>return</code>使いたくない人なので、これ設定できるようにしてほしいとお願いしてみる。</p>
+
+<p>あと<code>no-try-catch</code>とかもほしいですね。
+なにやらCoffeeScriptの<code>try</code>は、<code>try</code>だけ書くと</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="k">try</span>
+</span><span class='line'>    <span class="nx">hoge</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これが</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">hoge</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span> <span class="k">catch</span><span class="p">()</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>となるようです。ナイスキャッチ！ (- o ^)b</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-16T01:32:00+09:00" pubdate data-updated="true">Apr 16<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/" data-via="" data-counturl="http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/04/11/javascript-overload/" title="Previous Post: JavaScriptの似非オーバーロードが気に入らない">&laquo; JavaScriptの似非オーバーロードが気に入らない</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/04/16/coffee-lint-setting/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
