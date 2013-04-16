@@ -4,7 +4,7 @@
   <title><![CDATA[Category: UIKit | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/uikit/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-16T02:13:34+09:00</updated>
+  <updated>2013-04-17T03:16:17+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -75,15 +75,15 @@ Interface Builderを使いたい！と思うわけですが、<code>UITableViewC
 
 <p>おもむろにxibファイルを作ります。</p>
 
-<p><img src="/images/uinib_1.png" width="320"></p>
+<p>{% img /images/uinib_1.png 320 %}</p>
 
 <p>UIViewを消します。</p>
 
-<p><img src="/images/uinib_2.png" width="320"></p>
+<p>{% img /images/uinib_2.png 320 %}</p>
 
 <p>UITableViewCellをおきます。</p>
 
-<p><img src="/images/uinib_3.png" width="320"></p>
+<p>{% img /images/uinib_3.png 320 %}</p>
 
 <p><code>Class</code>と<code>Reuse identifiter</code>をセットします。
 FilesOwnerの<code>Class</code>はとりあえず<code>UIViewController</code>にしておきます。</p>

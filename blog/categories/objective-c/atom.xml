@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-16T02:13:34+09:00</updated>
+  <updated>2013-04-17T03:16:17+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -43,11 +43,11 @@ Book:
 
 <p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
 
-<p><img src="/images/mr-to-many.png"></p>
+<p>{% img /images/mr-to-many.png %}</p>
 
 <p><code>Class</code>とかも忘れずに設定する。</p>
 
-<p><img src="/images/mr-class.png" width="240"></p>
+<p>{% img /images/mr-class.png 240 %}</p>
 
 <h2>エンティティのモデルクラス作る</h2>
 

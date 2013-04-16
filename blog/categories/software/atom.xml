@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Software | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/software/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-04-17T03:16:17+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MVCにpを挟んでMpVCにすれば結構うまくいくのではと考えてみたログ]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/17/thinking-mpvc-pattern/"/>
+    <updated>2013-04-17T02:33:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/17/thinking-mpvc-pattern</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+誤解を生んでもあれなので最初に書いておくとただの戯れ言です。
+もしかしたら僕が勘違いしているor知らないだけで、既存のものが当てはまっているかも知れないので、あったら教えてください。</p>
+
+<p>クライアントアプリとか作るときに、大体の場合MVCパターンが付きまとうと思うんですが、
+MVCってどうしてもどこかに(多分主にView)しわ寄せが発生してるよなー的な。</p>
+
+<p>多分みんなModelを一番綺麗に保ちたいなーと思っているはずなので、
+Modelのプロパティによってビューの表示が大きく変わる時に、どうしてもビューに <code>if hogehoge</code> みたいなことを書かないといけない。
+入力必須のフォームに入力してなかったら赤になる、とかも突き詰めればそういう感じだと思うし、それをやった結果Viewが残念な状態になっていくわけですね、南無。</p>
+
+<p>で、MVVMとか流行って？ますが、あれは相当意識を高く保たないと書き続けられないなーと思っていて、
+チームとして運用していくことを考えた場合、常にそうにはなれないので、ちょっと微妙だなーとなってしまう訳です。</p>
+
+<p>結局のところMVCが分かりやすいというか、説明も楽というか、多分一番触れやすいだろうなーというところが大きい。
+んで、それでやっていくと、最初は大体うまく行くと思うんですが、残念ながら徐々に無念は生成されていきます。</p>
+
+<p>そこでPMパターンとかMVPパターンというのがあるわけなのですが、これのP(resentaion|resentator)の部分をもっと単純なものにしてしまって、
+最初っから無念をそこに集めればまあ、わりと長持ちするのでは、と考えてみた。</p>
+
+<p>例えば上の例のフォームを赤にするみたいなのは、Pのレイヤーでもう<code>form_background</code>とか作ってしまうイメージ。(実際にはやらないでくださいね。)</p>
+
+<p>というか多分これって結構な人がやってるんじゃないかなーと思うんだけど、どうなんだろ。</p>
+
+<h2>実装的な話</h2>
+
+<p>Viewがレンダリングするときに、対応するModelを、Presentationでラップして使う、的な感じかな。
+必要なのはレンダリングするときだと思うので、View <-> Model の紐付けとかは従来通りでよいのでは。
+イベントのハンドリングみたいのもControllerがやる、あくまで出す時だけに焦点を絞る。</p>
+
+<p>Presentationはもう負債を全部飲み込む勢いでいいと思う。そして分かりやすく残念な感じで書けばいい。
+Presentaionはパターンの主体として存在させるものではなくて、単なる変換関数くらいに考える。</p>
+
+<p>Viewに対するプロパティがModelの分と、Presentationが生んだ分とでかなり数が大きくなってしまうが、
+それでもテンプレートに<code>if</code>と書いてあるよりは大分マシだと思う。</p>
+
+<p>テストのことを考えたときも、これで少なくともModelとControllerは無念を見ずに単純なコードが書けそうな感じする。
+レンダリングとかは単体テスト書いてる上では、言っちゃあ悪いがそこまで気を使う場所ではないと思うし、
+逆にそこのテストはPresentaionをテストすることで大分楽が出来そう。</p>
+
+<h2>おわり</h2>
+
+<p>pを小文字にしたのはそこまで出しゃばってほしくない的な意味を込めてですかね。</p>
+]]></content>
+  </entry>
+  
+</feed>
