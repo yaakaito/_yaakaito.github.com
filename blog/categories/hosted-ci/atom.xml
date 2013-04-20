@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Hosted CI | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/hosted-ci/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-17T03:16:17+09:00</updated>
+  <updated>2013-04-20T19:21:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -54,7 +54,7 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
 <p>まずテスト用のSchemeを作ります。
 ビルドの設定へ<code>Jenkins</code>という名前のschemeを定義してあげます。</p>
 
-<p>{% img /images/appcode-jenkins-scheme.png %}</p>
+<p><img src="/images/appcode-jenkins-scheme.png"></p>
 
 <p>ところでこのschemeをjenkinsから使うのかと思ったんですが、実はいらなかったので、自身のある人はやらなくてよいかもしれません。
 作ったら<code>xcodebuild</code>で<code>-list</code>してみましょう。</p>
@@ -80,36 +80,36 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
 
 <p>登録できたっぽいメールがきたので、Hosted CI へログインしましょう！ログインするとDashboardが出てきます。何個かプロジェクトがありますね。</p>
 
-<p>{% img /images/hosted-ci-dashboard.png %}</p>
+<p><img src="/images/hosted-ci-dashboard.png"></p>
 
 <p>下の方にある Create new project からプロジェクトを追加します。</p>
 
-<p>{% img /images/hosted-ci-create.png %}</p>
+<p><img src="/images/hosted-ci-create.png"></p>
 
 <h2>プロジェクトの作成</h2>
 
 <p>新しいプロジェクトのセットアップを始めます。</p>
 
-<p>{% img /images/hosted-ci-new-project.png %}</p>
+<p><img src="/images/hosted-ci-new-project.png"></p>
 
 <p>おおーここから大まかな設定は出来るのかー。便利だなー。
 けどスクリプトとかどうせ書くんだろうしだるいなぁ、とか思いながらセットアップして、 Create Project します。さて次はめんどうな・・・</p>
 
-<p>{% img /images/hosted-ci-config-xcode.png %}</p>
+<p><img src="/images/hosted-ci-config-xcode.png"></p>
 
 <p>なん・・・だと・・・</p>
 
-<p>{% img /images/hosted-ci-selected-target.png %}</p>
+<p><img src="/images/hosted-ci-selected-target.png"></p>
 
 <p>こいつは・・・まさか・・・ 力強くUpdateします。</p>
 
-<p>{% img /images/hosted-ci-created-project.png %}</p>
+<p><img src="/images/hosted-ci-created-project.png"></p>
 
 <p>プロジェクトのページができます。ビルドします。</p>
 
-<p>{% img /images/hosted-ci-jenkins-console.png %}</p>
+<p><img src="/images/hosted-ci-jenkins-console.png"></p>
 
-<p>{% img /images/hosted-ci-test-complete.png %}</p>
+<p><img src="/images/hosted-ci-test-complete.png"></p>
 
 <p>俺の知ってるJenkins+iOSと違う・・・。</p>
 
@@ -122,17 +122,17 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
 
 <p>HookのURLが提供されているので、それを使います。プロジェクトのページにあります。</p>
 
-<p>{% img /images/hosted-ci-github-hook.png %}</p>
+<p><img src="/images/hosted-ci-github-hook.png"></p>
 
 <p>あとはGithubからJenkins Hook URL を設定して終わりです。</p>
 
-<p>{% img /images/github-jenkins-hook.png %}</p>
+<p><img src="/images/github-jenkins-hook.png"></p>
 
 <h2>と、というわけで</h2>
 
 <p>あっさり動いてしまいましたね・・・？</p>
 
-<p>{% img http://tiqav.com/et.jpg %}</p>
+<p><img src="http://tiqav.com/et.jpg"></p>
 
 <p>あ、いや本当に超絶素晴らしいサービスだと思いますし、フィードバックなどしつつ使わせて頂こうと思います、はい。</p>
 
@@ -140,15 +140,11 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
 
 <p>Cocoapodsを使うときに、</p>
 
-<p>{% blockquote %}
-[!] Xcodeproj doesn't know about the following attributes lastKnownFileTypetext for the 'PBXGroup' isa.
-{% endblockquote %}</p>
+<p><blockquote><p>[!] Xcodeproj doesn't know about the following attributes lastKnownFileTypetext for the 'PBXGroup' isa.</p></blockquote></p>
 
 <p>こういう感じになってしまったので、何かなーと思ったら、</p>
 
-<p>{% blockquote @azu_re https://twitter.com/azu_re/status/312065250436456448 %}
-Overline これにはまってた  "Problematic attribute added to PBXGroup when renaming group using AppCode : OC-5881"  http://bit.ly/13XdHU8
-{% endblockquote %}</p>
+<p><blockquote><p>Overline これにはまってた  "Problematic attribute added to PBXGroup when renaming group using AppCode : OC-5881"  http://bit.ly/13XdHU8</p><footer><strong>@azu_re</strong> <cite><a href='https://twitter.com/azu_re/status/312065250436456448'>twitter.com/azu_re/status/&hellip;</a></cite></footer></blockquote></p>
 
 <p>というのを見つけて、<a href="http://bit.ly/13XdHU8">リンク先</a>見てみたらどうもこれっぽい。
 <code>lastKnownFileType = text;</code> というのが入ってしまうのだとか。</p>

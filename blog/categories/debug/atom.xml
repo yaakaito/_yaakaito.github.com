@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Debug | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/debug/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-17T03:16:17+09:00</updated>
+  <updated>2013-04-20T19:21:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -36,15 +36,15 @@ $ tsc --out backbone.test.js test/bootstrap.ts --sourcemap
 
 <p>こんな感じにすると、<code>backbone.test.js.map</code>が出てくるので、Chormeで使ってみましょう。</p>
 
-<p>{% img /images/ts-sourcemap-setting.png %}</p>
+<p><img src="/images/ts-sourcemap-setting.png"></p>
 
 <p><code>Enable source maps</code>をonにして、</p>
 
-<p>{% img /images/ts-sourcemap-show.png %}</p>
+<p><img src="/images/ts-sourcemap-show.png"></p>
 
 <p>読み込めばこんな感じに<code>.ts</code>が出てくるので、</p>
 
-<p>{% img /images/ts-sourcemap-debug.png %}</p>
+<p><img src="/images/ts-sourcemap-debug.png"></p>
 
 <p>BP打つなりして使います、便利ですね！</p>
 ]]></content>
