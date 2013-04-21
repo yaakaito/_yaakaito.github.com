@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: NLTHTTPStubServer | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/nlthttpstubserver/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-04-22T03:05:45+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[iOS用テスティングサーバー NLTHTTPStubServer 0.4 を公開しました]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/22/release-nlt-http-stub-server-0-4-0/"/>
+    <updated>2013-04-22T00:51:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/22/release-nlt-http-stub-server-0-4-0</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+<a href="https://github.com/yaakaito/NLTHTTPStubServer">NLTHTTPStubServer</a> を0.4にアップデートしました。</p>
+
+<p>最初にごめんなさいしておかなければいけないことがあります。</p>
+
+<h2>0.2.x 系との互換性がありません</h2>
+
+<p>ごめんなさい。0.1.x 0.2.x 系でのバグフィックスなどは、半年くらいは受け付けようと思っていますので、気軽にご連絡ください。</p>
+
+<h2>NLTHTTPStubServerって何</h2>
+
+<p>簡単に言えば、レスポンス登録を動的にできるHTTPサーバー for iOSです。
+HTTP通信をするiOSアプリはたくさんあると思うのですが、これのテストを書く為に開発されました。</p>
+
+<p>仕組みとしては結構単純で、ローカルにHTTPサーバーを立てて、そこにレスポンスを登録し、アプリ(HTTPClient)でそこへアクセスする、という感じです。
+例えば <code>/api/v1/fake</code> は <code>fake.json</code> を返してほしい、というケースであれば、</p>
+
+<p><code>objective-c
+[[[server expect] forPath:@"/api/v1/fake"] andJSONResponseResource:@"fake" ofType:@"json"];
+</code></p>
+
+<p>という風に記述すると、クライアントからここにアクセスしたときに、<code>fake.json</code>が返されます。
+NSURLConnectionを使って書くと、</p>
+
+<p>```objective-c
+NSURL *api = [NSURL URLWithString:@"http://localhost:12345/api/v1/fake"];
+[NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:api]</p>
+
+<pre><code>                               queue:[[NSOperationQueue alloc] init]
+                   completionHandler:^(NSURLResponse *res, NSData *data, NSError *err) {
+                     // dataに fake.json が返ってくる
+                   }];
+</code></pre>
+
+<p>```</p>
+
+<p>このように<code>http://localhost:12345/api/v1/fake</code>へアクセスすると、<code>fake.json</code>が返ってきます。</p>
+
+<p>カテゴリを使ってレスポンスを入れ替えたりするライブラリなんかもありますが、それと比べて、副作用が起こりにくいのが特徴です。
+またモックを差し込む、という行為を必要とせず、APIのエンドポイントを入れ替えるだけでよいので、実装自体に手をいれる必要もほとんどありません。</p>
+
+<h2>セットアップ</h2>
+
+<p>Cocoapodsでのセットアップが簡単です。</p>
+
+<p><code>
+pod 'NLTHTTPStubServer'
+</code></p>
+
+<p><code>NLTHTTPStubServer.h</code>をインポートして使います。</p>
+
+<p>```objective-c</p>
+
+<h1>import "NLTHTTPStubServer"</h1>
+
+<p>```</p>
+
+<h2>機能</h2>
+
+<h3>サーバーの取得</h3>
+
+<p>テスト用サーバーは <code>sharedServer</code> でインスタンスを取得することができます。</p>
+
+<p><code>objective-c
+NLTHTTPStubServer *server = [NLTHTTPStubServer sharedServer];
+</code></p>
+
+<p><code>clear</code>で登録されているレスポンスをすべて削除し、綺麗な状態にすることができます。</p>
+
+<p><code>objective-c
+[server clear];
+</code></p>
+
+<p><code>tearDown</code>などでお使いください。</p>
+
+<h3>expect / stub /verify</h3>
+
+<p>0.2.x まででサポートされていた<code>stub</code>が廃止されました。<code>stub</code>というAPIは存在しますが、動作が異なっています。</p>
+
+<h4>expect</h4>
+
+<p><code>expect</code>はレスポンスを登録する一般的な方法です。</p>
+
+<p><code>objective-c
+[[server expect] forPath:@"/path"];
+</code></p>
+
+<p>このように記述すると、<code>/path</code>へレスポンスが登録されます。
+これに対して、メソッドチェインの形式で、必要なものを付加していきます。</p>
+
+<p><code>objective-c
+[[[server expect] forPath:@"/api/v1/fake"] andJSONResponseResource:@"fake" ofType:@"json"];
+</code></p>
+
+<p><code>expect</code>で登録されたレスポンスは、一度アクセスを受けてそれが返されると、自動的に消化さた状態になります。
+<code>/path</code>へ二度アクセスしても、レスポンスは返されません。(例外が投げられます。)</p>
+
+<h4>verify</h4>
+
+<p><code>expect</code>されたものは、<code>verify</code>によって、それが利用されたかを検証することができます。</p>
+
+<p>```objective-c
+[[server expect] forPath:@"/path"];</p>
+
+<p>// http://localhost:12345/path へアクセスするコード</p>
+
+<p>[server verify]; // /path へきちんとアクセスされているかを検証
+```</p>
+
+<h4>stub</h4>
+
+<p><code>stub</code>は<code>expect</code>と同じインターフェイスを持ちますが、永続的に登録されるレスポンスです。</p>
+
+<p><code>objective-c
+[[server stub] forPath:@"/path"];
+</code></p>
+
+<p>これは <code>http://localhost:12345/path</code> へアクセスを受けそれが返されても、<strong>消化された状態になりません</strong>。
+また、<code>verify</code>による検証では、<code>stub</code>で登録されたものは<strong>無視されます</strong>。</p>
+
+<h3>NLTPath</h3>
+
+<p><code>NLTPath</code>は複雑なURLを表現するために使われる物で、現状では特にGETパラメーターに対応するための機能です。</p>
+
+<p>```objective-c
+[[server expect] forPath:[NLTPath pathWithPathString:@"/fake" andParameters:@{</p>
+
+<pre><code>    @"k1" : @"v1",
+    @"k2" : @"v2",
+</code></pre>
+
+<p>}]];
+```</p>
+
+<p>このような記述をした場合、このレスポンスは <code>/fake?k1=v1&amp;k2=v2</code> または <code>/fake?k2=v2&amp;k1=v1</code> にマッチします。</p>
+
+<h4>anyValue</h4>
+
+<p><code>[NLTPath anyValue]</code>を使う事で、値部分をワイルドカードにすることができます。</p>
+
+<p>```objective-c
+[[server expect] forPath:[NLTPath pathWithPathString:@"/fake" andParameters:@{</p>
+
+<pre><code>    @"k1" : [NLTPAth anyValue]
+</code></pre>
+
+<p>}]];
+```</p>
+
+<p>これは、<code>/fake?k1=hogeeeeeeee</code> や <code>/fake?k1=fugaaaaaaaaaa</code> にマッチします。</p>
+
+<h3>付加可能な項目</h3>
+
+<p>メソッドチェインにより付加できる事ができる項目は以下です。</p>
+
+<h4>HTTP Method</h4>
+
+<p><code>objective-c
+[[server stub] forPath:@"/fake" HTTPMethod:@"Post"];
+</code></p>
+
+<h4>Status code</h4>
+
+<p><code>objective-c
+[[[server stub] forPath:@"/fake"] andStatusCode:200];
+</code></p>
+
+<h4>Simulate waiting</h4>
+
+<p>タイムアウトなどを再現することができます。</p>
+
+<p><code>objective-c
+[[[server stub] forPath:@"/fake"] andProcessingTime:10.0f];
+</code></p>
+
+<h4>Checking POST body</h4>
+
+<p>POSTされた内容を調べる事が出来ます。</p>
+
+<p>```objective-c
+[[[server expect] forPath:@"/fake" HTTPMethod:@"POST"] andCheckPostBody:<sup>(NSData</sup> *postBody) {</p>
+
+<pre><code>    NSString *postBodyString = [that toString:postBody];
+    GHAssertEqualStrings(postBodyString, @"POST_BODY", nil);
+}];
+</code></pre>
+
+<p>```</p>
+
+<h4>Supporting Content-Types</h4>
+
+<p>自動的にContentTypeを付加してくれるものは以下です。</p>
+
+<p><code>objective-c
+[[[server expect] forPath:@"/fake"] and{ContentType}Response...]
+</code></p>
+
+<ul>
+<li>JSON</li>
+<li>HTML</li>
+<li>XML</li>
+<li>Plain Text</li>
+<li>Binary
+
+<ul>
+<li>application/octet-stream</li>
+</ul>
+</li>
+</ul>
+
+
+<p>カスタムのContent-Typeは、<code>andContentTypeHeader</code>によって付加することができます。</p>
+
+<h2>バグなどの報告</h2>
+
+<p><a href="https://github.com/yaakaito/NLTHTTPStubServer/issues">Github Issue</a>で受け付けています。(日本語可)</p>
+]]></content>
+  </entry>
+  
+</feed>
