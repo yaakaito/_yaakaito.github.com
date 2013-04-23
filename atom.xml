@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-22T03:05:45+09:00</updated>
+  <updated>2013-04-24T04:22:40+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,145 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Segueでのオブジェクトのやりとりとか]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/24/segue-with-object/"/>
+    <updated>2013-04-24T03:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/24/segue-with-object</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+UIのコード書くのがだるいので今更感満載でStoryboardを始めました！
+Storyboard出来がよくて、iOSっぽいUIを作る分にはぽちぽちしていけば作れて便利だなーという感じです。</p>
+
+<p>で、ViewController間でのオブジェクトのやりとりにはやっぱコードが必要なので、そこのメモ。
+大体よく使うのは<code>pushViewController</code>、<code>Modal</code>、<code>TableView</code>あたりだと思うので、その3つあたりを書く。</p>
+
+<p>別にそれぞれで大きく変わる訳でもないと思うので、最初に貼っておくととりあえずこんな感じのStoryboard作った。</p>
+
+<p><img src="http://yaakaito.org/images/sample-story-board.png"></p>
+
+<p>めんどくさいので最初のVCをSSViewController、遷移先をSSSecondViewControllerにしてある。</p>
+
+<h2>基本</h2>
+
+<p><code>prepareForSegue:sender:</code>というのを使うらしい、これは遷移元の方に書く。
+遷移先から戻すときは<code>delegate</code>、両方<code>prepareForSegue:sender:</code>でいけんのかなーとか思ったけどそうではないらしい。</p>
+
+<h2>PushVC</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/navigation">コードはここ</a></p>
+
+<p>遷移元の方で<code>prepareForSegue:sender:</code>を定義してあげる。Segueには<code>TopToSecond</code>って名前が付けてある。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">prepareForSegue:</span><span class="p">(</span><span class="n">UIStoryboardSegue</span> <span class="o">*</span><span class="p">)</span><span class="nv">segue</span> <span class="nf">sender:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">segue</span><span class="p">.</span><span class="n">identifier</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;TopToSecond&quot;</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">segue</span><span class="p">.</span><span class="n">destinationViewController</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうすると遷移するときに、ここが呼ばれるので、Segue名で分岐する。
+<code>segue.destinationViewController</code>に遷移先のViewControllerのインスタンスが入っているので、ここでよしなにする。
+別にそんなにめんどくさくなさそう。</p>
+
+<p>次、戻る時。普通に<code>delegate</code>でやる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@protocol</span> <span class="nc">SSSecondViewControllerDelegate</span>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">willBack:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">obj</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>適当にプロトコルつくって、さっきのところで関連付ける。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">prepareForSegue:</span><span class="p">(</span><span class="n">UIStoryboardSegue</span> <span class="o">*</span><span class="p">)</span><span class="nv">segue</span> <span class="nf">sender:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">((</span><span class="n">SSSecondViewController</span> <span class="o">*</span><span class="p">)</span><span class="n">segue</span><span class="p">.</span><span class="n">destinationViewController</span><span class="p">).</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で、戻ってくるときにこれを呼べばいいんだけど、そういう感じのイベントがあるのかと思ったら別になかった。
+軽く調べてみた感じだけど、<code>viewWillDisappear</code>でやればよさげ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewWillDisappear:</span><span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nv">animated</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="nl">viewWillDisappear:</span><span class="n">animated</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">delegate</span> <span class="nl">willBack:</span><span class="err">@</span><span class="p">{</span><span class="s">@&quot;A&quot;</span> <span class="o">:</span> <span class="s">@&quot;HOGE&quot;</span><span class="p">}];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Modal</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/modal">コードはここ</a></p>
+
+<p>pushVCと大差ない。使ってないけど、いままで<code>self.presentedViewController</code>だったのが<code>self.presentingViewController</code>に変わるらしい、紛らわしい。</p>
+
+<p>モーダル閉じるところまでStoryboardで面倒みてほしい気分なんだけど、やりかたがよくわからなかった。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">IBAction</span><span class="p">)</span><span class="nf">touchDismiss:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">dismissViewControllerAnimated:</span><span class="n">YES</span> <span class="nl">completion:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>TableView</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/table">コードはここ</a></p>
+
+<p>戻すところは一緒だけど、indexPathを知る必要があるので一手間増える。
+試してみたら、<code>prepareForSegue:sender:</code> -> <code>tableView:didSelectRowAtIndexPath:</code> という順になってて、それはどうなんだろうという気持ちになった。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">prepareForSegue:</span><span class="p">(</span><span class="n">UIStoryboardSegue</span> <span class="o">*</span><span class="p">)</span><span class="nv">segue</span> <span class="nf">sender:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">sender</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">segue</span><span class="p">.</span><span class="n">identifier</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;TopToSecond&quot;</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">segue</span><span class="p">.</span><span class="n">destinationViewController</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">indexPathForSelectedRow</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じで、あとはよしなに。</p>
+
+<h2>まとめ</h2>
+
+<p>別に<code>prepareForSegue:sender:</code>じゃなくともよいのではという気がしたりしたけど、
+そう書けと言われてるっぽいし長い物に巻かれてそう書く事にした。
+いろいろ書けてしまいそうなので、早めにルール作っちゃうのがいいのかなーという感じ。</p>
+
+<p>あとこれどういう名前付ければいいのかよくわからん、<code>Segue</code>ってサフィックスは付けた気がいい気がする。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS用テスティングサーバー NLTHTTPStubServer 0.4 を公開しました]]></title>
@@ -2740,28 +2879,6 @@ Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多�
 
 
 <p>便利ですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ブログのデザイン変えた]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/14/new-blog-design/"/>
-    <updated>2013-03-14T03:27:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/14/new-blog-design</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！</p>
-
-<p>ブログのデザイン変えました！</p>
-
-<p>読み返してて、「くそっよみづらいし、俺は読む事に集中したいんだよ」と思ったので直した、読みやすさ重視。</p>
-
-<p>これあってもなくても一緒やろみたいなのを全部消して、きれいに文章読めるように工夫したつもりである。緑だけ残した。緑見にくいし控えめで。
-(そもそもの話ほとんど文字サイズと行間の調整しかしていない)</p>
-
-<p>モバイル対応とかやるのだるいので、だいたいどれでみても同じようになるようにした。</p>
-
-<p>これでまた少し世界をよく出来た気がします、やりましたね。</p>
-
-<p>あとついでだったしドメイン変えた。</p>
 ]]></content>
   </entry>
   

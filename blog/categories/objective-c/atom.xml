@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-22T03:05:45+09:00</updated>
+  <updated>2013-04-24T04:22:40+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,130 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Segueでのオブジェクトのやりとりとか]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/24/segue-with-object/"/>
+    <updated>2013-04-24T03:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/24/segue-with-object</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+UIのコード書くのがだるいので今更感満載でStoryboardを始めました！
+Storyboard出来がよくて、iOSっぽいUIを作る分にはぽちぽちしていけば作れて便利だなーという感じです。</p>
+
+<p>で、ViewController間でのオブジェクトのやりとりにはやっぱコードが必要なので、そこのメモ。
+大体よく使うのは<code>pushViewController</code>、<code>Modal</code>、<code>TableView</code>あたりだと思うので、その3つあたりを書く。</p>
+
+<p>別にそれぞれで大きく変わる訳でもないと思うので、最初に貼っておくととりあえずこんな感じのStoryboard作った。</p>
+
+<p><img src="/images/sample-story-board.png"></p>
+
+<p>めんどくさいので最初のVCをSSViewController、遷移先をSSSecondViewControllerにしてある。</p>
+
+<h2>基本</h2>
+
+<p><code>prepareForSegue:sender:</code>というのを使うらしい、これは遷移元の方に書く。
+遷移先から戻すときは<code>delegate</code>、両方<code>prepareForSegue:sender:</code>でいけんのかなーとか思ったけどそうではないらしい。</p>
+
+<h2>PushVC</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/navigation">コードはここ</a></p>
+
+<p>遷移元の方で<code>prepareForSegue:sender:</code>を定義してあげる。Segueには<code>TopToSecond</code>って名前が付けてある。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>if ([segue.identifier isEqualToString:@"TopToSecond"]) {
+    NSLog(@"%@", segue.destinationViewController);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こうすると遷移するときに、ここが呼ばれるので、Segue名で分岐する。
+<code>segue.destinationViewController</code>に遷移先のViewControllerのインスタンスが入っているので、ここでよしなにする。
+別にそんなにめんどくさくなさそう。</p>
+
+<p>次、戻る時。普通に<code>delegate</code>でやる。</p>
+
+<p><code>objective-c
+@protocol SSSecondViewControllerDelegate
+- (void)willBack:(id)obj;
+@end
+</code></p>
+
+<p>適当にプロトコルつくって、さっきのところで関連付ける。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>((SSSecondViewController *)segue.destinationViewController).delegate = self;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>で、戻ってくるときにこれを呼べばいいんだけど、そういう感じのイベントがあるのかと思ったら別になかった。
+軽く調べてみた感じだけど、<code>viewWillDisappear</code>でやればよさげ。</p>
+
+<p>```objective-c
+- (void)viewWillDisappear:(BOOL)animated {</p>
+
+<pre><code>[super viewWillDisappear:animated];
+[self.delegate willBack:@{@"A" : @"HOGE"}];
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Modal</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/modal">コードはここ</a></p>
+
+<p>pushVCと大差ない。使ってないけど、いままで<code>self.presentedViewController</code>だったのが<code>self.presentingViewController</code>に変わるらしい、紛らわしい。</p>
+
+<p>モーダル閉じるところまでStoryboardで面倒みてほしい気分なんだけど、やりかたがよくわからなかった。</p>
+
+<p>```
+- (IBAction)touchDismiss:(id)sender {</p>
+
+<pre><code>[self dismissViewControllerAnimated:YES completion:nil];
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>TableView</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/table">コードはここ</a></p>
+
+<p>戻すところは一緒だけど、indexPathを知る必要があるので一手間増える。
+試してみたら、<code>prepareForSegue:sender:</code> -> <code>tableView:didSelectRowAtIndexPath:</code> という順になってて、それはどうなんだろうという気持ちになった。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>if ([segue.identifier isEqualToString:@"TopToSecond"]) {
+    NSLog(@"%@", segue.destinationViewController);
+    NSLog(@"%@", self.tableView.indexPathForSelectedRow);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こんな感じで、あとはよしなに。</p>
+
+<h2>まとめ</h2>
+
+<p>別に<code>prepareForSegue:sender:</code>じゃなくともよいのではという気がしたりしたけど、
+そう書けと言われてるっぽいし長い物に巻かれてそう書く事にした。
+いろいろ書けてしまいそうなので、早めにルール作っちゃうのがいいのかなーという感じ。</p>
+
+<p>あとこれどういう名前付ければいいのかよくわからん、<code>Segue</code>ってサフィックスは付けた気がいい気がする。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS用テスティングサーバー NLTHTTPStubServer 0.4 を公開しました]]></title>
@@ -503,177 +627,6 @@ return [formatter dateFromString:obj];
 
 <p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
 Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Flow.jsをObjective-Cに移植してみた]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1/"/>
-    <updated>2013-03-21T03:24:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/21/flow-m-0-0-1</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="http://www.slideshare.net/uupaa/flowjs">Flow.js</a> というJavaScriptのライブラリを見て、面白いなーと思ったのでObjective-Cでも似たようなことが出来るようにしてみた。junctionとforkは(まだ)実装してないので、完全な移植ではないです。
-コードも適当なので遊び程度に見ていただければ。
-ところで英語全然書けないので誰か「Natural English」ってプルリクをください。</p>
-
-<p><a href="https://github.com/yaakaito/Flow.m">Flow.m</a></p>
-
-<p>名前はまんま、一応Cocoapodsにも入れてはいるのでCocoapods使ってる人は</p>
-
-<p><code>ruby
-pod 'Flow.m'
-</code></p>
-
-<p>で使える。</p>
-
-<h2>出来ること</h2>
-
-<p>といっても、基本的には本家と同じなので、<a href="http://www.slideshare.net/uupaa/flowjs">本家のスライド</a>の方が詳しいのでそちらを参照していただきたく。
-ただ微妙に仕様が違うところもある感じなので流しで書いておく。</p>
-
-<h3>基本的な使い方</h3>
-
-<p><code>FMFlow</code>のオブジェクトを作る時に、<code>waits</code>と<code>completionBlock</code>を渡す。
-<code>FMFlow</code>のオブジェクトには<code>pass</code>ってメソッドが生えていて、これを呼び出すとカウンタが一個づつあがる。
-呼び出した回数が<code>waits</code>に達したら、<code>completionBlock</code>が呼び出される。</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>NSLog(@"Flow!");
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow pass];
-[flow pass]; // Flow!
-```</p>
-
-<h3>extends</h3>
-
-<p>処理待機数を増やす、増える方向だけ。</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>NSLog(@"Flow!");
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow extend:1];</p>
-
-<p>[flow pass];
-[flow pass];  // Flow!
-```</p>
-
-<h3>arguments</h3>
-
-<p>本家に合わせる為に若干無理してるんだけど、<code>passWithValue:</code> か <code>passWithValue:forKey:</code>で渡せるし、インデックスかキーか好きなほうでどうぞ。</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>NSLog([arguments argumentAtIndex:0]); // HOGE
-NSLog([arguments argumentAtIndex:1]); // FUGA
-NSLog([arguments argumentForKey:@"fuga"]); // FUGA
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow passWithValue:@"HOGE"];
-[flow passWithValue:@"FUGA" forKey:@"fuga"];
-```</p>
-
-<h3>missとmissable</h3>
-
-<p>失敗可能回数の設定と、失敗の通知</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>NSLog(@"Flow!");
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow missable:1];</p>
-
-<p>[flow miss]; // 1回は許可してるので問題ない
-[flow pass]; // Flow!
-```</p>
-
-<p>失敗可能回数を超えた時は</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:2 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>// error がこんな感じで渡ってくる
-// error.domain : org.yaakaito.flow
-// error.code   : kFMErrorCodeFailure
-NSLog([arguments argumentAtIndex:0]); // ここまでに渡した引数は渡ってくる 
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow missable:1];</p>
-
-<p>[flow miss];
-[flow passWithValue:@"HOGE"];
-[flow miss]; // 失敗したのでCompletionBlockを呼び出す
-```</p>
-
-<h3>exit</h3>
-
-<p>強制終了。これはちょっと本家と違って、<code>userInfo</code>を渡すと、<code>CompletionBlock</code>の<code>error.userInfo</code>に入ってくるようになってる。</p>
-
-<p>```objective-c
-FMFlow <em>flow = [FMFlow flowWithWaits:1 completionBlock:<sup>(NSError</sup> </em>error, FMArguments *arguments) {</p>
-
-<pre><code>// error.domain : org.yaakaito.flow
-// error.code   : kFMErrorCodeExit
-NSLog([[error userInfo] objectForKey:@"msg"]); // えらー
-</code></pre>
-
-<p>}];</p>
-
-<p>[flow exit:@{ @"msg" : @"えらー"}];
-```</p>
-
-<p>こんな感じです、残りはまた今度・・・</p>
-
-<h2>ところで</h2>
-
-<p>AppCode2.0のDarculaテーマは、見やすいのでおすすめです。</p>
-
-<p>あああと非同期テストが必要になったわけなんですが、Cocoapods見てても、SenTestingKit+Asyncみたいなのはみるんだけど単純なモジュールねーなーみたいな。
-みんなSenTestingKit用のスーパークラス作るのかなーと思った。
-僕は別にちょっと待っててくれればいいだけなので、べつにただのオブジェクトでもいいわってなって、<a href="https://github.com/yaakaito/AsyncTestSupporter">こういう</a>の作った。作ったというか、元から他のコードで使ってたやつをpod化しただけ。
-なんか<code>waitForTimeout:</code>くらいしか使わんし、それで十分やろ、とか思うので、それしか作ってない。</p>
-
-<p>```objective-c
-- (void)testAsyncMethod
-{</p>
-
-<p>  // Create instance.
-  AsyncTestSupporter *asyncTest = [[AsyncTestSupporter alloc] init];</p>
-
-<p>  // Prepare for asynchronous call.
-  __weak AsyncTestSupporter *that = asyncTest;
-  // Call asynchronous method.
-  [object asyncMethod:<sup>()</sup> { // Completion blocks.</p>
-
-<pre><code>// Wait for notify with timeout seconds.
-[that waitForTimeout:10];
-</code></pre>
-
-<p>  }];</p>
-
-<p>  // Notify state if completed asynchronous method.
-  [asyncTest notify:notify:kAsyncTestSupporterWaitStatusSuccess];</p>
-
-<p>}
-```</p>
 ]]></content>
   </entry>
   
