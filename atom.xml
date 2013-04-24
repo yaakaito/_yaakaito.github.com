@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-24T04:22:40+09:00</updated>
+  <updated>2013-04-25T08:31:02+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,301 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Storyboardで横にずれるメニュー作る]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard/"/>
+    <updated>2013-04-25T02:22:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+StoryboardってFaceBookとかがやってる横にずれるメニューを作るのがめちゃくちゃめんどくさそう、というかそこだけコードで書くんじゃないの？という印象だったんですが、
+<a href="https://github.com/edgecase/ECSlidingViewController">ESSlidingViewController</a>というのが、Stroyboardに対応しているらしく、綺麗にいけそうなので試してみた。</p>
+
+<p><a href="https://github.com/yaakaito/StoryBoard-Sliding">コードはGithubで</a></p>
+
+<h2>プロジェクトつくってセットアップ</h2>
+
+<p>とりあえずSingle View Applicationを選んでき適当に</p>
+
+<p>作ったらCocoapodsで</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>platform :ios
+</span><span class='line'>
+</span><span class='line'>pod 'ECSlidingViewController'</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ pod install</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>ECSlidingViewControllerを設定する</h2>
+
+<p>Storyboardに最初に出てくるViewControllerのクラスを<code>ECSlidingViewController</code>にする。</p>
+
+<p><img src="http://yaakaito.org/images/storyboard-sliding-base.png"></p>
+
+<p>MenuViewControllerみたいなのをUITableViewControllerで作って、Storyboardで関連付ける。
+Menuというidentifierを与えておく。</p>
+
+<p><img src="http://yaakaito.org/images/storyboard-sliding-menu.png"></p>
+
+<p>これでAppDelegateをいじるのかなーと思ったんだけど、ついてくるサンプルを読んだら、
+InitialSlidingViewControllerみたいなを作って、これで初期化してた、こっちの方が綺麗な感じがするのでこっちでやることにする。
+最初に表示されるViewControllerを設定しているので、それを作つくるんだけど、ついでなので2つ追加して全体でこんなStoryboardにした。
+それぞれにFirstViewとSecondViewでidentifiterを与えている。</p>
+
+<p><img src="http://yaakaito.org/images/storyboard-sliding.png"></p>
+
+<p><code>topViewController</code>というのが生えているので、ここへFirstViewControllerみたいなのを入れる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">SSInitialViewController</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">UIStoryboard</span> <span class="o">*</span><span class="n">storyboard</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIStoryboard</span> <span class="nl">storyboardWithName:</span><span class="s">@&quot;MainStoryboard&quot;</span> <span class="nl">bundle:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">topViewController</span> <span class="o">=</span> <span class="p">[</span><span class="n">storyboard</span> <span class="nl">instantiateViewControllerWithIdentifier:</span><span class="s">@&quot;FirstView&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ここまでやったらFirstViewControllerの方でメニューなんかを追加する。
+グローバルな感じで設定するんじゃなくて、ViewController単位に指定できるっぽい、便利。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@implementation</span> <span class="nc">SSFirstViewController</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewWillAppear:</span><span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nv">animated</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="nl">viewWillAppear:</span><span class="n">animated</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">shadowOpacity</span> <span class="o">=</span> <span class="mf">0.75f</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">shadowRadius</span> <span class="o">=</span> <span class="mf">4.0f</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">shadowColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">blackColor</span><span class="p">].</span><span class="n">CGColor</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">underLeftViewController</span> <span class="nl">isKindOfClass:</span><span class="p">[</span><span class="n">SSMenuViewController</span> <span class="n">class</span><span class="p">]])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">UIViewController</span> <span class="o">*</span><span class="n">menu</span> <span class="o">=</span>  <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">storyboard</span> <span class="nl">instantiateViewControllerWithIdentifier:</span><span class="s">@&quot;Menu&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">underLeftViewController</span> <span class="o">=</span> <span class="n">menu</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nl">addGestureRecognizer:</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">panGesture</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="nl">setAnchorRightRevealAmount:</span><span class="mf">280.0f</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ところでここで一回ハマってて、<code>[self.slidingViewController setAnchorRightRevealAmount:280.0f]</code>はデフォルトとかがあるわけじゃなくて、かならず設定しないと駄目っぽい。</p>
+
+<p>こんなかんじ！</p>
+
+<p><img src="http://yaakaito.org/images/storyboard-sliding-sample.png" width="320"></p>
+
+<h2>メニューの実装してみる</h2>
+
+<p>適当に、面倒なのでメニュー名からidentifier作るようにしてる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">SSMenuViewController</span> <span class="p">()</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSArray</span> <span class="o">*</span><span class="n">items</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">SSMenuViewController</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">items</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span><span class="s">@&quot;First&quot;</span><span class="p">,</span> <span class="s">@&quot;Second&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">numberOfSectionsInTableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">items</span><span class="p">.</span><span class="n">count</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">CellIdentifier</span> <span class="o">=</span> <span class="s">@&quot;MenuCell&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">UITableViewCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="n">CellIdentifier</span> <span class="nl">forIndexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cell</span><span class="p">.</span><span class="n">textLabel</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">identifier</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;%@View&quot;</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]];</span>
+</span><span class='line'>    <span class="n">UIViewController</span> <span class="o">*</span><span class="n">newTopViewController</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">storyboard</span> <span class="nl">instantiateViewControllerWithIdentifier:</span><span class="n">identifier</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="nl">anchorTopViewOffScreenTo:</span><span class="n">ECRight</span> <span class="nl">animations:</span><span class="nb">nil</span> <span class="nl">onComplete:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="n">CGRect</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span> <span class="o">=</span> <span class="n">newTopViewController</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="n">resetTopView</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>画面の切り替えは<code>tableView:didSelectRowAtIndexPath:</code>でやってるあたり。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">identifier</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;%@View&quot;</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]];</span>
+</span><span class='line'>    <span class="n">UIViewController</span> <span class="o">*</span><span class="n">newTopViewController</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">storyboard</span> <span class="nl">instantiateViewControllerWithIdentifier:</span><span class="n">identifier</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="nl">anchorTopViewOffScreenTo:</span><span class="n">ECRight</span> <span class="nl">animations:</span><span class="nb">nil</span> <span class="nl">onComplete:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="n">CGRect</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span> <span class="o">=</span> <span class="n">newTopViewController</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="n">resetTopView</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>storyboardからidentifierで引いてきて、それを<code>topViewConttoller</code>に設定するだけの親切構造。
+僕がいままで使ってきたライブラリだと、この辺は自由にやってね、が多かったので、こうするとよいよがあると助かる。</p>
+
+<p>ほとんどサンプルのまま持ってきたんだけど、このままだとメニューをタップしたあとのアニメーションがちょっとうざい。(一番右まで行ってから戻るやつ)
+これは<code>anchorTopViewOffScreenTo:animations:onComplete:</code>がそういうアニメーションっぽいので、<code>resetTopView</code>だけにする。こっちは元の位置に戻すやつ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">identifier</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;%@View&quot;</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">items</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">]];</span>
+</span><span class='line'>    <span class="n">UIViewController</span> <span class="o">*</span><span class="n">newTopViewController</span> <span class="o">=</span> <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">storyboard</span> <span class="nl">instantiateViewControllerWithIdentifier:</span><span class="n">identifier</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">CGRect</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span> <span class="o">=</span> <span class="n">newTopViewController</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span><span class="p">.</span><span class="n">topViewController</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">slidingViewController</span> <span class="n">resetTopView</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとはStoryboardでよしなにビュー作ったりしていけばよい、Storyboardすごいなー。</p>
+
+<h2>まとめ</h2>
+
+<p>思ってたより綺麗にできたし、Storyboard毛嫌いなおりそうでよかったです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Segueでのオブジェクトのやりとりとか]]></title>
@@ -2800,85 +3095,6 @@ Cocoapods込みで<code>xcodebuild</code>するのが思えば始めてだった
 <p>僕の場合はNSNumberのグループに入ってたので、<a href="https://github.com/yaakaito/Overline/commit/01fbeaf306a56319485e394d56b249bd502cab30">これ消したら</a>なおった。</p>
 
 <p>ありがとうございます。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/14/brunch-withw-testem/"/>
-    <updated>2013-03-14T16:36:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/14/brunch-withw-testem</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-<a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
-Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
-
-<h2>testemの準備</h2>
-
-<p>testemがないと始まらないのでtestemをインストールします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g testem</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>testem.jsonの設定</h2>
-
-<p>BrunchはデフォルトでMochaを使ったテストのテンプレートを作ってくれるので、これを参考にします。
-<code>brunch build</code>すると、<code>/public/test/index.html</code>ができるので、これを参考に書いていきます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;framework&quot;</span> <span class="o">:</span> <span class="s2">&quot;mocha&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;src_files&quot;</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;public/javascripts/vendor.js&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;public/javascripts/app.js&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;public/test/javascripts/test-vendor.js&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;public/test/javascripts/test.js&quot;</span>
-</span><span class='line'>  <span class="p">]</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これをプロジェクトのルートに配置します。</p>
-
-<h2>brunchが生成するmochaを消す</h2>
-
-<p>brunchはmochaやsinonを <code>public/test/javascripts/test-vendor.js</code> にまとめてビルドしているので、このビルドからmochaを外します。とりあえず <code>rm</code> してしまいます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rm</span> <span class="nx">test</span><span class="o">/</span><span class="nx">vender</span><span class="o">/</span><span class="nx">scripts</span><span class="o">/</span><span class="nx">mocha</span><span class="p">[</span><span class="nx">version</span><span class="p">].</span><span class="nx">js</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>brunch watchを起動する</h2>
-
-<p>brunchはテストをまとめて <code>public/test/javascripts/test.js</code> にビルドしてくれます。
-なのでtestem側からはこれを見ているだけでOKです。便利ですね。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">brunch</span> <span class="nx">w</span> <span class="o">-</span><span class="nx">s</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ついでなのでサーバーも立てておきます。</p>
-
-<h2>testemでテストする</h2>
-
-<p>あとはtestemでテストするだけです。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">testem</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>便利ですね！</p>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-24T04:22:40+09:00</updated>
+  <updated>2013-04-25T08:31:02+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,213 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Storyboardで横にずれるメニュー作る]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard/"/>
+    <updated>2013-04-25T02:22:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+StoryboardってFaceBookとかがやってる横にずれるメニューを作るのがめちゃくちゃめんどくさそう、というかそこだけコードで書くんじゃないの？という印象だったんですが、
+<a href="https://github.com/edgecase/ECSlidingViewController">ESSlidingViewController</a>というのが、Stroyboardに対応しているらしく、綺麗にいけそうなので試してみた。</p>
+
+<p><a href="https://github.com/yaakaito/StoryBoard-Sliding">コードはGithubで</a></p>
+
+<h2>プロジェクトつくってセットアップ</h2>
+
+<p>とりあえずSingle View Applicationを選んでき適当に</p>
+
+<p>作ったらCocoapodsで</p>
+
+<p>```
+platform :ios</p>
+
+<p>pod 'ECSlidingViewController'
+```</p>
+
+<p><code>
+$ pod install
+</code></p>
+
+<h2>ECSlidingViewControllerを設定する</h2>
+
+<p>Storyboardに最初に出てくるViewControllerのクラスを<code>ECSlidingViewController</code>にする。</p>
+
+<p><img src="/images/storyboard-sliding-base.png"></p>
+
+<p>MenuViewControllerみたいなのをUITableViewControllerで作って、Storyboardで関連付ける。
+Menuというidentifierを与えておく。</p>
+
+<p><img src="/images/storyboard-sliding-menu.png"></p>
+
+<p>これでAppDelegateをいじるのかなーと思ったんだけど、ついてくるサンプルを読んだら、
+InitialSlidingViewControllerみたいなを作って、これで初期化してた、こっちの方が綺麗な感じがするのでこっちでやることにする。
+最初に表示されるViewControllerを設定しているので、それを作つくるんだけど、ついでなので2つ追加して全体でこんなStoryboardにした。
+それぞれにFirstViewとSecondViewでidentifiterを与えている。</p>
+
+<p><img src="/images/storyboard-sliding.png"></p>
+
+<p><code>topViewController</code>というのが生えているので、ここへFirstViewControllerみたいなのを入れる。</p>
+
+<p>```objective-c
+@implementation SSInitialViewController</p>
+
+<ul>
+<li><p>(void)viewDidLoad
+{
+  [super viewDidLoad];</p>
+
+<p>  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+  self.topViewController = [storyboard instantiateViewControllerWithIdentifier:@"FirstView"];
+}</p></li>
+</ul>
+
+
+<p>@end
+```</p>
+
+<p>ここまでやったらFirstViewControllerの方でメニューなんかを追加する。
+グローバルな感じで設定するんじゃなくて、ViewController単位に指定できるっぽい、便利。</p>
+
+<p>```objective-c
+@implementation SSFirstViewController</p>
+
+<ul>
+<li><p>(void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];</p>
+
+<p>  self.view.layer.shadowOpacity = 0.75f;
+  self.view.layer.shadowRadius = 4.0f;
+  self.view.layer.shadowColor = [UIColor blackColor].CGColor;</p>
+
+<p>  if (![self.slidingViewController.underLeftViewController isKindOfClass:[SSMenuViewController class]]) {</p>
+
+<pre><code>  UIViewController *menu =  [self.storyboard instantiateViewControllerWithIdentifier:@"Menu"];
+  self.slidingViewController.underLeftViewController = menu;
+</code></pre>
+
+<p>  }</p>
+
+<p>  [self.view addGestureRecognizer:self.slidingViewController.panGesture];
+  [self.slidingViewController setAnchorRightRevealAmount:280.0f];
+}</p></li>
+</ul>
+
+
+<p>@end
+<code>``
+ところでここで一回ハマってて、</code>[self.slidingViewController setAnchorRightRevealAmount:280.0f]`はデフォルトとかがあるわけじゃなくて、かならず設定しないと駄目っぽい。</p>
+
+<p>こんなかんじ！</p>
+
+<p><img src="/images/storyboard-sliding-sample.png" width="320"></p>
+
+<h2>メニューの実装してみる</h2>
+
+<p>適当に、面倒なのでメニュー名からidentifier作るようにしてる。</p>
+
+<p>```objective-c
+@interface SSMenuViewController ()
+@property (strong, nonatomic) NSArray *items;
+@end</p>
+
+<p>@implementation SSMenuViewController</p>
+
+<ul>
+<li><p>(void)viewDidLoad
+{
+  [super viewDidLoad];</p>
+
+<p>  self.items = @[@"First", @"Second"];
+}</p></li>
+<li><p>(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+  return 1;
+}</p></li>
+<li><p>(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+  return self.items.count;
+}</p></li>
+<li><p>(UITableViewCell <em>)tableView:(UITableView </em>)tableView cellForRowAtIndexPath:(NSIndexPath <em>)indexPath
+{
+  static NSString </em>CellIdentifier = @"MenuCell";
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];</p>
+
+<p>  cell.textLabel.text = self.items[indexPath.row];</p>
+
+<p>  return cell;
+}</p></li>
+<li><p>(void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{
+  NSString <em>identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+  UIViewController </em>newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];</p>
+
+<p>  [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:<sup>{</sup></p>
+
+<pre><code>  CGRect frame = self.slidingViewController.topViewController.view.frame;
+  self.slidingViewController.topViewController = newTopViewController;
+  self.slidingViewController.topViewController.view.frame = frame;
+  [self.slidingViewController resetTopView];
+</code></pre>
+
+<p>  }];
+}</p></li>
+</ul>
+
+
+<p>@end
+```</p>
+
+<p>画面の切り替えは<code>tableView:didSelectRowAtIndexPath:</code>でやってるあたり。</p>
+
+<p>```objective-c
+- (void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{</p>
+
+<pre><code>NSString *identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+
+[self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+    CGRect frame = self.slidingViewController.topViewController.view.frame;
+    self.slidingViewController.topViewController = newTopViewController;
+    self.slidingViewController.topViewController.view.frame = frame;
+    [self.slidingViewController resetTopView];
+}];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>storyboardからidentifierで引いてきて、それを<code>topViewConttoller</code>に設定するだけの親切構造。
+僕がいままで使ってきたライブラリだと、この辺は自由にやってね、が多かったので、こうするとよいよがあると助かる。</p>
+
+<p>ほとんどサンプルのまま持ってきたんだけど、このままだとメニューをタップしたあとのアニメーションがちょっとうざい。(一番右まで行ってから戻るやつ)
+これは<code>anchorTopViewOffScreenTo:animations:onComplete:</code>がそういうアニメーションっぽいので、<code>resetTopView</code>だけにする。こっちは元の位置に戻すやつ。</p>
+
+<p>```objective-c
+- (void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{</p>
+
+<pre><code>NSString *identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+
+CGRect frame = self.slidingViewController.topViewController.view.frame;
+self.slidingViewController.topViewController = newTopViewController;
+self.slidingViewController.topViewController.view.frame = frame;
+[self.slidingViewController resetTopView];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>あとはStoryboardでよしなにビュー作ったりしていけばよい、Storyboardすごいなー。</p>
+
+<h2>まとめ</h2>
+
+<p>思ってたより綺麗にできたし、Storyboard毛嫌いなおりそうでよかったです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Segueでのオブジェクトのやりとりとか]]></title>
@@ -587,46 +794,6 @@ return [formatter dateFromString:obj];
 <h2>よろしくね！</h2>
 
 <p><a href="https://github.com/yaakaito">Overline</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands/"/>
-    <updated>2013-03-28T02:26:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="https://github.com/yaakaito/Overline/">Overline</a>であんまり気が向かなかった<code>NSDateFormatter</code>系のところに手をつけ始めました。
-わりと意見を求めている記事です。</p>
-
-<p>といっても、そんなにやることはないかなーとか思っていて、<code>NSDateFormatter</code>をそのまま使っちゃって、あれ・・・和暦・・・みたいなトラップを意識的に回避できればそれでよいのかなーと思ってます。</p>
-
-<p>んで、以下の２つのメソッドを追加した。</p>
-
-<p>```objective-c
-+ (instancetype)dateFormatterWithCalendarIndetifiter:(NSString *)calendar</p>
-
-<pre><code>                               LocaleIdentifiter:(NSString *)locale
-                            timeZoneAbbreviation:(NSString *)timeZone;
-</code></pre>
-
-<ul>
-<li>(instancetype)userDefaultFormatter;
-```</li>
-</ul>
-
-
-<p>１個目はカレンダー、ロケール、タイムゾーンを忘れずに設定してね、というのを明確にするために作ったメソッド。
-なんかこの辺は設定するかなーというものを引数にとってる。</p>
-
-<p>２個目は、デフォルトのものを返してくるよ、というもの。
-つまりは単純に<code>alloc init</code>した状態のものなんだけど、そもそもの話その状態が分かりにくいんだよ・・・ってことで名前を付けたもの。
-ちょっとは分かりやすくなるのかなーと思ってる。</p>
-
-<h2>意見があったらほしいです</h2>
-
-<p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
-Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
 ]]></content>
   </entry>
   

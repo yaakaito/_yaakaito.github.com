@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Storyboard | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/storyboard/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-04-25T08:31:02+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Storyboardで横にずれるメニュー作る]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard/"/>
+    <updated>2013-04-25T02:22:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+StoryboardってFaceBookとかがやってる横にずれるメニューを作るのがめちゃくちゃめんどくさそう、というかそこだけコードで書くんじゃないの？という印象だったんですが、
+<a href="https://github.com/edgecase/ECSlidingViewController">ESSlidingViewController</a>というのが、Stroyboardに対応しているらしく、綺麗にいけそうなので試してみた。</p>
+
+<p><a href="https://github.com/yaakaito/StoryBoard-Sliding">コードはGithubで</a></p>
+
+<h2>プロジェクトつくってセットアップ</h2>
+
+<p>とりあえずSingle View Applicationを選んでき適当に</p>
+
+<p>作ったらCocoapodsで</p>
+
+<p>```
+platform :ios</p>
+
+<p>pod 'ECSlidingViewController'
+```</p>
+
+<p><code>
+$ pod install
+</code></p>
+
+<h2>ECSlidingViewControllerを設定する</h2>
+
+<p>Storyboardに最初に出てくるViewControllerのクラスを<code>ECSlidingViewController</code>にする。</p>
+
+<p><img src="/images/storyboard-sliding-base.png"></p>
+
+<p>MenuViewControllerみたいなのをUITableViewControllerで作って、Storyboardで関連付ける。
+Menuというidentifierを与えておく。</p>
+
+<p><img src="/images/storyboard-sliding-menu.png"></p>
+
+<p>これでAppDelegateをいじるのかなーと思ったんだけど、ついてくるサンプルを読んだら、
+InitialSlidingViewControllerみたいなを作って、これで初期化してた、こっちの方が綺麗な感じがするのでこっちでやることにする。
+最初に表示されるViewControllerを設定しているので、それを作つくるんだけど、ついでなので2つ追加して全体でこんなStoryboardにした。
+それぞれにFirstViewとSecondViewでidentifiterを与えている。</p>
+
+<p><img src="/images/storyboard-sliding.png"></p>
+
+<p><code>topViewController</code>というのが生えているので、ここへFirstViewControllerみたいなのを入れる。</p>
+
+<p>```objective-c
+@implementation SSInitialViewController</p>
+
+<ul>
+<li><p>(void)viewDidLoad
+{
+  [super viewDidLoad];</p>
+
+<p>  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+  self.topViewController = [storyboard instantiateViewControllerWithIdentifier:@"FirstView"];
+}</p></li>
+</ul>
+
+
+<p>@end
+```</p>
+
+<p>ここまでやったらFirstViewControllerの方でメニューなんかを追加する。
+グローバルな感じで設定するんじゃなくて、ViewController単位に指定できるっぽい、便利。</p>
+
+<p>```objective-c
+@implementation SSFirstViewController</p>
+
+<ul>
+<li><p>(void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];</p>
+
+<p>  self.view.layer.shadowOpacity = 0.75f;
+  self.view.layer.shadowRadius = 4.0f;
+  self.view.layer.shadowColor = [UIColor blackColor].CGColor;</p>
+
+<p>  if (![self.slidingViewController.underLeftViewController isKindOfClass:[SSMenuViewController class]]) {</p>
+
+<pre><code>  UIViewController *menu =  [self.storyboard instantiateViewControllerWithIdentifier:@"Menu"];
+  self.slidingViewController.underLeftViewController = menu;
+</code></pre>
+
+<p>  }</p>
+
+<p>  [self.view addGestureRecognizer:self.slidingViewController.panGesture];
+  [self.slidingViewController setAnchorRightRevealAmount:280.0f];
+}</p></li>
+</ul>
+
+
+<p>@end
+<code>``
+ところでここで一回ハマってて、</code>[self.slidingViewController setAnchorRightRevealAmount:280.0f]`はデフォルトとかがあるわけじゃなくて、かならず設定しないと駄目っぽい。</p>
+
+<p>こんなかんじ！</p>
+
+<p><img src="/images/storyboard-sliding-sample.png" width="320"></p>
+
+<h2>メニューの実装してみる</h2>
+
+<p>適当に、面倒なのでメニュー名からidentifier作るようにしてる。</p>
+
+<p>```objective-c
+@interface SSMenuViewController ()
+@property (strong, nonatomic) NSArray *items;
+@end</p>
+
+<p>@implementation SSMenuViewController</p>
+
+<ul>
+<li><p>(void)viewDidLoad
+{
+  [super viewDidLoad];</p>
+
+<p>  self.items = @[@"First", @"Second"];
+}</p></li>
+<li><p>(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+  return 1;
+}</p></li>
+<li><p>(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+  return self.items.count;
+}</p></li>
+<li><p>(UITableViewCell <em>)tableView:(UITableView </em>)tableView cellForRowAtIndexPath:(NSIndexPath <em>)indexPath
+{
+  static NSString </em>CellIdentifier = @"MenuCell";
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];</p>
+
+<p>  cell.textLabel.text = self.items[indexPath.row];</p>
+
+<p>  return cell;
+}</p></li>
+<li><p>(void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{
+  NSString <em>identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+  UIViewController </em>newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];</p>
+
+<p>  [self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:<sup>{</sup></p>
+
+<pre><code>  CGRect frame = self.slidingViewController.topViewController.view.frame;
+  self.slidingViewController.topViewController = newTopViewController;
+  self.slidingViewController.topViewController.view.frame = frame;
+  [self.slidingViewController resetTopView];
+</code></pre>
+
+<p>  }];
+}</p></li>
+</ul>
+
+
+<p>@end
+```</p>
+
+<p>画面の切り替えは<code>tableView:didSelectRowAtIndexPath:</code>でやってるあたり。</p>
+
+<p>```objective-c
+- (void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{</p>
+
+<pre><code>NSString *identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+
+[self.slidingViewController anchorTopViewOffScreenTo:ECRight animations:nil onComplete:^{
+    CGRect frame = self.slidingViewController.topViewController.view.frame;
+    self.slidingViewController.topViewController = newTopViewController;
+    self.slidingViewController.topViewController.view.frame = frame;
+    [self.slidingViewController resetTopView];
+}];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>storyboardからidentifierで引いてきて、それを<code>topViewConttoller</code>に設定するだけの親切構造。
+僕がいままで使ってきたライブラリだと、この辺は自由にやってね、が多かったので、こうするとよいよがあると助かる。</p>
+
+<p>ほとんどサンプルのまま持ってきたんだけど、このままだとメニューをタップしたあとのアニメーションがちょっとうざい。(一番右まで行ってから戻るやつ)
+これは<code>anchorTopViewOffScreenTo:animations:onComplete:</code>がそういうアニメーションっぽいので、<code>resetTopView</code>だけにする。こっちは元の位置に戻すやつ。</p>
+
+<p>```objective-c
+- (void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath
+{</p>
+
+<pre><code>NSString *identifier = [NSString stringWithFormat:@"%@View", self.items[indexPath.row]];
+UIViewController *newTopViewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+
+CGRect frame = self.slidingViewController.topViewController.view.frame;
+self.slidingViewController.topViewController = newTopViewController;
+self.slidingViewController.topViewController.view.frame = frame;
+[self.slidingViewController resetTopView];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>あとはStoryboardでよしなにビュー作ったりしていけばよい、Storyboardすごいなー。</p>
+
+<h2>まとめ</h2>
+
+<p>思ってたより綺麗にできたし、Storyboard毛嫌いなおりそうでよかったです。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Segueでのオブジェクトのやりとりとか]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/24/segue-with-object/"/>
+    <updated>2013-04-24T03:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/24/segue-with-object</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+UIのコード書くのがだるいので今更感満載でStoryboardを始めました！
+Storyboard出来がよくて、iOSっぽいUIを作る分にはぽちぽちしていけば作れて便利だなーという感じです。</p>
+
+<p>で、ViewController間でのオブジェクトのやりとりにはやっぱコードが必要なので、そこのメモ。
+大体よく使うのは<code>pushViewController</code>、<code>Modal</code>、<code>TableView</code>あたりだと思うので、その3つあたりを書く。</p>
+
+<p>別にそれぞれで大きく変わる訳でもないと思うので、最初に貼っておくととりあえずこんな感じのStoryboard作った。</p>
+
+<p><img src="/images/sample-story-board.png"></p>
+
+<p>めんどくさいので最初のVCをSSViewController、遷移先をSSSecondViewControllerにしてある。</p>
+
+<h2>基本</h2>
+
+<p><code>prepareForSegue:sender:</code>というのを使うらしい、これは遷移元の方に書く。
+遷移先から戻すときは<code>delegate</code>、両方<code>prepareForSegue:sender:</code>でいけんのかなーとか思ったけどそうではないらしい。</p>
+
+<h2>PushVC</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/navigation">コードはここ</a></p>
+
+<p>遷移元の方で<code>prepareForSegue:sender:</code>を定義してあげる。Segueには<code>TopToSecond</code>って名前が付けてある。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>if ([segue.identifier isEqualToString:@"TopToSecond"]) {
+    NSLog(@"%@", segue.destinationViewController);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こうすると遷移するときに、ここが呼ばれるので、Segue名で分岐する。
+<code>segue.destinationViewController</code>に遷移先のViewControllerのインスタンスが入っているので、ここでよしなにする。
+別にそんなにめんどくさくなさそう。</p>
+
+<p>次、戻る時。普通に<code>delegate</code>でやる。</p>
+
+<p><code>objective-c
+@protocol SSSecondViewControllerDelegate
+- (void)willBack:(id)obj;
+@end
+</code></p>
+
+<p>適当にプロトコルつくって、さっきのところで関連付ける。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>((SSSecondViewController *)segue.destinationViewController).delegate = self;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>で、戻ってくるときにこれを呼べばいいんだけど、そういう感じのイベントがあるのかと思ったら別になかった。
+軽く調べてみた感じだけど、<code>viewWillDisappear</code>でやればよさげ。</p>
+
+<p>```objective-c
+- (void)viewWillDisappear:(BOOL)animated {</p>
+
+<pre><code>[super viewWillDisappear:animated];
+[self.delegate willBack:@{@"A" : @"HOGE"}];
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Modal</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/modal">コードはここ</a></p>
+
+<p>pushVCと大差ない。使ってないけど、いままで<code>self.presentedViewController</code>だったのが<code>self.presentingViewController</code>に変わるらしい、紛らわしい。</p>
+
+<p>モーダル閉じるところまでStoryboardで面倒みてほしい気分なんだけど、やりかたがよくわからなかった。</p>
+
+<p>```
+- (IBAction)touchDismiss:(id)sender {</p>
+
+<pre><code>[self dismissViewControllerAnimated:YES completion:nil];
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>TableView</h2>
+
+<p><a href="https://github.com/yaakaito/SegueSample/tree/table">コードはここ</a></p>
+
+<p>戻すところは一緒だけど、indexPathを知る必要があるので一手間増える。
+試してみたら、<code>prepareForSegue:sender:</code> -> <code>tableView:didSelectRowAtIndexPath:</code> という順になってて、それはどうなんだろうという気持ちになった。</p>
+
+<p>```objective-c
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {</p>
+
+<pre><code>if ([segue.identifier isEqualToString:@"TopToSecond"]) {
+    NSLog(@"%@", segue.destinationViewController);
+    NSLog(@"%@", self.tableView.indexPathForSelectedRow);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こんな感じで、あとはよしなに。</p>
+
+<h2>まとめ</h2>
+
+<p>別に<code>prepareForSegue:sender:</code>じゃなくともよいのではという気がしたりしたけど、
+そう書けと言われてるっぽいし長い物に巻かれてそう書く事にした。
+いろいろ書けてしまいそうなので、早めにルール作っちゃうのがいいのかなーという感じ。</p>
+
+<p>あとこれどういう名前付ければいいのかよくわからん、<code>Segue</code>ってサフィックスは付けた気がいい気がする。</p>
+]]></content>
+  </entry>
+  
+</feed>
