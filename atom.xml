@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-25T08:32:15+09:00</updated>
+  <updated>2013-04-25T08:33:34+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -19,7 +19,7 @@
     <updated>2013-04-25T02:22:00+09:00</updated>
     <id>http://yaakaito.org/blog/2013/04/25/sliding-view-with-stroyboard</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-StoryboardってFaceBookとかがやってる横にずれるメニューを作るのがめちゃくちゃめんどくさそう、というかそこだけコードで書くんじゃないの？という印象だったんですが、
+StoryboardってFaceBookとかがやってる、横にずれるメニューを作るのが、めちゃくちゃめんどくさそう、というかそこだけコードで書くんじゃないの？という印象だったんですが、
 <a href="https://github.com/edgecase/ECSlidingViewController">ESSlidingViewController</a>というのが、Stroyboardに対応しているらしく、綺麗にいけそうなので試してみた。</p>
 
 <p><a href="https://github.com/yaakaito/StoryBoard-Sliding">コードはGithubで</a></p>
