@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Grunt | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/grunt/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-26T05:19:23+09:00</updated>
+  <updated>2013-04-26T05:22:19+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -116,12 +116,14 @@ tree -L 2 --dirsfirst
 
 <h3>d.ts</h3>
 
-<p>TypeScript用のd.tsを置くところ。コードとほぼ同じ扱い。
+<p>TypeScript用の<code>d.ts</code>を置くところ。コードとほぼ同じ扱い。
 微妙に違うけど、vendorみたいなもの。ドットは好みだと思うのでご自由に。</p>
 
 <p>デフォルトでは jQueryと mocha、chaiを入れてある。
 jQueryはまあなんだかんだで使う(使わされる)のでデフォで入れてある感じ。
 mochaとchaiはテスト用、testemはそこまでは面倒みてくれないので自分で置く。</p>
+
+<p><code>d.ts</code>の追加は僕は<a href="http://www.tsdpm.com/">tsdpm</a>から探して<code>tsd</code>で取ってきて適当に配置してる。</p>
 
 <h3>node_modules</h3>
 
