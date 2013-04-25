@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-25T08:35:06+09:00</updated>
+  <updated>2013-04-26T05:18:24+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,303 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[最近TypeScript書くときに使うGrunt+Testem+αのテンプレ]]></title>
+    <link href="http://yaakaito.org/blog/2013/04/26/typescript-proj-template/"/>
+    <updated>2013-04-26T03:50:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/04/26/typescript-proj-template</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScript0.9のpreviewがリリースされましたね！最近はもうJavaScriptもCoffeeScriptも自発的には書ていないです。
+仕事とかでも結構TypeScriptでプロト作っては捨て、みたいなことをやってるんですが、
+そうしてるうちにプロジェクトのテンプレ大体決まってきたなーという感じがしたのでまとめた。</p>
+
+<p><a href="https://github.com/yaakaito/typescript-proj">typescript-proj</a></p>
+
+<h2>搭載しているもの</h2>
+
+<ul>
+<li>Gruntのカスタムタスク</li>
+<li>Testem Mocha+chai でのテスト環境</li>
+<li>jQuery.d.ts 1.9</li>
+<li>.gitignoreとか.gitattributes</li>
+<li>package.jsonとcomponents.json入り</li>
+</ul>
+
+
+<p>中核はGrunt+Testem+Bowerな感じ。yoでよくね感すごい。</p>
+
+<h2>使い方</h2>
+
+<p>完全に個人用にまとめてるだけなので、cloneして<code>.git</code>消して使ってる。</p>
+
+<p><code>
+$ git clone https://github.com/yaakaito/typescript-proj.git proj
+$ rm -rf proj/.git
+</code></p>
+
+<p>npmとbowerを使ってるので、とりあえずテンプレ分を取ってくる</p>
+
+<p><code>
+$ npm install
+$ bower install
+</code></p>
+
+<h2>プロジェクト構成</h2>
+
+<p>セットアップしてから、とりあえず <code>grunt generate</code> するとこんな感じになる。</p>
+
+<p><code>
+tree -L 2 --dirsfirst
+.
+├── build
+│   ├── index.js
+│   └── index.min.js
+├── compiled
+│   ├── src
+│   └── test
+├── components
+│   └── jquery
+├── d.ts
+│   ├── chai.d.ts
+│   ├── jquery.d.ts
+│   └── mocha.d.ts
+├── node_modules
+│   ├── grunt
+│   ├── grunt-contrib-clean
+│   ├── grunt-contrib-concat
+│   ├── grunt-contrib-connect
+│   ├── grunt-contrib-copy
+│   ├── grunt-contrib-uglify
+│   ├── grunt-regarde
+│   └── grunt-typescript
+├── public
+│   ├── javascript
+│   └── index.html
+├── res
+│   └── index.html
+├── src
+│   └── index.ts
+├── test
+│   └── index.ts
+├── Gruntfile.coffee
+├── README.md
+├── component.json
+├── package.json
+└── testem.json
+</code></p>
+
+<p>上から説明していくと</p>
+
+<h3>build</h3>
+
+<p>連結済み + minify済みのJSが置かれるところ。
+これはリリースの配布にも使うことを前提にしているので、gitignoreはされてない。</p>
+
+<h3>compiled</h3>
+
+<p>単純にコンパイルした状態のJSが置かれるところ。
+中間ファイルみたいなものなので、gitignoreの対象。</p>
+
+<h3>components</h3>
+
+<p>bowerで入るモジュール。gitginore。</p>
+
+<h3>d.ts</h3>
+
+<p>TypeScript用のd.tsを置くところ。コードとほぼ同じ扱い。
+微妙に違うけど、vendorみたいなもの。ドットは好みだと思うのでご自由に。</p>
+
+<p>デフォルトでは jQueryと mocha、chaiを入れてある。
+jQueryはまあなんだかんだで使う(使わされる)のでデフォで入れてある感じ。
+mochaとchaiはテスト用、testemはそこまでは面倒みてくれないので自分で置く。</p>
+
+<h3>node_modules</h3>
+
+<p>npm。主にgrunt系がインストールされる。特に書く事ない。</p>
+
+<h3>public</h3>
+
+<p>プレビューモードでルートにするところ。gh-pagesとか作りたいときはここに入るように作るんだけど、<code>index.html</code>の元ファイルとかは<code>res</code>にある。</p>
+
+<h3>res</h3>
+
+<p>TypeScript以外のものを置くところ。上の<code>index.html</code>とか、cssとか置いたりする。
+compassとかをデフォルトで入れてないんだけど、作るならここに入れる事になると思う。</p>
+
+<h3>src</h3>
+
+<p>TypeScript、特に言う事ない。</p>
+
+<h3>test</h3>
+
+<p>テスト、特に言う事ない。</p>
+
+<h3>Gruntfile.coffee</h3>
+
+<p>Gruntの設定ファイル。詳しくは後で。</p>
+
+<h3>README.md</h3>
+
+<p>とりあえずデフォルトでテンプレートのREADME入れてる。</p>
+
+<h3>component.json package.json</h3>
+
+<p>bowerとnpm。特に言う事ない。</p>
+
+<h3>testem.json</h3>
+
+<p>Testemの設定ファイル。詳しくは後で。</p>
+
+<h2>Gruntのタスク</h2>
+
+<p>ビルド系は微妙に分かり難いんだけど、基本的に<code>compile</code> <code>build</code> <code>generate</code>の3種類を定義して使ってる。
+それにプラスして<code>preview</code>というのを作っていて、配信サーバーを立てて、ファイル更新されたらビルドしなおす感じ。
+LiveReloadとかはなくともよいかなーと思ってるので作ってない。</p>
+
+<h3>compile</h3>
+
+<p>単純にTypeScriptをコンパイルするだけ。<code>src</code> <code>test</code> 共にコンパイルして <code>compiled</code> へ。
+TypeScriptだと<code>index.ts</code>だけコンパイルするようにして、<code>index.ts</code>で全部referenceでもいいと思うので使い分ける。</p>
+
+<p>```coffeescript
+typescript:</p>
+
+<pre><code>compile:
+    src: ['src/**/*.ts']
+    dest: 'compiled'
+    # src: ['src/index.ts']
+    # dest: 'compiled/src/index.ts'
+    options:
+        module: 'commonjs'
+        target: 'es5'
+        # sourcemap: true
+        # declaration: true
+test:
+    src: ['test/**/*.ts']
+    dest: 'compiled'
+    options:
+        module: 'commonjs'
+        target: 'es5'
+</code></pre>
+
+<p>grunt.registerTask 'compile', ['typescript']
+```</p>
+
+<h3>build</h3>
+
+<p>concat + uglifyでminify作ったりする。作ったのは <code>build</code> に入る。</p>
+
+<p>```coffeescript
+concat:</p>
+
+<pre><code>dist:
+    src: ['compiled/src/**/*.js']
+    dest: 'build/index.js'
+options:
+    separator: ';'
+</code></pre>
+
+<p>uglify:</p>
+
+<pre><code>min:
+    files:
+        'build/index.min.js': ['build/index.js']
+###
+options:
+    mangle:
+        expect: ['jQuery']
+    sourceMap: 'build/source-map.js'
+###
+</code></pre>
+
+<p>grunt.registerTask 'build', ['concat', 'uglify']
+```</p>
+
+<h3>generete</h3>
+
+<p><code>public</code>を作る為のコマンド、用途に合わせて書き足していく。(インデントきもい)</p>
+
+<p>```coffeescript
+copy:</p>
+
+<pre><code>public:
+    files: [
+            expand: true
+            cwd: 'build'
+            src: '**'
+            dest: 'public/javascript'
+        ,
+            expand: true
+            cwd: 'res'
+            src: '**'
+            dest: 'public/'
+    ]
+</code></pre>
+
+<p>grunt.registerTask 'generate', ['compile', 'build', 'copy:public']
+```</p>
+
+<h3>preview</h3>
+
+<p>connect + regarde。regardeでgenerateするようにしてる。</p>
+
+<p>```coffeescript
+connect:</p>
+
+<pre><code>preview:
+    options:
+        port: 9000
+        base: 'public'
+</code></pre>
+
+<p>regarde:</p>
+
+<pre><code>src:
+    files: ['src/**/*.*']
+    tasks: ['generate']
+</code></pre>
+
+<p>grunt.registerTask 'preview', ['generate', 'connect:preview', 'regarde']
+```</p>
+
+<p>Gruntfileは状況に合わせて柔軟に変えていく感じにしたいので、デフォルトは<code>*</code>指定が多め。</p>
+
+<h2>Testem</h2>
+
+<p>テストは最近は全部Testemでやってる。BusterJS派だったけど、BusterJSはちょっとトロい感じがする・・・。</p>
+
+<p>```javascript
+{</p>
+
+<pre><code>"framework" : "mocha+chai",
+"before_tests" : "grunt compile",
+"src_files" : [
+    "src/**/*.ts",
+    "test/**/*.ts"
+],
+"serve_files" : [
+    "compiled/src/**/*.js",
+    "compiled/test/**/*.js"
+]
+</code></pre>
+
+<p>}
+```</p>
+
+<p>基本は <code>src</code> <code>test</code> を監視して、あとはGruntに任せてる。</p>
+
+<h2>その他</h2>
+
+<p>適当に<code>index.ts</code>を<code>src</code> <code>test</code> 共に吐いているので、忘れかけたら参考にするなどして書く。
+<code>.js</code>は最初からバイナリ扱いしているので安心してください！！！</p>
+
+<h2>まとめ</h2>
+
+<p>CoffeeScriptとかも大体同じ感じで出来ると思うので、それなりに汎用性ある感じだと思う。(やろうとしたけど書かない事に気づいてやってない)
+<a href="https://github.com/yaakaito/Gruntfile">Gruntfileだけ個別</a>にまとめたりもしてるので、適当に組み合わせるとよいのでは。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS用テスティングサーバー NLTHTTPStubServer 0.4 を公開しました]]></title>
@@ -785,76 +1082,6 @@ $ xcodebuild -workspace Overline.xcworkspace -scheme 'Jenkins' -configuration 'D
 <p>僕の場合はNSNumberのグループに入ってたので、<a href="https://github.com/yaakaito/Overline/commit/01fbeaf306a56319485e394d56b249bd502cab30">これ消したら</a>なおった。</p>
 
 <p>ありがとうございます。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Brunchプロジェクトでtestemを使う]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/14/brunch-withw-testem/"/>
-    <updated>2013-03-14T16:36:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/14/brunch-withw-testem</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-<a href="http://yaakaito.org/blog/2013/03/08/hello-brunch/">前回</a>みたいな手順で始めたChaplinのプロジェクトで<a href="https://github.com/airportyh/testem">testem</a>を使う手順です。
-Brunch with Chaplinを使っていますが、Brunchプロジェクトなら多分大体同じ感じでいけると思います。</p>
-
-<h2>testemの準備</h2>
-
-<p>testemがないと始まらないのでtestemをインストールします。</p>
-
-<p><code>
-$ npm install -g testem
-</code></p>
-
-<h2>testem.jsonの設定</h2>
-
-<p>BrunchはデフォルトでMochaを使ったテストのテンプレートを作ってくれるので、これを参考にします。
-<code>brunch build</code>すると、<code>/public/test/index.html</code>ができるので、これを参考に書いていきます。</p>
-
-<p>```javascript
-{
-  "framework" : "mocha",
-  "src_files" : [</p>
-
-<pre><code>"public/javascripts/vendor.js",
-"public/javascripts/app.js",
-"public/test/javascripts/test-vendor.js",
-"public/test/javascripts/test.js"
-</code></pre>
-
-<p>  ]
-}
-```</p>
-
-<p>これをプロジェクトのルートに配置します。</p>
-
-<h2>brunchが生成するmochaを消す</h2>
-
-<p>brunchはmochaやsinonを <code>public/test/javascripts/test-vendor.js</code> にまとめてビルドしているので、このビルドからmochaを外します。とりあえず <code>rm</code> してしまいます。</p>
-
-<p><code>
-$ rm test/vender/scripts/mocha[version].js
-</code></p>
-
-<h2>brunch watchを起動する</h2>
-
-<p>brunchはテストをまとめて <code>public/test/javascripts/test.js</code> にビルドしてくれます。
-なのでtestem側からはこれを見ているだけでOKです。便利ですね。</p>
-
-<p><code>
-$ brunch w -s
-</code></p>
-
-<p>ついでなのでサーバーも立てておきます。</p>
-
-<h2>testemでテストする</h2>
-
-<p>あとはtestemでテストするだけです。</p>
-
-<p><code>
-$ testem
-</code></p>
-
-<p>便利ですね！</p>
 ]]></content>
   </entry>
   
