@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-26T05:22:19+09:00</updated>
+  <updated>2013-05-02T03:01:47+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,325 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptのInterfaceとStructural Subtyping]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/02/typescript-subtyping/"/>
+    <updated>2013-05-02T02:58:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/02/typescript-subtyping</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScriptにはInterfaceとStructural Subtypingがあるのでそれについて書こうと思います。まだ0.8.x系です。</p>
+
+<h2>Interface</h2>
+
+<p>JavaやC#でいうinterfaceと似ていますが、ある形をしたオブジェクトに対する別名というのが正しいと思います。</p>
+
+<p>```javascript
+interface Rider {</p>
+
+<pre><code>name: string;
+henshin: () =&gt; void;
+</code></pre>
+
+<p>}</p>
+
+<p>var wizard: Rider = {</p>
+
+<pre><code>name: '仮面ライダーウィザード',
+henshin: () =&gt; {
+    console.log('ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!');
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こうすると <code>wizard</code> は <code>Rider</code> であることになります。
+JavaScriptには存在しないシンタックスなので、コンパイルするとinterfaceは当然ですが消えます。</p>
+
+<p>```javascript
+var wizard = {</p>
+
+<pre><code>name: '仮面ライダーウィザード',
+henshin: function () {
+    console.log('ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!');
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<p>同じように <code>beast</code> も作ってみます。</p>
+
+<p>```javascript
+var beast: Rider = {</p>
+
+<pre><code>name: '仮面ライダービースト',
+henshin: () =&gt; {
+    console.log('L・I・O・N!ﾗｲｵｰﾝ!');
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>やりましたね。</p>
+
+<p>このinterfaceはそのまま型のように扱うことが出来るので、</p>
+
+<p>```javascript
+var please = function(rider: Rider) {</p>
+
+<pre><code>rider.henshin();
+</code></pre>
+
+<p>}</p>
+
+<p>please(wizard);
+please(beast);
+```</p>
+
+<p>こういう風に使う事も出来ます。便利ですね。</p>
+
+<p>もちろんclassにimplementsすることも出来ます。</p>
+
+<p>```javascript
+class WizardInfinity implements Rider {</p>
+
+<pre><code>public name: string = '仮面ライダーウィザード インフィニティ';
+
+public henshin(): void {
+    console.log('ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!');
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>実装が欠けている場合は、こういう感じのエラーになります。</p>
+
+<p><code>
+Class 'WizardInfinity' declares interface 'Rider' but does not implement it: Type 'WizardInfinity' is missing property 'name' from type 'Rider'
+Class 'WizardInfinity' declares interface 'Rider' but does not implement it: Type 'WizardInfinity' is missing property 'henshin' from type 'Rider'
+</code></p>
+
+<p>Functionにも適用することができて、</p>
+
+<p>```javascript
+class Ring {</p>
+
+<pre><code>public name: string = 'ドライバーオンウィザードリング';
+</code></pre>
+
+<p>}</p>
+
+<p>interface DriverOn {</p>
+
+<pre><code>(ring: Ring): void;
+</code></pre>
+
+<p>}</p>
+
+<p>var driverOn: DriverOn = function(ring: Ring) {</p>
+
+<pre><code>if (ring.name === 'ドライバーオンウィザードリング') {
+    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こういう感じに書けます。これだけだと別に利点が分からなくて、</p>
+
+<p>```javascript
+var driverOn = (ring: Ring): void => {</p>
+
+<pre><code>if (ring.name === 'ドライバーオンウィザードリング') {
+    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>これで別によくね、となるんですが、いうならオーバーロードみたいなことが出来るのでちょっと便利です。こういう感じで書く事が出来るので、</p>
+
+<p>```javascript
+interface DriverOn {</p>
+
+<pre><code>(ring: Ring): void;
+(love: Love): void;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>全体でこんな感じになってると、<code>Phantom</code>を受け付けません。</p>
+
+<p>```javascript
+class Ring {</p>
+
+<pre><code>public name: string = 'ドライバーオンウィザードリング';
+</code></pre>
+
+<p>}</p>
+
+<p>class Love {</p>
+
+<pre><code>public target: string = 'こよみ';
+</code></pre>
+
+<p>}</p>
+
+<p>class Phantom {</p>
+
+<pre><code>public original: string = 'ミサ';
+</code></pre>
+
+<p>}</p>
+
+<p>interface DriverOn {</p>
+
+<pre><code>(ring: Ring): void;
+(love: Love): void;
+</code></pre>
+
+<p>}</p>
+
+<p>var driverOn: DriverOn = function(power: any) {</p>
+
+<pre><code>if (power instanceof Ring &amp;&amp; power.name === 'ドライバーオンウィザードリング') {
+    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
+}
+else if (power instanceof Love &amp;&amp; power.target === 'こよみ') {
+    console.log('ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!');
+}
+</code></pre>
+
+<p>}</p>
+
+<p>driverOn(new Ring());
+driverOn(new Love());
+driverOn(new Phantom()); // Supplied parameters do not match any signature of call target
+```</p>
+
+<p>あとは <code>interface A extends B</code> と出来たり、同じ<code>interface</code>を2回定義する事で拡張できたりします。</p>
+
+<h2>Structural Subtyping</h2>
+
+<p>ようするにダックタイピングみたいなやつです。
+さっきの<code>please</code>関数の引数を、</p>
+
+<p>```javascript
+function please(rider: { name: string; henshin: () => void; }): void {</p>
+
+<p>}
+```</p>
+
+<p>みたいに出来ます、言ってしまえばそれだけです。</p>
+
+<p>なんの役に立つかよくわかんないと思うので、<code>each</code>関数みたいなのを作るのを想定してみましょう。
+ウィザードで説明するのに限界を感じ(飽き)ました。</p>
+
+<p><code>each</code>って基本的には<code>Array</code>を受け取ると思うんですが、JavaScriptには<code>Array</code>っぽいものというのが存在しますよね。
+オブジェクトとしては、数値でインデックスアクセスできて、<code>length</code>を持っている、というものです。</p>
+
+<p>で、これをさっきの例に当てはめると、</p>
+
+<p>```javascript
+function each(list: { [index: number]: any; length: number; }, func: (obj: any) => void): void {</p>
+
+<pre><code>return [];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>まあこんな感じになるわけです。
+これで例えば<code>Array</code>っぽい<code>arguments</code>とかが通るようになります。</p>
+
+<p><code>javascript
+() =&gt; each(arguments, (obj: any) =&gt; {})
+</code></p>
+
+<p>ただこのままだと、<code>map([1,2,3])</code>が通らないので、<code>any[]</code>も受け付けるようにオーバーロードします。</p>
+
+<p>```javascript
+function each(list: any[], func: (obj: any) => void): void;
+function each(list: { [index: number]: any; length: any; }, func: (obj: any) => void): void;
+function each(list: any, func: (obj: any) => void): void {</p>
+
+<pre><code>for (var i = 0, l = list.length; i &lt; l; i++) {
+    func(list[i]);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こんな感じ。長い。こうすると</p>
+
+<p><code>javascript
+each([1,2,3], (obj: any) =&gt; {})
+() =&gt; each(arguments, (obj: any) =&gt; {})
+</code></p>
+
+<p>は通るけど、</p>
+
+<p><code>javascript
+each(1, (obj: any) =&gt; {})
+</code></p>
+
+<p>とかは通らなくなります、よかったですね！</p>
+
+<p>あとは<code>func</code>をInterfaceにまとめて、</p>
+
+<p>```javascript
+interface EachFunc {</p>
+
+<pre><code>(obj: any): void;
+</code></pre>
+
+<p>}</p>
+
+<p>function each(list: any[], func: EachFunc): void;
+function each(list: { [index: number]: any; length: any; }, func: EachFunc): void;
+function each(list: any, func: EachFunc): void {
+}
+```</p>
+
+<p>こうなって、さらにさっきのをInterfaceを経由するようにすると、</p>
+
+<p>```javascript
+interface EachFunc {</p>
+
+<pre><code>(obj: any): void;
+</code></pre>
+
+<p>}</p>
+
+<p>interface LikeArray {</p>
+
+<pre><code>[index: number]: any;
+length: any;
+</code></pre>
+
+<p>}</p>
+
+<p>function each(list: any[], func: EachFunc): void;
+function each(list: LikeArray, func: EachFunc): void;
+function each(list: any, func: EachFunc): void {
+}
+```</p>
+
+<p>とか書いたりできます。</p>
+
+<h2>まとめ</h2>
+
+<p>ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[最近TypeScript書くときに使うGrunt+Testem+αのテンプレ]]></title>
@@ -572,186 +891,6 @@ module A {
 <p>一番いい解説を頼む。</p>
 
 <p>(誰も知らなさそうなら公式に投げてみようと思います。)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[テスト書きながらTypeScript書ける環境作る]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/"/>
-    <updated>2013-03-24T19:33:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/24/test-driven-typescript</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScriptを書いています。
-というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
-触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。</p>
-
-<p>そこで、テストを書きたいわけなんですが、TypeScriptのテスト環境の情報が少ないので、手探りでやったところまで記録しておきます。</p>
-
-<p><a href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/">前回、Mocha + Testem + HTMLCov</a> で基礎的な部分を作ったので、これをベースにします。
-なのでこれにTypeScriptのコンパイルやらを乗せていく感じです。</p>
-
-<p><a href="https://github.com/yaakaito/typebone">リポジトリはgithubにある</a>ので、見ながら読むと分かりやすいかもしれません。</p>
-
-<h2>TypeScriptのコンパイル</h2>
-
-<p>TypeScriptのコンパイルには <code>tsc</code> を使うので、npmで入れます。</p>
-
-<p><code>
-$ npm install -g tsc
-</code></p>
-
-<p><code>tsc</code> でコンパイルする時に、<code>--out</code> オプションを付けると <code>refrence</code> を解決しながらビルドしてくれます。
-で、これは流儀的にどうなのかは分からないんですが、これを利用して、コンパイル対象は <code>reference</code> するだけにしました。</p>
-
-<p><code>javascript
-// src/backbone.ts
-/// &lt;reference path="events.ts" /&gt;
-/// &lt;reference path="model.ts" /&gt;
-</code></p>
-
-<p>とりあえず<code>Backbone.Events</code>と<code>Backbone.Model</code>だけ用意します。</p>
-
-<p>```javascript
-// src/events.ts
-/// <reference path="../vendor/underscore.d.ts" /></p>
-
-<p>module Backbone {
-  export class Events {
-  // ....
-  }
-}
-```</p>
-
-<p><code>javascript
-// src/model.ts
-module Backbone {
-  export class Model {
-  // ....
-  }
-}
-</code></p>
-
-<p>こういう感じにしておいて、以下のコマンドでビルドします。</p>
-
-<p><code>
-$ tsc --out backbone.js src/backbone.ts
-</code></p>
-
-<p>すると、<code>backbone.js</code>に <code>events.ts</code> と <code>models.ts</code> をコンパイルして、依存を解決したものが吐き出されます。
-これには <code>underscore</code> は含まれません。</p>
-
-<h2>テスト用のビルドとTestem</h2>
-
-<p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
-
-<h3>【追記】d.tsファイルについて</h3>
-
-<p>TypeScriptからMocha(JavaScript)を利用する為に、<code>d.ts</code>というファイルが必要になります。
-これは安全に既存のJavaScriptをTypeScriptから利用する為の仕組みです。</p>
-
-<p><code>d.ts</code> ファイル自体はただのテキストで、コードと対して変わらないです。</p>
-
-<p>入手方法としては自分で書く(ある程度自動生成できるっぽい？)、他の人が作ったものを使う、<a href="http://www.tsdpm.com/">tsd</a>を利用するの3つがあります。
-tsdは<code>d.ts</code>のパッケージマネージャみたいなものなんですが、僕はそこまで大げさなものじゃないよなーと思っているので、適当に拾ってきて突っ込んでいます。(あんまりツール的なの増やしたくないのもある。)</p>
-
-<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a> を見ると有名どころは大体揃ってるので、ほとんどの場合はここから取得すれば済むと思います。
-mochaとchaiはこの中になかったので、僕は下のを使ってます。</p>
-
-<p><a href="https://gist.github.com/muratg/4163650">mocha.d.ts</a> | <a href="https://github.com/TobiaszCudnik/asyncmachine/blob/master/headers/chai.d.ts">chai.d.ts</a></p>
-
-<h3>テストを書く</h3>
-
-<p>```javascript
-// test/events-test.ts
-/// <reference path="../src/events.ts" />
-/// <reference path="../vendor/mocha.d.ts" />
-/// <reference path="../vendor/chai.d.ts" /></p>
-
-<p>describe('Backbone.Events', function(){
-  it('test name', function(){</p>
-
-<pre><code>// ....
-</code></pre>
-
-<p>  });
-});
-```</p>
-
-<p><code>test/bootstrap.ts</code> みたいなのを作って、こっちも <code>reference</code> だけにします。(<code>expect</code>のexportだけ書いてます。)</p>
-
-<p>```javascript
-/// <reference path="events-tests.ts" />
-/// <reference path="../vender/chai.d.ts" /></p>
-
-<p>var expect = chai.expect;
-```</p>
-
-<p>これをビルドします。</p>
-
-<p><code>javascript
-$ tsc --out backbone.test.js test/bootstrap.ts
-</code></p>
-
-<p>これで、全部の<code>reference</code>が解決されると、さっきの<code>backbone.js</code>の下にテストが丸々ついたようなファイルが生成されます。
-これをTestemに食わせます。</p>
-
-<p>```javascript
-// testem.json
-{
-  "framework" : "mocha",
-  "src_files" : [</p>
-
-<pre><code>"vendor/chai.js",
-"vendor/underscore.js",
-"backbone.test.js"
-</code></pre>
-
-<p>  ]
-}
-```</p>
-
-<p>これでTestemでテストできるようになりました、<code>tsc</code> には <code>watch</code> があるので、これを使って 変更監視 -> 自動コンパイル -> テスト自動実行 というすてき環境を作ります。</p>
-
-<p><code>
-$ tsc --watch -out backbone.test.js test/bootstrap.js
-</code></p>
-
-<p>やったー！これでいける！
-・・・と思ったんですが、どうもちゃんと <code>watch</code> が動いていなくて、うまくコンパイルできません。
-なので<a href="https://github.com/yaakaito/typebone/blob/master/Guardfile">Guardで代用</a>しました。</p>
-
-<p>ちょっと面倒ですが、すてき環境ができましたね！</p>
-
-<h2>カバレッジ</h2>
-
-<p>カバレッジをとるときは、<code>backbone.js</code>側に<code>jscoverage</code>をかける必要があるので、別々にコンパイルが必要です。
-となると、さっきの <code>test/bootstrap.js</code> なんかで依存関係を解決しながらコンパイルできないので、個別にコンパイルします。
-個別にコンパイルしたテストを全部 <code>cat</code>で繋げて、<code>all-tests.js</code> みたいなのを作ります。あとは前回を参考にしてください。</p>
-
-<p>Makefileにするとこんな感じ</p>
-
-<p>```
-compile:
-  tsc --out backbone.js src/backbone.ts</p>
-
-<p>compile-test:
-  tsc test/<em>.ts
-  cat test/</em>.js > all-tests.js
-  rm test/*.js</p>
-
-<p>cover: compile compile-test
-  jscoverage backbone.js backbone.cover.js
-  mocha-phantomjs -R json-cov cover-runner.html | json2htmlcov > cover.html
-```</p>
-
-<h2>とりあえず</h2>
-
-<p>こんな感じで一旦は不満なく開発できる環境ができました。</p>
-
-<p>TypeScriptまだ勝手がよく分かってないので、コードはあんまり見ないでーーー＾ー＾</p>
-
-<p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
-無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
-なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
 ]]></content>
   </entry>
   

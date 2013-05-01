@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-04-26T05:22:19+09:00</updated>
+  <updated>2013-05-02T03:01:47+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,389 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptのInterfaceとStructural Subtyping]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/02/typescript-subtyping/"/>
+    <updated>2013-05-02T02:58:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/02/typescript-subtyping</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScriptにはInterfaceとStructural Subtypingがあるのでそれについて書こうと思います。まだ0.8.x系です。</p>
+
+<h2>Interface</h2>
+
+<p>JavaやC#でいうinterfaceと似ていますが、ある形をしたオブジェクトに対する別名というのが正しいと思います。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">Rider</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">henshin</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">wizard</span><span class="o">:</span> <span class="nx">Rider</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;仮面ライダーウィザード&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">henshin</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうすると <code>wizard</code> は <code>Rider</code> であることになります。
+JavaScriptには存在しないシンタックスなので、コンパイルするとinterfaceは当然ですが消えます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">wizard</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;仮面ライダーウィザード&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">henshin</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同じように <code>beast</code> も作ってみます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">beast</span><span class="o">:</span> <span class="nx">Rider</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;仮面ライダービースト&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">henshin</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;L・I・O・N!ﾗｲｵｰﾝ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やりましたね。</p>
+
+<p>このinterfaceはそのまま型のように扱うことが出来るので、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">please</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rider</span><span class="o">:</span> <span class="nx">Rider</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">rider</span><span class="p">.</span><span class="nx">henshin</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">please</span><span class="p">(</span><span class="nx">wizard</span><span class="p">);</span>
+</span><span class='line'><span class="nx">please</span><span class="p">(</span><span class="nx">beast</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう風に使う事も出来ます。便利ですね。</p>
+
+<p>もちろんclassにimplementsすることも出来ます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">WizardInfinity</span> <span class="kr">implements</span> <span class="nx">Rider</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;仮面ライダーウィザード インフィニティ&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">henshin</span><span class="p">()</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>実装が欠けている場合は、こういう感じのエラーになります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Class</span> <span class="s1">&#39;WizardInfinity&#39;</span> <span class="nx">declares</span> <span class="kr">interface</span> <span class="s1">&#39;Rider&#39;</span> <span class="nx">but</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">implement</span> <span class="nx">it</span><span class="o">:</span> <span class="nx">Type</span> <span class="s1">&#39;WizardInfinity&#39;</span> <span class="nx">is</span> <span class="nx">missing</span> <span class="nx">property</span> <span class="s1">&#39;name&#39;</span> <span class="nx">from</span> <span class="nx">type</span> <span class="s1">&#39;Rider&#39;</span>
+</span><span class='line'><span class="nx">Class</span> <span class="s1">&#39;WizardInfinity&#39;</span> <span class="nx">declares</span> <span class="kr">interface</span> <span class="s1">&#39;Rider&#39;</span> <span class="nx">but</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">implement</span> <span class="nx">it</span><span class="o">:</span> <span class="nx">Type</span> <span class="s1">&#39;WizardInfinity&#39;</span> <span class="nx">is</span> <span class="nx">missing</span> <span class="nx">property</span> <span class="s1">&#39;henshin&#39;</span> <span class="nx">from</span> <span class="nx">type</span> <span class="s1">&#39;Rider&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Functionにも適用することができて、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Ring</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;ドライバーオンウィザードリング&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">DriverOn</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">ring</span><span class="o">:</span> <span class="nx">Ring</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">driverOn</span><span class="o">:</span> <span class="nx">DriverOn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ring</span><span class="o">:</span> <span class="nx">Ring</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">ring</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;ドライバーオンウィザードリング&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じに書けます。これだけだと別に利点が分からなくて、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">driverOn</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ring</span><span class="o">:</span> <span class="nx">Ring</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">ring</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;ドライバーオンウィザードリング&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで別によくね、となるんですが、いうならオーバーロードみたいなことが出来るのでちょっと便利です。こういう感じで書く事が出来るので、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">DriverOn</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">ring</span><span class="o">:</span> <span class="nx">Ring</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">love</span><span class="o">:</span> <span class="nx">Love</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>全体でこんな感じになってると、<code>Phantom</code>を受け付けません。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Ring</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;ドライバーオンウィザードリング&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Love</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">target</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;こよみ&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Phantom</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">original</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="s1">&#39;ミサ&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">DriverOn</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">ring</span><span class="o">:</span> <span class="nx">Ring</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">love</span><span class="o">:</span> <span class="nx">Love</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">driverOn</span><span class="o">:</span> <span class="nx">DriverOn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">power</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">power</span> <span class="k">instanceof</span> <span class="nx">Ring</span> <span class="o">&amp;&amp;</span> <span class="nx">power</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;ドライバーオンウィザードリング&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">power</span> <span class="k">instanceof</span> <span class="nx">Love</span> <span class="o">&amp;&amp;</span> <span class="nx">power</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="s1">&#39;こよみ&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">driverOn</span><span class="p">(</span><span class="k">new</span> <span class="nx">Ring</span><span class="p">());</span>
+</span><span class='line'><span class="nx">driverOn</span><span class="p">(</span><span class="k">new</span> <span class="nx">Love</span><span class="p">());</span>
+</span><span class='line'><span class="nx">driverOn</span><span class="p">(</span><span class="k">new</span> <span class="nx">Phantom</span><span class="p">());</span> <span class="c1">// Supplied parameters do not match any signature of call target</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>あとは <code>interface A extends B</code> と出来たり、同じ<code>interface</code>を2回定義する事で拡張できたりします。</p>
+
+<h2>Structural Subtyping</h2>
+
+<p>ようするにダックタイピングみたいなやつです。
+さっきの<code>please</code>関数の引数を、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">please</span><span class="p">(</span><span class="nx">rider</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span> <span class="nx">henshin</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span> <span class="p">})</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>みたいに出来ます、言ってしまえばそれだけです。</p>
+
+<p>なんの役に立つかよくわかんないと思うので、<code>each</code>関数みたいなのを作るのを想定してみましょう。
+ウィザードで説明するのに限界を感じ(飽き)ました。</p>
+
+<p><code>each</code>って基本的には<code>Array</code>を受け取ると思うんですが、JavaScriptには<code>Array</code>っぽいものというのが存在しますよね。
+オブジェクトとしては、数値でインデックスアクセスできて、<code>length</code>を持っている、というものです。</p>
+
+<p>で、これをさっきの例に当てはめると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="p">{</span> <span class="p">[</span><span class="nx">index</span><span class="o">:</span> <span class="nx">number</span><span class="p">]</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span> <span class="nx">length</span><span class="o">:</span> <span class="nx">number</span><span class="p">;</span> <span class="p">},</span> <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>まあこんな感じになるわけです。
+これで例えば<code>Array</code>っぽい<code>arguments</code>とかが通るようになります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">each</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ただこのままだと、<code>map([1,2,3])</code>が通らないので、<code>any[]</code>も受け付けるようにオーバーロードします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">[],</span> <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="p">{</span> <span class="p">[</span><span class="nx">index</span><span class="o">:</span> <span class="nx">number</span><span class="p">]</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span> <span class="nx">length</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span> <span class="p">},</span> <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">func</span><span class="o">:</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">list</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">func</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ。長い。こうすると</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">each</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{})</span>
+</span><span class='line'><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">each</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>は通るけど、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">each</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とかは通らなくなります、よかったですね！</p>
+
+<p>あとは<code>func</code>をInterfaceにまとめて、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">EachFunc</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">[],</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="p">{</span> <span class="p">[</span><span class="nx">index</span><span class="o">:</span> <span class="nx">number</span><span class="p">]</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span> <span class="nx">length</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span> <span class="p">},</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうなって、さらにさっきのをInterfaceを経由するようにすると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">EachFunc</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">obj</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">LikeArray</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="nx">index</span><span class="o">:</span> <span class="nx">number</span><span class="p">]</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">length</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">[],</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">LikeArray</span><span class="p">,</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">each</span><span class="p">(</span><span class="nx">list</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">func</span><span class="o">:</span> <span class="nx">EachFunc</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span> <span class="p">{</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とか書いたりできます。</p>
+
+<h2>まとめ</h2>
+
+<p>ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[最近TypeScript書くときに使うGrunt+Testem+αのテンプレ]]></title>
@@ -3224,133 +3607,6 @@ CIは今回はやりません。本当は同じランナーでやりたかった
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Chaplin Overview オレオレ意訳]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja/"/>
-    <updated>2013-03-15T07:22:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-このエントリは<a href="http://chaplinjs.org/">Chaplin</a>の<a href="https://github.com/chaplinjs/chaplin/blob/master/docs/overview.md">Overview</a>のオレオレ意訳です。あんまり信用はしないでください。
-おかしいだろそれ、というのあれば教えてください。</p>
-
-<p><em>italic</em>はこうでは、と思ったのを勝手に足してるところです。</p>
-
-<h2>アーキテクチャ</h2>
-
-<p>ChaplinはJavaScriptでWebアプリケーションを作るためのアーキテクチャで、backboneをベースにしてるよ。
-<a href="http://moviepilot.com">moviepilot.com</a>みたいな単一ページの大規模プロジェクトに使われてるよ。</p>
-
-<h2>フレームワーク</h2>
-
-<h3>Application</h3>
-
-<p>ブートストラップ。Chaplinを利用する上で重要なとこだよ。</p>
-
-<h3>Router</h3>
-
-<p>定義されたURLマッピングにしたがって、<code>Controller</code>の各アクションを呼び出すことを助ける部分だよ。
-URLの変更などを監視して、責任を持つよ。
-でも、<code>Router</code>が直接<code>Controller</code>をキックするんじゃなくて、それは<code>Dispatcher</code>の仕事だよ。</p>
-
-<h3>Route</h3>
-
-<p>Railsに似たURLマッピングを提供するよ。<code>route.coffee</code>みたいなファイル作るといいよ。
-こんな感じで定義するよ。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">match</span> <span class="s">&#39;likes/:id&#39;</span><span class="p">,</span> <span class="s">&#39;likes#show&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ルートにマッチしたら、GETパラメータと、パターン一致部分(例で言えば<code>id</code>) <em>と、オプションの引数</em> を持って、<code>matchRoute</code>イベントを発行するよ。
-これは<code>Dispacther</code>に引き継がれるよ。</p>
-
-<h3>Dispachter</h3>
-
-<p>ルーティングに関するイベントをListenしてるよ。
-対象のイベントが発生したら、それに対応する<code>Controller</code>のインスタンスを生成して、対象のアクション(<code>Controller</code>のメソッド)を呼び出すよ。</p>
-
-<h3>Layout</h3>
-
-<p><code>Layout</code>はアプリケーションの中で一番外側にあるビューだよ。新しい<code>Controller</code>が起動されると、<code>Layout</code>は新しい<code>Controller</code>をメインビューにするよ。</p>
-
-<p><code>Layout</code>はアプリケーション内でのリンクをうまく処理する役割ももつよ。たとえば<code>&lt;a href="http://yaakaito.org/foo"&gt;</code>というリンクなんかも、正しく機能するようにしてくれるよ。</p>
-
-<p>そして、<code>window</code>や<code>document</code>などのトップレイヤーに対するイベントハンドリングなどは<code>Layout</code>で行うよ。</p>
-
-<h3>Mediator</h3>
-
-<p><code>Mediator</code>はpub/subを実装するためのブローカーだよ。
-Chaplinアプリケーションでは、ほとんどのモジュール間通信で利用されるべきだよ。
-モジュールは<code>this.publishEvent</code>でイベントを発行できるし、<code>this.subscribeEvent</code>でイベントをリッスンできるよ。
-例えばユーザーモデルのような永続的でグローバルにアクセス可能なものを共有するために使ったりもできるよ。</p>
-
-<h3>Controller</h3>
-
-<p><em>BackboneのControllerを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Controller</code>は<code>Model</code>とそれに結びつけられる<code>View</code>をインスタンス化して、管理するよ。
-１つの<code>Controller</code>はアプリケーションの１画面を構成するようにするのが普通だよ。
-けど、メインビュー的なものを提供して、他に現在のURLを表すためのコントローラーが存在することもあるよ。 <em>(多分HeaderとかFooterなんかの共通パーツのこと？)</em></p>
-
-<p>コントローラーはアプリケーションの機能を定義することが多いよ。
-<code>Controller</code>は<code>index</code>や<code>show</code>、<code>edit</code>のようなアクションメソッドを提供することができるよ。
-そしてこれらのアクションはURLが一致したときに<code>Dispacther</code>から呼び出されるよ。</p>
-
-<h3>Model</h3>
-
-<p><em>BackboneのModelを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p>データと、それに操作を行うためのロジックをもってるよ。</p>
-
-<h3>Collection</h3>
-
-<p><em>BackboneのCollectionを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Model</code>のリストを持つためのものだよ。クライアントサイドでフィルタリングをしたり、ソートしたりするためのロジックをもってるよ。</p>
-
-<h3>View</h3>
-
-<p><em>BackboneのViewを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Model</code>をテンプレートを使って描画したり、その中に含まれるユーザーイベントなどを管理するよ。</p>
-
-<h3>Collection View</h3>
-
-<p><code>Collection</code>のためのビューだよ。それぞれの<code>Model</code>に対する<code>View</code>を作って、それを管理するよ。</p>
-
-<h2>アプリケーションの起動フロー</h2>
-
-<p>アプリケーションは、<code>Chaplin.Application</code>を継承したところから始まるよ。
-<code>Application</code>では<code>Dispacther</code> <code>Layout</code> <code>Mediator</code> <code>Router</code> の順で、これらをインスタンス化してセットアップしてね。</p>
-
-<p><code>Router</code>に<code>Route</code>を登録するよ。普通は設定ファイルとして<code>route.coffee</code>か<code>route.js</code>使うよ。
-<code>Route</code>は<code>Controller</code>のアクションにURLパターンをマッピングするよ、たとえば<code>/</code>なら<code>HomeController</code>の<code>index</code>、という感じだよ。</p>
-
-<p>ここまで終わったら、<code>initRouter</code>を呼び出して、URLの監視を始めよう。URLにマッチするパターンであれば、<code>Dispacther</code>や他のモジュールへ通知するよ。</p>
-
-<p><code>Dispacther</code>まで来たら、対象の<code>Controller</code>をインスタンス化して、対応するアクションを呼び出すよ。
-<code>Dispachter</code>はアクティブな<code>Controller</code>を管理していて、必要ないものを破棄するよ。</p>
-
-<p>対応するアクションが呼び出されたら、<code>Model</code>や<code>Collection</code>を<code>Ctonroller</code>で生成して、それに対応する<code>View</code>をレンダリングしていくのがよくある流れだよ。
-<code>Model</code>や<code>Collection</code>は必要に応じてサーバーからデータを取得したりするよ。
-<code>Model</code>や<code>Collection</code>と、それに対応する<code>View</code>は、<code>Controller</code>によって管理されるのが通例だよ。</p>
-
-<h2>メモリ管理について</h2>
-
-<p>Chaplinでは、適切なメモリ管理を行う、というのがコアにあるよ。</p>
-
-<p>みんな、あまりJavaScriptでGCやメモリ管理に関する議論をしないけど、それは重要なトピックだよ。
-イベントドリブンで動くシステムは、イベントを登録するときにオブジェクト間の参照が発生するし、それが削除されないと、メモリ解放されないよ。</p>
-
-<p>だから、ChaplinではBackboneのModel、Collection、View、Controllerを拡張して、それらのクリーンアップを保証して、パワフルな処理プロセスを実装できるようにしているよ。</p>
-
-<h2>終わり</h2>
-
-<p>起動フローとかはコードと付き合わせないと分かりにくいところが多いと思うので、<a href="https://github.com/paulmillr/ostio/blob/master/app/application.coffee">ost.ioのブート</a>とか合わせて読むといいと思います。</p>
 ]]></content>
   </entry>
   
