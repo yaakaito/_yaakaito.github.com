@@ -1,0 +1,803 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS部で話したViewControllerのテストとかのまとめ - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！
+この前iOS部というイベントでiOSテストの話をしたんですが、ViewControllerのテストで反応が結構あったのと、
+ちゃんと説明できてない部分があったなーということで、文章としてまとめようと思います。 iOS部でやったものからコードが変わってますが、 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/05/03/view-controller-testing/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">iOS部で話したViewControllerのテストとかのまとめ</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-03T20:20:00+09:00" pubdate data-updated="true">May 3<span>rd</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ocmock/'>OCMock</a>, <a class='category' href='/blog/categories/objective-c/'>Objective-C</a>, <a class='category' href='/blog/categories/sentestingkit/'>SenTestingKit</a>, <a class='category' href='/blog/categories/testing/'>Testing</a>, <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！
+この前iOS部というイベントでiOSテストの話をしたんですが、ViewControllerのテストで反応が結構あったのと、
+ちゃんと説明できてない部分があったなーということで、文章としてまとめようと思います。</p>
+
+<p>iOS部でやったものからコードが変わってますが、やりたいことは一緒なので、iOS部に参加されていた方は適宜変換して読んでもらえればと思います。</p>
+
+<h2>ツールとか</h2>
+
+<p>SenTestingKit + OCMockです。
+OCMockの解説はiOS部では初めての方が居たので軽く説明しましたが、これを読んでる方はオンラインかと思いますので、分からなければググってください。
+<a href="http://yaakaito.hatenablog.com/entry/2012/06/26/013813">僕が古い方のブログで書いたもの</a>もあるので、そちらを読まれるとよいかもしれません。</p>
+
+<h2>ViewControllerの役割</h2>
+
+<p>最初にぶっちゃけておくとViewControllerのテストはしんどいです。できれば書きたくない。
+なのでViewControllerが何なのか、きちんと整理しておきましょう。</p>
+
+<p>僕はViewControllerって、</p>
+
+<ul>
+<li>ビューからやってきたユーザー操作の実際の処理</li>
+<li>モデルへの操作、モデルからのイベントなんかの受け取り、ビューへの反映</li>
+</ul>
+
+
+<p>この2つ(3つ？)にフォーカスしてるべきだと思ってます。
+なのでViewControllerって基本的にはステートとかをもっちゃ駄目で、そういうのはロジックとしてモデルで管理されるべきだと思います。</p>
+
+<p>ここをちゃんと意識して書いていくとViewControllerのテストが結構楽になります。
+モデルのテストはViewControllerと比較して圧倒的に楽なので、そちらでやりましょう。</p>
+
+<h2>モックを使いまくります</h2>
+
+<p>OCMockなんかのモックライブラリは便利でよく使いますが、僕はほとんどViewControllerのテストの為に使います。
+ある程度モデルが完成した段階であれば、モックを使わずに記述していくこともまあ出来るんですが、
+例えば「サーバーとの通信に失敗したときの動作」、みたいなのをテストするときに大抵めんどくさいことになります。
+モックを使っておけばここは一行でサッパリと書いてしまったり出来るので、基本的には全部モックを差し込みます。</p>
+
+<p>モデル自体が単純なバリューを表すものであればわざわざモックする必要もないかなーとは思うので、まあそのあたりは好みでいいかなと思います。</p>
+
+<p>あとはUILabelとかUITextFieldとか、Storyboardとか使ってるとコードから生成されないものですね。
+別にこのオブジェクト自体を作って自分でセットしてあげるようにしてもいいんですが、
+さっきと同じような理由で、「ユーザーがHelloWorldと入力したときの動作」、みたいなのをテストするときに大抵めんd（ry</p>
+
+<p>というわけで僕はViewControllerは基本的にモックを使って書いています。</p>
+
+<h2>プライベートとかreadonlyなプロパティに対するモックの差し込み</h2>
+
+<p>テストを始める前に、予備知識として知っている必要のある項目です。
+これはViewController以外のテストでも応用できると思うので、わけで書きます。
+正しいけどきわどいので、似たようなことをアプリ側でやるのはやめたほうがいいと思います。</p>
+
+<p>これは無名カテゴリを使って、プロパティの宣言を上書きすることで実現します。</p>
+
+<p>例えば</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &lt;UIKit/UIKit.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MIViewController</span> : <span class="nc">UIViewController</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &quot;MIViewController.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MIViewController</span> <span class="p">()</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UILabel</span> <span class="o">*</span><span class="n">hogeLabel</span><span class="p">;</span> <span class="c1">// &lt;- Stroyboardから作られる</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">MIViewController</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じに<code>.m</code>の方でプライベートなプロパティとして宣言するとかよくあると思います。
+この無名カテゴリをテストの方にも持ってきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">MIViewController</span> <span class="p">()</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UILabel</span> <span class="o">*</span><span class="n">hogeLabel</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">MIViewControllerTests</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testExample</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">MIViewController</span> <span class="o">*</span><span class="n">viewController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MIViewController</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">hogeLabel</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span> <span class="c1">// &lt;- 通る</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうするとパブリックのようにメッセージを送ることが出来るので、モックに差し替えたりできるわけです。きわどい感じがしますね。</p>
+
+<p>これは完全に雑感ですけど、標準ライブラリでもまあ、よく見ると <code>@property(nonatomic, readonly, retain)</code> みたいな宣言をしてあるものがあって、内部的に<code>property(nonatomic, retain)</code>になってたりするんじゃないかなーと思えるものもあるので、まあまあまあ。</p>
+
+<h2>というわけでテストを書きましょう</h2>
+
+<p>前置きが長くなりましたが、そろそろViewControllerのテストの話をしましょう。</p>
+
+<p>サンプルとしてこんな感じの画面を使います。</p>
+
+<p><img src="/images/viewcontroller-testing-sample.png" width="240"></p>
+
+<p>この画面はモーダルとして呼び出されて、メモを作成&amp;編集できる画面です。
+以下のような要件で作られています。</p>
+
+<ul>
+<li>タイトルと本文を入力できる</li>
+<li>「Done」を押したら、入力したタイトルと本文からメモオブジェクトを作って、delegateへ渡す。</li>
+<li>すでに生成されているメモが渡されたら、それを初期値として表示する。</li>
+</ul>
+
+
+<p>実際の実装としては、</p>
+
+<ul>
+<li>新規と編集の処理を同じにするために、このViewControllerはメモオブジェクトを作成せずに、外から渡されたメモオブジェクトを更新するようになっています。</li>
+<li>ユーザーの入力に影響せず、viewWillDissapearでdelegateを呼び出すようになっています。</li>
+</ul>
+
+
+<p>メモオブジェクトは<code>title</code>と<code>body</code>を持っています。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">TBMemo</span> : <span class="nc">NSObject</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">titile</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">body</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">initWithTitle:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">title</span> <span class="nf">body:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">body</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このViewControllerはこんな感じのインターフェイスを持っています。この段階ではあえて実装は出さないことにします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@protocol</span> <span class="nc">TBMemoEditDelegate</span>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">editViewController:</span><span class="p">(</span><span class="n">TBMemoEditViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="nf">didFinishEditMemo:</span><span class="p">(</span><span class="n">TBMemo</span> <span class="o">*</span><span class="p">)</span><span class="nv">memo</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">TBMemoEditViewController</span> : <span class="nc">UIViewController</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSObject</span><span class="o">&lt;</span><span class="n">TBMemoEditDelegate</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">delegate</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>editingMemo</code>はこのViewControllerが更新するメモオブジェクトでこのViewControllerを呼び出す際に外からセットされます。
+またプライベートとして、<code>.m</code>の方でStoryboardから生成される2つのUIを持っています。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">TBMemoEditViewController</span> <span class="p">()</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UITextField</span> <span class="o">*</span><span class="n">titleTextField</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UITextView</span> <span class="o">*</span><span class="n">bodyTextView</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>今回テストした方がよさそうなのは、</p>
+
+<ul>
+<li>viewWillDisappearで、入力したタイトルと本文からメモオブジェクトを更新して、delegateへ渡す。</li>
+<li>viewWillAppearで、渡したメモの内容を初期値として設定する。</li>
+</ul>
+
+
+<p>の2つです。</p>
+
+<p>「done」を押した時にどうこうというのは、これは単純に「モーダルを閉じる」とだけの実装であるべきなので、テストする価値が薄いですし、
+アプリを調整していく仮定で変更される可能性の高いものなので(やっぱりpushがいいとか)、安全に変更を加えるためのテストが、逆に足を引っ張ってしまいます。</p>
+
+<p>ではテストを書いていきましょう。</p>
+
+<h3>setup</h3>
+
+<p>まずは<code>setup</code>で<code>UITextField</code>なんかをモックに差し替えていきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#import &quot;TBMemoEditViewController.h&quot;</span>
+</span><span class='line'><span class="cp">#import &quot;OCMock.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">TBMemoEditViewController</span> <span class="p">()</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UITextField</span> <span class="o">*</span><span class="n">titleTextField</span><span class="p">;</span>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="n">weak</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="kt">IBOutlet</span> <span class="n">UITextView</span> <span class="o">*</span><span class="n">bodyTextView</span><span class="p">;</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">TBMemoEditViewControllerTests</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemoEditViewController</span> <span class="o">*</span><span class="n">viewController</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">id</span> <span class="n">mockTitleTextField</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">id</span> <span class="n">mockBodyTextView</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">setUp</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">super</span> <span class="n">setUp</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">viewController</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemoEditViewController</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// UITextFieldを差し替える</span>
+</span><span class='line'>    <span class="n">mockTitleTextField</span> <span class="o">=</span> <span class="p">[</span><span class="n">OCMockObject</span> <span class="nl">mockForClass:</span><span class="p">[</span><span class="n">UITextField</span> <span class="n">class</span><span class="p">]];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">titleTextField</span> <span class="o">=</span> <span class="n">mockTitleTextField</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// UITextViewを差し替える</span>
+</span><span class='line'>    <span class="n">mockBodyTextView</span> <span class="o">=</span> <span class="p">[</span><span class="n">OCMockObject</span> <span class="nl">mockForClass:</span><span class="p">[</span><span class="n">UITextView</span> <span class="n">class</span><span class="p">]];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">bodyTextView</span> <span class="o">=</span> <span class="n">mockBodyTextView</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ、これで準備が整いました。</p>
+
+<h3>viewWillAppearで渡したメモの内容を初期値として設定する</h3>
+
+<p>まずはこっちを書いてみましょう。
+<code>editingMemo</code>が呼び出し元からセットされますが、この場合はテストケースが呼び出し元になるので、これをセットします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testUpdateViewWithEditingMemoObjectInViewWillAppear</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;TITLE&quot;</span> <span class="nl">body:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>次にこのメモオブジェクトの値が<code>titleTextField</code>と<code>bodyTextView</code>にそれぞれ、<code>text</code>経由でセットされるはずなので、これをOCMockで<code>expect</code>します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testUpdateViewWithEditingMemoObjectInViewWillAppear</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;TITLE&quot;</span> <span class="nl">body:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockTitleTextField</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockBodyTextView</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>viewWillAppear</code>を呼び出して、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testUpdateViewWithEditingMemoObjectInViewWillAppear</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;TITLE&quot;</span> <span class="nl">body:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockTitleTextField</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockBodyTextView</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillAppear:</span><span class="n">NO</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>titleTextField</code>と<code>bodyTextView</code>に<code>text</code>を経由して値がセットされたかを<code>verify</code>します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testUpdateViewWithEditingMemoObjectInViewWillAppear</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle:</span><span class="s">@&quot;TITLE&quot;</span> <span class="nl">body:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockTitleTextField</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockBodyTextView</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">setText:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillAppear:</span><span class="n">NO</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">mockTitleTextField</span> <span class="n">verify</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">mockBodyTextView</span> <span class="n">verify</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでよさそうです。案外、簡単でしたね。</p>
+
+<h3>viewWillDisappearで、入力したタイトルと本文からメモオブジェクトを更新して、delegateへ渡す</h3>
+
+<p>次はこっちです。これはdelegateの扱い方で、大きく分けて2つ方法があります。</p>
+
+<p>1つめはdelegateのモックオブジェクトを使うパターン、そしてテストケース自身がdelegateになるパターンです。
+これは結構好みだと思うので、好きな方を採用すればよいかと思います。</p>
+
+<h4>共通部分</h4>
+
+<p>まずは共通なところ、<code>titleTextField</code>と<code>bodyTextView</code>をスタブして、<code>TITLE</code>と<code>BODY</code>が入力された状態を再現します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testFinishDelegateWithUpdatedMemoObjectInViewWillDisappear</span><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ユーザー入力を再現</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockTitleTextField</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockBodyTextView</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;BODY&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうすると、<code>titleTextField.text</code>は<code>TITLE</code>が入っている状態になりますね。</p>
+
+<h4>delegateのモックオブジェクトを使うパターン</h4>
+
+<p>OCMockでプロトコルからモックのdelegateを作り、セットします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="kt">id</span> <span class="n">mockDelegate</span> <span class="o">=</span> <span class="p">[</span><span class="n">OCMockObject</span> <span class="nl">mockForProtocol:</span><span class="err">@</span><span class="n">protocol</span><span class="p">(</span><span class="n">TBMemoEditDelegate</span><span class="p">)];</span>
+</span><span class='line'><span class="n">viewController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">mockDelegate</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このモックの<code>editViewController:didFinishEditMemo:</code>が、更新されたメモオブジェクトを持って呼び出される事を期待します。
+これには<code>[OCMArg checkWithBlock:]</code>を利用します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[[</span><span class="n">mockDelegate</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">editViewController:</span><span class="n">viewController</span> <span class="nl">didFinishEditMemo:</span><span class="p">[</span><span class="n">OCMArg</span> <span class="nl">checkWithBlock:</span><span class="o">^</span><span class="kt">BOOL</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">memo</span> <span class="o">=</span> <span class="p">(</span><span class="n">TBMemo</span> <span class="o">*</span><span class="p">)</span><span class="n">obj</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">memo</span><span class="p">.</span><span class="n">titile</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">[</span><span class="n">memo</span><span class="p">.</span><span class="n">body</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'><span class="p">}]];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>そして、メモオブジェクトをセットして、<code>viewWillDisappear</code>を呼び、<code>verify</code>します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">TBMemo</span> <span class="o">*</span><span class="n">edtingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'><span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">edtingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillDisappear:</span><span class="n">NO</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">mockDelegate</span> <span class="n">verify</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>全体としてこんなテストになります。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testFinishDelegateWithUpdatedMemoObjectInViewWillDisappear</span><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockTitleTextField</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockBodyTextView</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;BODY&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">id</span> <span class="n">mockDelegate</span> <span class="o">=</span> <span class="p">[</span><span class="n">OCMockObject</span> <span class="nl">mockForProtocol:</span><span class="err">@</span><span class="n">protocol</span><span class="p">(</span><span class="n">TBMemoEditDelegate</span><span class="p">)];</span>
+</span><span class='line'>    <span class="p">[[</span><span class="n">mockDelegate</span> <span class="n">expect</span><span class="p">]</span> <span class="nl">editViewController:</span><span class="n">viewController</span> <span class="nl">didFinishEditMemo:</span><span class="p">[</span><span class="n">OCMArg</span> <span class="nl">checkWithBlock:</span><span class="o">^</span><span class="kt">BOOL</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">TBMemo</span> <span class="o">*</span><span class="n">memo</span> <span class="o">=</span> <span class="p">(</span><span class="n">TBMemo</span> <span class="o">*</span><span class="p">)</span><span class="n">obj</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">[</span><span class="n">memo</span><span class="p">.</span><span class="n">titile</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">[</span><span class="n">memo</span><span class="p">.</span><span class="n">body</span> <span class="nl">isEqualToString:</span><span class="s">@&quot;BODY&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}]];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">mockDelegate</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillDisappear:</span><span class="n">NO</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">mockDelegate</span> <span class="n">verify</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>テストケース自身がdelegateになるパターン</h4>
+
+<p>こっちはiOS部では説明してなかったです。(すればよかった)</p>
+
+<p>まずは、テストケースがDelegateを実装することを宣言します。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">@interface</span> <span class="nc">TBMemoEditViewControllerTests</span> <span class="p">()</span> <span class="o">&lt;</span><span class="n">TBMemoEditDelegate</span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>テストケースにdelegateを実装します。渡ってきたメモオブジェクトを<code>editedMemo</code>にとっておきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">editViewController:</span><span class="p">(</span><span class="n">TBMemoEditViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="nf">didFinishEditMemo:</span><span class="p">(</span><span class="n">TBMemo</span> <span class="o">*</span><span class="p">)</span><span class="nv">memo</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">editedMemo</span> <span class="o">=</span> <span class="n">memo</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>自身をdelegateにして、<code>viewWillDisappear</code>を呼びます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">viewController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">TBMemo</span> <span class="o">*</span><span class="n">edtingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'><span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">edtingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillDisappear:</span><span class="n">NO</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>editedMemo</code>に更新されたメモオブジェクトがあるはずなので、これをアサートします。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="n">editedMemo</span><span class="p">.</span><span class="n">titile</span><span class="p">,</span> <span class="s">@&quot;TITLE&quot;</span><span class="p">,</span> <span class="nb">nil</span><span class="p">);</span>
+</span><span class='line'><span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="n">editedMemo</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="s">@&quot;BODY&quot;</span><span class="p">,</span> <span class="nb">nil</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでよさそうです。全体としてはこんな感じ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testFinishDelegateWithUpdatedMemoObjectInViewWillDisappearWithSelfDelegate</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockTitleTextField</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;TITLE&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[[[</span><span class="n">mockBodyTextView</span> <span class="n">stub</span><span class="p">]</span> <span class="nl">andReturn:</span><span class="s">@&quot;BODY&quot;</span><span class="p">]</span> <span class="n">text</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">TBMemo</span> <span class="o">*</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TBMemo</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">viewController</span><span class="p">.</span><span class="n">editingMemo</span> <span class="o">=</span> <span class="n">editingMemo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">viewController</span> <span class="nl">viewWillDisappear:</span><span class="n">NO</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="n">editedMemo</span><span class="p">.</span><span class="n">titile</span><span class="p">,</span> <span class="s">@&quot;TITLE&quot;</span><span class="p">,</span> <span class="nb">nil</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">STAssertEqualObjects</span><span class="p">(</span><span class="n">editedMemo</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="s">@&quot;BODY&quot;</span><span class="p">,</span> <span class="nb">nil</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">editViewController:</span><span class="p">(</span><span class="n">TBMemoEditViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">viewController</span> <span class="nf">didFinishEditMemo:</span><span class="p">(</span><span class="n">TBMemo</span> <span class="o">*</span><span class="p">)</span><span class="nv">memo</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">editedMemo</span> <span class="o">=</span> <span class="n">memo</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>どうでしょう、僕は前者の方が好みですが、分かりやすいのは多分後者ですかね。</p>
+
+<h2>まとめ</h2>
+
+<p>こんな感じのことを解説しました。
+ちゃんと分割していけば、複雑になるかもしれないですが、大抵はこのパータンで事足りるかなーと思います。</p>
+
+<p>非同期の終了をまってからBlocksでほげほげ、とかはOCMockの<code>andDo:</code>とかでうまい感じに表現できますし、<code>NSNotification</code>とか使う場合にも結構素直に書けます。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-03T20:20:00+09:00" pubdate data-updated="true">May 3<span>rd</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/05/03/view-controller-testing/" data-via="" data-counturl="http://yaakaito.org/blog/2013/05/03/view-controller-testing/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/05/02/typescript-subtyping/" title="Previous Post: TypeScriptのInterfaceとStructural Subtyping">&laquo; TypeScriptのInterfaceとStructural Subtyping</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/05/03/view-controller-testing/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/05/03/view-controller-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

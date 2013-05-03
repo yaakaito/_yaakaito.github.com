@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-02T03:01:47+09:00</updated>
+  <updated>2013-05-03T22:12:21+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,472 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[iOS部で話したViewControllerのテストとかのまとめ]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/03/view-controller-testing/"/>
+    <updated>2013-05-03T20:20:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/03/view-controller-testing</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+この前iOS部というイベントでiOSテストの話をしたんですが、ViewControllerのテストで反応が結構あったのと、
+ちゃんと説明できてない部分があったなーということで、文章としてまとめようと思います。</p>
+
+<p>iOS部でやったものからコードが変わってますが、やりたいことは一緒なので、iOS部に参加されていた方は適宜変換して読んでもらえればと思います。</p>
+
+<h2>ツールとか</h2>
+
+<p>SenTestingKit + OCMockです。
+OCMockの解説はiOS部では初めての方が居たので軽く説明しましたが、これを読んでる方はオンラインかと思いますので、分からなければググってください。
+<a href="http://yaakaito.hatenablog.com/entry/2012/06/26/013813">僕が古い方のブログで書いたもの</a>もあるので、そちらを読まれるとよいかもしれません。</p>
+
+<h2>ViewControllerの役割</h2>
+
+<p>最初にぶっちゃけておくとViewControllerのテストはしんどいです。できれば書きたくない。
+なのでViewControllerが何なのか、きちんと整理しておきましょう。</p>
+
+<p>僕はViewControllerって、</p>
+
+<ul>
+<li>ビューからやってきたユーザー操作の実際の処理</li>
+<li>モデルへの操作、モデルからのイベントなんかの受け取り、ビューへの反映</li>
+</ul>
+
+
+<p>この2つ(3つ？)にフォーカスしてるべきだと思ってます。
+なのでViewControllerって基本的にはステートとかをもっちゃ駄目で、そういうのはロジックとしてモデルで管理されるべきだと思います。</p>
+
+<p>ここをちゃんと意識して書いていくとViewControllerのテストが結構楽になります。
+モデルのテストはViewControllerと比較して圧倒的に楽なので、そちらでやりましょう。</p>
+
+<h2>モックを使いまくります</h2>
+
+<p>OCMockなんかのモックライブラリは便利でよく使いますが、僕はほとんどViewControllerのテストの為に使います。
+ある程度モデルが完成した段階であれば、モックを使わずに記述していくこともまあ出来るんですが、
+例えば「サーバーとの通信に失敗したときの動作」、みたいなのをテストするときに大抵めんどくさいことになります。
+モックを使っておけばここは一行でサッパリと書いてしまったり出来るので、基本的には全部モックを差し込みます。</p>
+
+<p>モデル自体が単純なバリューを表すものであればわざわざモックする必要もないかなーとは思うので、まあそのあたりは好みでいいかなと思います。</p>
+
+<p>あとはUILabelとかUITextFieldとか、Storyboardとか使ってるとコードから生成されないものですね。
+別にこのオブジェクト自体を作って自分でセットしてあげるようにしてもいいんですが、
+さっきと同じような理由で、「ユーザーがHelloWorldと入力したときの動作」、みたいなのをテストするときに大抵めんd（ry</p>
+
+<p>というわけで僕はViewControllerは基本的にモックを使って書いています。</p>
+
+<h2>プライベートとかreadonlyなプロパティに対するモックの差し込み</h2>
+
+<p>テストを始める前に、予備知識として知っている必要のある項目です。
+これはViewController以外のテストでも応用できると思うので、わけで書きます。
+正しいけどきわどいので、似たようなことをアプリ側でやるのはやめたほうがいいと思います。</p>
+
+<p>これは無名カテゴリを使って、プロパティの宣言を上書きすることで実現します。</p>
+
+<p>例えば</p>
+
+<p>```objective-c</p>
+
+<h1>import &lt;UIKit/UIKit.h></h1>
+
+<p>@interface MIViewController : UIViewController</p>
+
+<p>@end
+```</p>
+
+<p>```objective-c</p>
+
+<h1>import "MIViewController.h"</h1>
+
+<p>@interface MIViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *hogeLabel; // &lt;- Stroyboardから作られる
+@end</p>
+
+<p>@implementation MIViewController</p>
+
+<p>@end
+```</p>
+
+<p>という感じに<code>.m</code>の方でプライベートなプロパティとして宣言するとかよくあると思います。
+この無名カテゴリをテストの方にも持ってきます。</p>
+
+<p>```objective-c
+@interface MIViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *hogeLabel;
+@end</p>
+
+<p>@implementation MIViewControllerTests</p>
+
+<ul>
+<li>(void)testExample
+{
+  MIViewController *viewController = [[MIViewController alloc] init];
+  viewController.hogeLabel = nil; // &lt;- 通る
+}</li>
+</ul>
+
+
+<p>@end
+```</p>
+
+<p>こうするとパブリックのようにメッセージを送ることが出来るので、モックに差し替えたりできるわけです。きわどい感じがしますね。</p>
+
+<p>これは完全に雑感ですけど、標準ライブラリでもまあ、よく見ると <code>@property(nonatomic, readonly, retain)</code> みたいな宣言をしてあるものがあって、内部的に<code>property(nonatomic, retain)</code>になってたりするんじゃないかなーと思えるものもあるので、まあまあまあ。</p>
+
+<h2>というわけでテストを書きましょう</h2>
+
+<p>前置きが長くなりましたが、そろそろViewControllerのテストの話をしましょう。</p>
+
+<p>サンプルとしてこんな感じの画面を使います。</p>
+
+<p><img src="/images/viewcontroller-testing-sample.png" width="240"></p>
+
+<p>この画面はモーダルとして呼び出されて、メモを作成&amp;編集できる画面です。
+以下のような要件で作られています。</p>
+
+<ul>
+<li>タイトルと本文を入力できる</li>
+<li>「Done」を押したら、入力したタイトルと本文からメモオブジェクトを作って、delegateへ渡す。</li>
+<li>すでに生成されているメモが渡されたら、それを初期値として表示する。</li>
+</ul>
+
+
+<p>実際の実装としては、</p>
+
+<ul>
+<li>新規と編集の処理を同じにするために、このViewControllerはメモオブジェクトを作成せずに、外から渡されたメモオブジェクトを更新するようになっています。</li>
+<li>ユーザーの入力に影響せず、viewWillDissapearでdelegateを呼び出すようになっています。</li>
+</ul>
+
+
+<p>メモオブジェクトは<code>title</code>と<code>body</code>を持っています。</p>
+
+<p>```objective-c
+@interface TBMemo : NSObject
+@property (strong, nonatomic) NSString <em>titile;
+@property (strong, nonatomic) NSString </em>body;</p>
+
+<ul>
+<li>(id)initWithTitle:(NSString <em>)title body:(NSString </em>)body;
+@end
+```</li>
+</ul>
+
+
+<p>このViewControllerはこんな感じのインターフェイスを持っています。この段階ではあえて実装は出さないことにします。</p>
+
+<p>```objective-c
+@protocol TBMemoEditDelegate
+- (void)editViewController:(TBMemoEditViewController <em>)viewController didFinishEditMemo:(TBMemo </em>)memo;
+@end</p>
+
+<p>@interface TBMemoEditViewController : UIViewController
+@property (weak, nonatomic) NSObject<TBMemoEditDelegate> <em>delegate;
+@property (weak, nonatomic) TBMemo </em>editingMemo;
+@end
+```</p>
+
+<p><code>editingMemo</code>はこのViewControllerが更新するメモオブジェクトでこのViewControllerを呼び出す際に外からセットされます。
+またプライベートとして、<code>.m</code>の方でStoryboardから生成される2つのUIを持っています。</p>
+
+<p><code>objective-c
+@interface TBMemoEditViewController ()
+@property (weak, nonatomic) IBOutlet UITextField *titleTextField;
+@property (weak, nonatomic) IBOutlet UITextView *bodyTextView;
+@end
+</code></p>
+
+<p>今回テストした方がよさそうなのは、</p>
+
+<ul>
+<li>viewWillDisappearで、入力したタイトルと本文からメモオブジェクトを更新して、delegateへ渡す。</li>
+<li>viewWillAppearで、渡したメモの内容を初期値として設定する。</li>
+</ul>
+
+
+<p>の2つです。</p>
+
+<p>「done」を押した時にどうこうというのは、これは単純に「モーダルを閉じる」とだけの実装であるべきなので、テストする価値が薄いですし、
+アプリを調整していく仮定で変更される可能性の高いものなので(やっぱりpushがいいとか)、安全に変更を加えるためのテストが、逆に足を引っ張ってしまいます。</p>
+
+<p>ではテストを書いていきましょう。</p>
+
+<h3>setup</h3>
+
+<p>まずは<code>setup</code>で<code>UITextField</code>なんかをモックに差し替えていきます。</p>
+
+<p>```objective-c</p>
+
+<h1>import "TBMemoEditViewController.h"</h1>
+
+<h1>import "OCMock.h"</h1>
+
+<p>@interface TBMemoEditViewController ()
+@property (weak, nonatomic) IBOutlet UITextField <em>titleTextField;
+@property (weak, nonatomic) IBOutlet UITextView </em>bodyTextView;
+@end</p>
+
+<p>@implementation TBMemoEditViewControllerTests {</p>
+
+<pre><code>TBMemoEditViewController *viewController;
+id mockTitleTextField;
+id mockBodyTextView;
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li><p>(void)setUp {
+  [super setUp];</p>
+
+<p>  viewController = [[TBMemoEditViewController alloc] init];</p>
+
+<p>  // UITextFieldを差し替える
+  mockTitleTextField = [OCMockObject mockForClass:[UITextField class]];
+  viewController.titleTextField = mockTitleTextField;</p>
+
+<p>  // UITextViewを差し替える
+  mockBodyTextView = [OCMockObject mockForClass:[UITextView class]];
+  viewController.bodyTextView = mockBodyTextView;</p></li>
+</ul>
+
+
+<p>}
+@end
+```</p>
+
+<p>こんな感じ、これで準備が整いました。</p>
+
+<h3>viewWillAppearで渡したメモの内容を初期値として設定する</h3>
+
+<p>まずはこっちを書いてみましょう。
+<code>editingMemo</code>が呼び出し元からセットされますが、この場合はテストケースが呼び出し元になるので、これをセットします。</p>
+
+<p>```objective-c</p>
+
+<ul>
+<li>(void)testUpdateViewWithEditingMemoObjectInViewWillAppear {
+  TBMemo *editingMemo = [[TBMemo alloc] initWithTitle:@"TITLE" body:@"BODY"];
+  viewController.editingMemo = editingMemo;
+}
+```</li>
+</ul>
+
+
+<p>次にこのメモオブジェクトの値が<code>titleTextField</code>と<code>bodyTextView</code>にそれぞれ、<code>text</code>経由でセットされるはずなので、これをOCMockで<code>expect</code>します。</p>
+
+<p>```objective-c
+- (void)testUpdateViewWithEditingMemoObjectInViewWillAppear {</p>
+
+<pre><code>TBMemo *editingMemo = [[TBMemo alloc] initWithTitle:@"TITLE" body:@"BODY"];
+viewController.editingMemo = editingMemo;
+
+[[mockTitleTextField expect] setText:@"TITLE"];
+[[mockBodyTextView expect] setText:@"BODY"];
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>viewWillAppear</code>を呼び出して、</p>
+
+<p>```objective-c
+- (void)testUpdateViewWithEditingMemoObjectInViewWillAppear {</p>
+
+<pre><code>TBMemo *editingMemo = [[TBMemo alloc] initWithTitle:@"TITLE" body:@"BODY"];
+viewController.editingMemo = editingMemo;
+
+[[mockTitleTextField expect] setText:@"TITLE"];
+[[mockBodyTextView expect] setText:@"BODY"];
+
+[viewController viewWillAppear:NO];
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>titleTextField</code>と<code>bodyTextView</code>に<code>text</code>を経由して値がセットされたかを<code>verify</code>します。</p>
+
+<p>```objective-c
+- (void)testUpdateViewWithEditingMemoObjectInViewWillAppear {</p>
+
+<pre><code>TBMemo *editingMemo = [[TBMemo alloc] initWithTitle:@"TITLE" body:@"BODY"];
+viewController.editingMemo = editingMemo;
+
+[[mockTitleTextField expect] setText:@"TITLE"];
+[[mockBodyTextView expect] setText:@"BODY"];
+
+[viewController viewWillAppear:NO];
+
+[mockTitleTextField verify];
+[mockBodyTextView verify];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>これでよさそうです。案外、簡単でしたね。</p>
+
+<h3>viewWillDisappearで、入力したタイトルと本文からメモオブジェクトを更新して、delegateへ渡す</h3>
+
+<p>次はこっちです。これはdelegateの扱い方で、大きく分けて2つ方法があります。</p>
+
+<p>1つめはdelegateのモックオブジェクトを使うパターン、そしてテストケース自身がdelegateになるパターンです。
+これは結構好みだと思うので、好きな方を採用すればよいかと思います。</p>
+
+<h4>共通部分</h4>
+
+<p>まずは共通なところ、<code>titleTextField</code>と<code>bodyTextView</code>をスタブして、<code>TITLE</code>と<code>BODY</code>が入力された状態を再現します。</p>
+
+<p>```objective-c
+- (void)testFinishDelegateWithUpdatedMemoObjectInViewWillDisappear{</p>
+
+<pre><code>// ユーザー入力を再現
+[[[mockTitleTextField stub] andReturn:@"TITLE"] text];
+[[[mockBodyTextView stub] andReturn:@"BODY"] text];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こうすると、<code>titleTextField.text</code>は<code>TITLE</code>が入っている状態になりますね。</p>
+
+<h4>delegateのモックオブジェクトを使うパターン</h4>
+
+<p>OCMockでプロトコルからモックのdelegateを作り、セットします。</p>
+
+<p><code>objective-c
+id mockDelegate = [OCMockObject mockForProtocol:@protocol(TBMemoEditDelegate)];
+viewController.delegate = mockDelegate;
+</code></p>
+
+<p>このモックの<code>editViewController:didFinishEditMemo:</code>が、更新されたメモオブジェクトを持って呼び出される事を期待します。
+これには<code>[OCMArg checkWithBlock:]</code>を利用します。</p>
+
+<p>```objective-c
+[[mockDelegate expect] editViewController:viewController didFinishEditMemo:[OCMArg checkWithBlock:<sup>BOOL(id</sup> obj) {</p>
+
+<pre><code>TBMemo *memo = (TBMemo *)obj;
+return [memo.titile isEqualToString:@"TITLE"] &amp;&amp; [memo.body isEqualToString:@"BODY"];
+</code></pre>
+
+<p>}]];
+```</p>
+
+<p>そして、メモオブジェクトをセットして、<code>viewWillDisappear</code>を呼び、<code>verify</code>します。</p>
+
+<p>```objective-c
+TBMemo *edtingMemo = [[TBMemo alloc] init];
+viewController.editingMemo = edtingMemo;</p>
+
+<p>[viewController viewWillDisappear:NO];</p>
+
+<p>[mockDelegate verify];
+```</p>
+
+<p>全体としてこんなテストになります。</p>
+
+<p>```objective-c
+- (void)testFinishDelegateWithUpdatedMemoObjectInViewWillDisappear{</p>
+
+<pre><code>[[[mockTitleTextField stub] andReturn:@"TITLE"] text];
+[[[mockBodyTextView stub] andReturn:@"BODY"] text];
+
+id mockDelegate = [OCMockObject mockForProtocol:@protocol(TBMemoEditDelegate)];
+[[mockDelegate expect] editViewController:viewController didFinishEditMemo:[OCMArg checkWithBlock:^BOOL(id obj) {
+    TBMemo *memo = (TBMemo *)obj;
+    return [memo.titile isEqualToString:@"TITLE"] &amp;&amp; [memo.body isEqualToString:@"BODY"];
+}]];
+viewController.delegate = mockDelegate;
+
+TBMemo *editingMemo = [[TBMemo alloc] init];
+viewController.editingMemo = editingMemo;
+
+[viewController viewWillDisappear:NO];
+
+[mockDelegate verify];
+</code></pre>
+
+<p>}
+```</p>
+
+<h4>テストケース自身がdelegateになるパターン</h4>
+
+<p>こっちはiOS部では説明してなかったです。(すればよかった)</p>
+
+<p>まずは、テストケースがDelegateを実装することを宣言します。</p>
+
+<p><code>objective-c
+@interface TBMemoEditViewControllerTests () &lt;TBMemoEditDelegate&gt;
+@end
+</code></p>
+
+<p>テストケースにdelegateを実装します。渡ってきたメモオブジェクトを<code>editedMemo</code>にとっておきます。</p>
+
+<p>```objective-c
+- (void)editViewController:(TBMemoEditViewController <em>)viewController didFinishEditMemo:(TBMemo </em>)memo {</p>
+
+<pre><code>editedMemo = memo;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>自身をdelegateにして、<code>viewWillDisappear</code>を呼びます。</p>
+
+<p>```objective-c
+viewController.delegate = self;</p>
+
+<p>TBMemo *edtingMemo = [[TBMemo alloc] init];
+viewController.editingMemo = edtingMemo;</p>
+
+<p>[viewController viewWillDisappear:NO];
+```</p>
+
+<p><code>editedMemo</code>に更新されたメモオブジェクトがあるはずなので、これをアサートします。</p>
+
+<p><code>objective-c
+STAssertEqualObjects(editedMemo.titile, @"TITLE", nil);
+STAssertEqualObjects(editedMemo.body, @"BODY", nil);
+</code></p>
+
+<p>これでよさそうです。全体としてはこんな感じ。</p>
+
+<p>```objective-c
+- (void)testFinishDelegateWithUpdatedMemoObjectInViewWillDisappearWithSelfDelegate {</p>
+
+<pre><code>[[[mockTitleTextField stub] andReturn:@"TITLE"] text];
+[[[mockBodyTextView stub] andReturn:@"BODY"] text];
+
+viewController.delegate = self;
+
+TBMemo *editingMemo = [[TBMemo alloc] init];
+viewController.editingMemo = editingMemo;
+
+[viewController viewWillDisappear:NO];
+
+STAssertEqualObjects(editedMemo.titile, @"TITLE", nil);
+STAssertEqualObjects(editedMemo.body, @"BODY", nil);
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li>(void)editViewController:(TBMemoEditViewController <em>)viewController didFinishEditMemo:(TBMemo </em>)memo {
+  editedMemo = memo;
+}
+```</li>
+</ul>
+
+
+<p>どうでしょう、僕は前者の方が好みですが、分かりやすいのは多分後者ですかね。</p>
+
+<h2>まとめ</h2>
+
+<p>こんな感じのことを解説しました。
+ちゃんと分割していけば、複雑になるかもしれないですが、大抵はこのパータンで事足りるかなーと思います。</p>
+
+<p>非同期の終了をまってからBlocksでほげほげ、とかはOCMockの<code>andDo:</code>とかでうまい感じに表現できますし、<code>NSNotification</code>とか使う場合にも結構素直に書けます。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Storyboardで横にずれるメニュー作る]]></title>
@@ -676,124 +1142,6 @@ book.bookId = @(123);</p>
 <h2>sqliteのビュアーとか</h2>
 
 <p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/30/overline-020-release/"/>
-    <updated>2013-03-30T19:13:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/30/overline-020-release</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-Objective-C用ユーティリティ、<a href="https://github.com/yaakaito">Overline</a> 0.2.0を公開しました。0.1.5は6時間くらいの命でした。
-同時に0.1.xで問題になっていたBlocksKitと一緒に使うとassertで死ぬ問題を回避した、Overline-BlocksKitを公開しています。</p>
-
-<h2>BlocksKitと一緒に使う場合</h2>
-
-<p>Overline-BlocksKitを利用します。Podfileはこんな感じ。</p>
-
-<p><code>
-pod 'BlocksKit'
-pod 'Overline-BlocksKit'
-</code></p>
-
-<p>重複を解決するために、いくつかショートハンドのメソッドを削除しています。
-削除されているのは、<code>NSArray</code> <code>NSDictionary</code> <code>NSSet</code> にある以下のメソッドです。</p>
-
-<ul>
-<li><code>each:</code></li>
-<li><code>map:</code></li>
-<li><code>reduce:memo:</code></li>
-<li><code>filter:</code></li>
-<li><code>reject:</code></li>
-</ul>
-
-
-<p>ショートハンドは削除されますが、Objective-Cっぽい方はそのまま使えます。このあたりはBlocksKitが実装してくれているので、そちらをご利用ください。</p>
-
-<h2>追加された機能とか</h2>
-
-<p>たらたらと紹介していきます。全部書くのはだるいので全部じゃないです。0.1.0から0.2.0までの変更のうちいろいろという感じです。</p>
-
-<h3>NSArray arrayWithRange</h3>
-
-<p>指定した範囲のNSArrayを作ります、NSNumber自体が使いにくいので、あんまり使わないですかね。</p>
-
-<p><code>objective-c
-NSArray *array = [NSArray arrayWithRangeFrom:0 to:10];
-// @[@0, @1, @2, @3, @4, @5, @6, @7, @8, @9]
-</code></p>
-
-<p>逆方向にも行けます</p>
-
-<p><code>objective-c
-NSArray *array2 = [NSArray arrayWithRangeFrom:0 to:-10 step:2];
-// @[@0, @-2, @-4, @-6, @-8]
-</code></p>
-
-<h3>NSArray uniqueObjects</h3>
-
-<p>まんま、ユニークなものだけ返ってきます。</p>
-
-<p><code>objective-c
-NSArray *uniqueObjects = [@[@1, @2, @3, @1, @3, @4, @5] uniqueObjects];
-// @[@1, @2, @3, @4, @5]
-</code></p>
-
-<p>比較の部分をBlocksで書ける <code>uniqueObjectsUsingEqualsBlock:</code> もあります。</p>
-
-<h3>その他NSArray</h3>
-
-<p><code>subArray</code> <code>diffrence</code> <code>reversed</code> とかが地味に増えました。</p>
-
-<h3>NSDictionary arrayMap</h3>
-
-<p>そもそも<code>map</code>おかしくね？となって、追加した。</p>
-
-<p>```objective-c
-[@{</p>
-
-<pre><code>@"a" : @1,
-@"b" : @2,
-@"c" : @3,
-@"d" : @4
-</code></pre>
-
-<p>} mappedArrayUsingBlock:<sup>(id</sup> obj, NSString *key) {</p>
-
-<pre><code>return @([obj integerValue] * 2);
-</code></pre>
-
-<p>}];
-// @[@2,@4,@6,@8]
-```</p>
-
-<h3>NSDictionary objectForKey:transformBlock: pathForKey:</h3>
-
-<p><code>objectForKey:</code>したあとに変換してーというのが面倒なので、Blocksでまとめられるようにしました。</p>
-
-<p>```objective-c
-NSDate *date = [JSON objectForKey:@"date8601" transformBlock:<sup>id(id</sup> obj) {</p>
-
-<pre><code>NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-[formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss Z"];
-return [formatter dateFromString:obj];
-</code></pre>
-
-<p>}];
-```</p>
-
-<p>とか、あとは<code>stringForKey:</code> <code>dateForKey:usingFormat:</code> <code>bookForKey:withTrueValue:</code> <code>integerForKey:</code> などもろもろ。多いのでREADMEかテストを見てください。</p>
-
-<p><code>objectForPath:</code> は <code>hoge.fuga</code> みたいなので階層を辿れる。 <code>valueForKey</code> とか <code>valueForKeyPath</code> でも出来たはずだけど、本来その目的に使う物ではないはずなので、あんまり使っちゃ駄目だと思います。</p>
-
-<p>こっちの<code>transform</code>とかの対応そういえばやってなかった・・・</p>
-
-<p>多分大きめなのはこれくらいかと思います。はい。</p>
-
-<h2>よろしくね！</h2>
-
-<p><a href="https://github.com/yaakaito">Overline</a></p>
 ]]></content>
   </entry>
   
