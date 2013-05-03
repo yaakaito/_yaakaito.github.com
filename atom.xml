@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-03T22:12:21+09:00</updated>
+  <updated>2013-05-03T22:15:51+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -189,7 +189,7 @@ OCMockの解説はiOS部では初めての方が居たので軽く説明しま�
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>このViewControllerはこんな感じのインターフェイスを持っています。この段階ではあえて実装は出さないことにします。</p>
+<p>このViewControllerはこんな感じのインターフェイスを持っています。ここではあえて実装は出さないことにします。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
