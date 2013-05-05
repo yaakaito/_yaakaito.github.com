@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-03T22:15:51+09:00</updated>
+  <updated>2013-05-05T21:20:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,204 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptのコーディング規約を考える]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/05/typescript-codeconventions/"/>
+    <updated>2013-05-05T19:30:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/05/typescript-codeconventions</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScript書いてますか？？？おすすめです！！！
+ところでTypeScriptのコーディング規約がよくわからなかったので、コンパイラをみてきました。
+JavaScriptほどあーだーこーだというものでもないと思うので、ほんとにコーディング規約みたいな感じです。</p>
+
+<h2>基本的なところ</h2>
+
+<h3>インデント</h3>
+
+<ul>
+<li>ソフトインデントで4個</li>
+</ul>
+
+
+<h3>1行の文字数</h3>
+
+<p>これはコンパイラの方は結構自由に感じた・・・。
+ので、JavaScriptよりはJavaとか参考にした方がいいだろうってことで <a href="http://www.oracle.com/technetwork/java/javase/documentation/codeconventions-136091.html#313">Oracle</a> のを参考にすることに。</p>
+
+<ul>
+<li>1行は80文字</li>
+</ul>
+
+
+<p>改行ルールとかもこっちを参考にして、</p>
+
+<ul>
+<li>コンマのあと</li>
+<li>オペレーターの前</li>
+<li>改行するときは8個インデント</li>
+</ul>
+
+
+<h3>型の為のコロンの位置</h3>
+
+<ul>
+<li>変数名にくっつけてスペースを一つ入れる</li>
+</ul>
+
+
+<p>```javascript
+(name: string) => { }</p>
+
+<p>var name: string = Names.at(0);</p>
+
+<p>public name: string = null;
+```</p>
+
+<h3>関数の返り値</h3>
+
+<ul>
+<li>voidの時は宣言しない</li>
+</ul>
+
+
+<p>```
+public voidFunction() {</p>
+
+<p>}</p>
+
+<p>public stringFunction(): string {</p>
+
+<pre><code>return "hoge";
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>命名規則</h2>
+
+<ul>
+<li>変数/関数/メソッドはキャメルケール</li>
+</ul>
+
+
+<h3>クラスとモジュールの命名規則</h3>
+
+<ul>
+<li>アッパーキャメルケース</li>
+</ul>
+
+
+<p>```javascript
+module Hoge {</p>
+
+<pre><code>class HogeClass {
+    // ...
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>Enumの命名規則</h3>
+
+<ul>
+<li>アッパーキャメルケース</li>
+</ul>
+
+
+<p><code>javascript
+enum Fruit {
+  Apple,
+  Orange,
+  KiwiFruit
+}
+</code></p>
+
+<h3>定数の命名規則</h3>
+
+<ul>
+<li>大文字スネークケース</li>
+</ul>
+
+
+<p><code>javascript
+var HOGE_FUGA = 'a';
+</code></p>
+
+<h3>インターフェイスの命名規則</h3>
+
+<ul>
+<li>頭に <code>I</code> をつける</li>
+</ul>
+
+
+<p>```javascript
+interface IHoge {</p>
+
+<pre><code>// ...
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>varの型宣言</h2>
+
+<ul>
+<li>基本的には宣言しない</li>
+<li>anyとして返されるものに対してには宣言する</li>
+</ul>
+
+
+<p><code>
+var name = 'yaakaito';
+var name: string = names[0];
+</code></p>
+
+<h2>即時関数</h2>
+
+<p>よくわからなかった。JavaScriptのまんま書いてある感じもする。</p>
+
+<p>```javascript
+(function(x) {</p>
+
+<pre><code>return x * x
+</code></pre>
+
+<p>})(10);
+```</p>
+
+<p>TypeScript的にはこんな感じなんだろうか？</p>
+
+<p><code>javascript
+(x =&gt; x * x)(10)
+</code></p>
+
+<h2>コンストラクタでのプロパティの宣言</h2>
+
+<ul>
+<li>コンストラクタに渡された値をそのまま利用する場合はコンストラクタの引数で宣言する</li>
+</ul>
+
+
+<p>```
+class Hoge {</p>
+
+<pre><code>public fullName: string;
+
+constructor(public firstName: string, public lastName: string, private age: number) {
+    this.fullName = [firstName, lastName].join(" ");
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>こんな感じかなぁ</h2>
+
+<p>追加あれば書く。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptのInterfaceとStructural Subtyping]]></title>
@@ -717,180 +915,6 @@ $ tsc --out backbone.test.js test/bootstrap.ts --sourcemap
 <p><img src="/images/ts-sourcemap-debug.png"></p>
 
 <p>BP打つなりして使います、便利ですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[【解決した】TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/25/typescript-module-division-files/"/>
-    <updated>2013-03-25T08:42:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/25/typescript-module-division-files</id>
-    <content type="html"><![CDATA[<h2>解決した</h2>
-
-<p>どうも俺が0.8.3だと思っていた<code>tsc</code>は0.8.0だった。
-バージョンが古いなんて生易しいもんじゃねぇ、気がついたらnode環境がぶっ壊れていた、何を言っているかわからねーと思うが(ry
-npm listで出てくるtscと、パスが通ってるtscが違った。とりあえず直した、お騒がせしました。</p>
-
-<p>本来下に書いてある</p>
-
-<p>```javascript
-module A {
-  class Hoge {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>  }
-  export var hoge = new Hoge();
-}
-```</p>
-
-<p>というのは、0.8.3時点でコンパイルでエラーになるようになっています、<code>Hoge</code>をexportしろ、とのことです。
-で、Hogeの中でさらにインナークラスとか呼んでると、それもexportしなくちゃいけなくてヤダーなので、ほしいメソッドだけ<code>interface</code>にしました。</p>
-
-<p>あと、<code>reference</code>を反対にするとなんかおかしい問題は健在っぽいです。
-いろいろ邪推してみましたが、それにあんまり意味はないので、issueにしてこようと思います。</p>
-
-<hr />
-
-<p>　</p>
-
-<p>こんにちは！うきょーです！分からないので誰か教えてください。
-TypeScriptに<code>module</code>って機能があるんですが、こいつでハマってる。</p>
-
-<p>というのもこれって、</p>
-
-<p>```javascript
-module A {
-  class Hoge {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>  }
-}
-```</p>
-
-<p>みたいにしておくと、</p>
-
-<p>```javascript
-var A;
-(function (A) {</p>
-
-<pre><code>var Hoge = (function () {
-    function Hoge() { }
-    return Hoge;
-})();  
-</code></pre>
-
-<p>})(A || (A = {}));
-```</p>
-
-<p>こうなるわけ。
-で、<code>module</code>は複数のファイルに渡って同一のものを定義できるらしい。
-実際そういう感じになっているし、そうなんだろう、分かる。</p>
-
-<p>問題はこのモジュール内で変数定義しようとしたときに起こった。
-例えばシングルトン的な感じでオブジェクトを外に出したいときに、</p>
-
-<p>```javascript
-module A {
-  class Hoge {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>  }
-  export var hoge = new Hoge();
-}
-```</p>
-
-<p>とすれば、</p>
-
-<p>```javascript
-var A;
-(function (A) {</p>
-
-<pre><code>var Hoge = (function () {
-    function Hoge() { }
-    return Hoge;
-})(); 
-A.hoge = new Hoge(); 
-</code></pre>
-
-<p>})(A || (A = {}));
-```</p>
-
-<p>となる、ここまではよい。
-もう一個同じ<code>module</code>を実装しているファイルがあるとする、</p>
-
-<p>```javascript
-module A {
-  class Fuga {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>  }
-}
-```</p>
-
-<p>で、この二つを個別にコンパイルする分には何も起こらないし、普通に実行できてるっぽいんだけど、</p>
-
-<p>```javascript
-/// <reference path="Fugaの方.ts" /></p>
-
-<p>module A {
-  class Hoge {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>  }
-  export var hoge = new Hoge();
-}
-```</p>
-
-<p>という風にreferenceすると <code>export var hoge = new Hoge();</code> でHogeが見つからなくなる。真上にあるが・・・。</p>
-
-<p>例えばこういう感じにしてビルドしてみても駄目。</p>
-
-<p><code>javascript
-/// &lt;reference path="Fugaの方.ts" /&gt;
-/// &lt;reference path="Hogeの方.ts" /&gt;
-</code></p>
-
-<p>なんだけど、順番を入れ替えると・・・</p>
-
-<p><code>javascript
-/// &lt;reference path="Hogeの方.ts" /&gt;
-/// &lt;reference path="Fugaの方.ts" /&gt;
-</code></p>
-
-<p>なんか知らんが通る。そんな参照で大丈夫か？</p>
-
-<p>要するに、コンパイルするときに</p>
-
-<p>```javascript
-module A {
-  // ...
-}</p>
-
-<p>module A {
-  // ...
-}
-```</p>
-
-<p>という状態になると、二番目以降の<code>module</code>内で参照が死ぬ。
-けど<code>class</code>とかでプロパティに持つ分には大丈夫という謎状況。</p>
-
-<p>バグなのかな、バグならバグでよいんだけど。</p>
-
-<p>で、ここまで説明してきたんだけど、これエラーは出るけど、コンパイルはちゃんと通った跡がある、どっちやねん。</p>
-
-<p>一番いい解説を頼む。</p>
-
-<p>(誰も知らなさそうなら公式に投げてみようと思います。)</p>
 ]]></content>
   </entry>
   
