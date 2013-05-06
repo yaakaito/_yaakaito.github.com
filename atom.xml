@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-05T21:20:16+09:00</updated>
+  <updated>2013-05-06T13:15:07+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -135,9 +135,9 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">enum</span> <span class="nx">Fruit</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">Apple</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">Orange</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">KiwiFruit</span>
+</span><span class='line'>    <span class="nx">Apple</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">Orange</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">KiwiFruit</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 

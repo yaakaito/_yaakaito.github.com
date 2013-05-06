@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-05T21:20:16+09:00</updated>
+  <updated>2013-05-06T13:15:07+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -118,13 +118,16 @@ module Hoge {</p>
 </ul>
 
 
-<p><code>javascript
-enum Fruit {
-  Apple,
-  Orange,
-  KiwiFruit
-}
-</code></p>
+<p>```javascript
+enum Fruit {</p>
+
+<pre><code>Apple,
+Orange,
+KiwiFruit
+</code></pre>
+
+<p>}
+```</p>
 
 <h3>定数の命名規則</h3>
 
