@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-08T14:15:58+09:00</updated>
+  <updated>2013-05-08T14:29:05+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -53,7 +53,7 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 
 <p>元々は80文字しか表示できないから系(表現あれだけど)の理由らしいんだけど、じゃあ今だとどうなのかなと考えてみた。
 で、僕はGithubをよく使う方だと思うので(エンタープライズ含め)、そこで横スクロールしちゃうのはやだなーと思った。
-というわけでGithubの100%表示で何文字入るのか数えてみた、スペース込みで122文字らしい。</p>
+というわけでGithubの100%表示で何文字入るのか数えてみた、122文字らしい。</p>
 
 <p>なので個人で書く範囲では</p>
 
