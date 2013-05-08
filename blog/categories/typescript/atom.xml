@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-06T17:13:03+09:00</updated>
+  <updated>2013-05-08T14:15:58+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -38,9 +38,31 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 ので、JavaScriptよりはJavaとか参考にした方がいいだろうってことで <a href="http://www.oracle.com/technetwork/java/javase/documentation/codeconventions-136091.html#313">Oracle</a> のを参考にすることに。</p>
 
 <ul>
-<li>1行は80文字</li>
+<li><s>1行は80文字</s></li>
 </ul>
 
+
+<h4>追記</h4>
+
+<p>いまどき80文字じゃなくてよくない？というツッコミがあったので考え直した。</p>
+
+<p>僕は、80文字で結構いけるんじゃないかなーと思っている。なのであんまり80文字なってる理由については深追いしてない。
+というのも、80文字あったら結構書けるよなーと思うので、オーバーするなら分割する基準になるんでは、というところが大きい。
+ただ、シンタックス上長くなっちゃうよねーというのも、もちろんあると思う。(下の方で85文字のがある。)
+その都度柔軟に変えばよいというのも、その通りだけど、自分が書いていくのにある程度基準がほしいなーとは思う。</p>
+
+<p>元々は80文字しか表示できないから系(表現あれだけど)の理由らしいんだけど、じゃあ今だとどうなのかなと考えてみた。
+で、僕はGithubをよく使う方だと思うので(エンタープライズ含め)、そこで横スクロールしちゃうのはやだなーと思った。
+というわけでGithubの100%表示で何文字入るのか数えてみた、スペース込みで122文字らしい。</p>
+
+<p>なので個人で書く範囲では</p>
+
+<ul>
+<li>1行は120文字</li>
+</ul>
+
+
+<p>ということにしようかなと思う。</p>
 
 <p>改行ルールとかもこっちを参考にして、</p>
 
