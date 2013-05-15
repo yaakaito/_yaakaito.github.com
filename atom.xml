@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-16T01:51:34+09:00</updated>
+  <updated>2013-05-16T01:53:58+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[TypeScript0.9alphaをNode+Gruntで使うよ]]></title>
-    <link href="http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node-and-grunt/"/>
+    <title type="html"><![CDATA[TypeScript0.9alphaをMac+Gruntで使うよ]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-mac-and-grunt/"/>
     <updated>2013-05-16T00:52:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node-and-grunt</id>
+    <id>http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-mac-and-grunt</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！
 TypeScript0.9alphaがちょっと前に出ましたね。
 npm経由でインストールできなくてだるいので使ってなかったんですが、0.9の機能試したくなったのでがんばって使えるようにすることにしました。</p>
