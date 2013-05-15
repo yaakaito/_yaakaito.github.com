@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-08T14:29:05+09:00</updated>
+  <updated>2013-05-16T01:40:55+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,175 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScript0.9をNode+Gruntで使うよ]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node/"/>
+    <updated>2013-05-16T00:52:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScript0.9がちょっと前に出ましたね。
+npm経由でインストールできなくてだるいので使ってなかったんですが、0.9の機能試したくなったのでがんばって使えるようにすることにしました。</p>
+
+<h2>TypeScriptのコンパイル</h2>
+
+<p>developをコンパイルすると大体いい感じだと思うのでそうしましょう。
+この辺は<a href="http://typescript.codeplex.com/wikipage?title=Build%20The%20Source&amp;referringTitle=Home">本家にも載ってますね</a>。リポジトリでけぇ。
+<code>jake</code>が必要なのでいれます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g jake
+</span><span class='line'>$ git clone https://git01.codeplex.com/typescript
+</span><span class='line'>$ cd typescript
+</span><span class='line'>$ git checkout develop
+</span><span class='line'>$ jake local
+</span><span class='line'>$ chmod +x bin/tsc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで <code>typescript/bin/tsc</code> が使えるようになります。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ ./bin/tsc
+</span><span class='line'>Version 0.9.0.0
+</span><span class='line'>Syntax:   tsc [options] [file ..]
+</span><span class='line'>
+</span><span class='line'>Examples: tsc hello.ts
+</span><span class='line'>          tsc --out foo.js foo.ts
+</span><span class='line'>          tsc @args.txt
+</span><span class='line'>
+</span><span class='line'>// ...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やったー！！</p>
+
+<h2>grunt-typescript</h2>
+
+<p>普段のビルドは<code>grunt-typesript</code>を使っているので、これが動くと便利な訳です。
+どういう指定になってるのかなーと見てみたら、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">resolveTypeScriptBinPath</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">currentPath</span><span class="p">,</span> <span class="nx">depth</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">targetPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">(</span><span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;../../&quot;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s2">&quot;../node_modules/typescript/bin&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">currentPath</span><span class="p">,</span> <span class="s2">&quot;node_modules/typescript/bin&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">targetPath</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">targetPath</span><span class="p">,</span> <span class="s2">&quot;typescript.js&quot;</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">targetPath</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">resolveTypeScriptBinPath</span><span class="p">(</span><span class="nx">currentPath</span><span class="p">,</span> <span class="o">++</span><span class="nx">depth</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>なるほど？
+つまりはこいつのnode_moduleに入ってるtypescriptを丸ごと置き換えちゃえば動くんじゃないかなーーーーーーーーやっちゃえーーーーーー＾ー＾</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">rm</span> <span class="o">/</span><span class="nx">path</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">grunt</span><span class="o">-</span><span class="nx">typescript</span><span class="o">/</span><span class="nx">node_modules</span><span class="o">/</span><span class="nx">typescript</span>
+</span><span class='line'><span class="nx">$</span> <span class="nx">cp</span> <span class="o">-</span><span class="nx">r</span> <span class="nx">typescript</span> <span class="o">/</span><span class="nx">path</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">grunt</span><span class="o">-</span><span class="nx">typescript</span><span class="o">/</span><span class="nx">node_modules</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>動いた気がする、これはひどい。</p>
+
+<p>適当なファイルをコンパイルしてみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Running</span> <span class="s2">&quot;typescript:compile&quot;</span> <span class="p">(</span><span class="nx">typescript</span><span class="p">)</span> <span class="nx">task</span>
+</span><span class='line'><span class="nx">Warning</span><span class="o">:</span> <span class="nb">Object</span> <span class="nx">module</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Fuga</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span> <span class="nx">has</span> <span class="nx">no</span> <span class="nx">method</span> <span class="s1">&#39;contents&#39;</span> <span class="nx">Use</span> <span class="o">--</span><span class="nx">force</span> <span class="nx">to</span> <span class="k">continue</span><span class="p">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Aborted</span> <span class="nx">due</span> <span class="nx">to</span> <span class="nx">warnings</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>うーん、なんか駄目っぽい。
+普通に<code>tsc</code>でコンパイルする分にはいけるので、追う意味あんまりないし、<code>tsc</code>でコンパイルしよう。</p>
+
+<h2>grunt-exec</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">npm</span> <span class="nx">install</span> <span class="nx">grunt</span><span class="o">-</span><span class="nx">exec</span> <span class="o">--</span><span class="nx">save</span><span class="o">-</span><span class="nx">dev</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Gruntfileはこんな感じで</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">tsc = </span><span class="s">&quot;path/to/tsc&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">module.exports = </span><span class="nf">(grunt) -&gt;</span>
+</span><span class='line'>    <span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span>
+</span><span class='line'>        <span class="nv">pkg: </span><span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">readJSON</span> <span class="s">&#39;package.json&#39;</span>
+</span><span class='line'>        <span class="nv">exec:</span>
+</span><span class='line'>            <span class="nv">compile:</span>
+</span><span class='line'>                <span class="nv">cmd: </span><span class="nf">() -&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/src --declaration src/*.ts&quot;</span>
+</span><span class='line'>            <span class="nv">test:</span>
+</span><span class='line'>                <span class="nv">cmd: </span><span class="nf">() -&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/test test/*.ts&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">grunt</span><span class="p">.</span><span class="nx">loadNpmTasks</span> <span class="s">&#39;grunt-exec&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>コンパイルできた！</p>
+
+<p>あとはgruntのエイリアスよしなにして、とりあえずこれで使えそう。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptのコーディング規約を考える]]></title>
@@ -3737,236 +3906,6 @@ TypeScriptに<code>module</code>って機能があるんですが、こいつで
 <p>一番いい解説を頼む。</p>
 
 <p>(誰も知らなさそうなら公式に投げてみようと思います。)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[テスト書きながらTypeScript書ける環境作る]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/24/test-driven-typescript/"/>
-    <updated>2013-03-24T19:33:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/24/test-driven-typescript</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScriptを書いています。
-というのもBackbone、というかJavaScriptでのMVCにガッツリと関わるような状況になってしまったので、
-触ってるだけでもわからんとこ多いし、勉強がてらTypeScriptでクローンつくってみるかーという感じです。</p>
-
-<p>そこで、テストを書きたいわけなんですが、TypeScriptのテスト環境の情報が少ないので、手探りでやったところまで記録しておきます。</p>
-
-<p><a href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/">前回、Mocha + Testem + HTMLCov</a> で基礎的な部分を作ったので、これをベースにします。
-なのでこれにTypeScriptのコンパイルやらを乗せていく感じです。</p>
-
-<p><a href="https://github.com/yaakaito/typebone">リポジトリはgithubにある</a>ので、見ながら読むと分かりやすいかもしれません。</p>
-
-<h2>TypeScriptのコンパイル</h2>
-
-<p>TypeScriptのコンパイルには <code>tsc</code> を使うので、npmで入れます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g tsc</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>tsc</code> でコンパイルする時に、<code>--out</code> オプションを付けると <code>refrence</code> を解決しながらビルドしてくれます。
-で、これは流儀的にどうなのかは分からないんですが、これを利用して、コンパイル対象は <code>reference</code> するだけにしました。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/backbone.ts</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;events.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;model.ts&quot; /&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とりあえず<code>Backbone.Events</code>と<code>Backbone.Model</code>だけ用意します。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/events.ts</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/underscore.d.ts&quot; /&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Events</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ....</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/model.ts</span>
-</span><span class='line'><span class="nx">module</span> <span class="nx">Backbone</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Model</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ....</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こういう感じにしておいて、以下のコマンドでビルドします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>すると、<code>backbone.js</code>に <code>events.ts</code> と <code>models.ts</code> をコンパイルして、依存を解決したものが吐き出されます。
-これには <code>underscore</code> は含まれません。</p>
-
-<h2>テスト用のビルドとTestem</h2>
-
-<p>テストもTypeScriptで書きます。といっても、Mochaを使うので、ほとんどJavaScriptになります。</p>
-
-<h3>【追記】d.tsファイルについて</h3>
-
-<p>TypeScriptからMocha(JavaScript)を利用する為に、<code>d.ts</code>というファイルが必要になります。
-これは安全に既存のJavaScriptをTypeScriptから利用する為の仕組みです。</p>
-
-<p><code>d.ts</code> ファイル自体はただのテキストで、コードと対して変わらないです。</p>
-
-<p>入手方法としては自分で書く(ある程度自動生成できるっぽい？)、他の人が作ったものを使う、<a href="http://www.tsdpm.com/">tsd</a>を利用するの3つがあります。
-tsdは<code>d.ts</code>のパッケージマネージャみたいなものなんですが、僕はそこまで大げさなものじゃないよなーと思っているので、適当に拾ってきて突っ込んでいます。(あんまりツール的なの増やしたくないのもある。)</p>
-
-<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a> を見ると有名どころは大体揃ってるので、ほとんどの場合はここから取得すれば済むと思います。
-mochaとchaiはこの中になかったので、僕は下のを使ってます。</p>
-
-<p><a href="https://gist.github.com/muratg/4163650">mocha.d.ts</a> | <a href="https://github.com/TobiaszCudnik/asyncmachine/blob/master/headers/chai.d.ts">chai.d.ts</a></p>
-
-<h3>テストを書く</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/events-test.ts</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../src/events.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/mocha.d.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vendor/chai.d.ts&quot; /&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Backbone.Events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;test name&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class='line'>    <span class="c1">// ....</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>test/bootstrap.ts</code> みたいなのを作って、こっちも <code>reference</code> だけにします。(<code>expect</code>のexportだけ書いてます。)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;events-tests.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../vender/chai.d.ts&quot; /&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">expect</span> <span class="o">=</span> <span class="nx">chai</span><span class="p">.</span><span class="nx">expect</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これをビルドします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">ts</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで、全部の<code>reference</code>が解決されると、さっきの<code>backbone.js</code>の下にテストが丸々ついたようなファイルが生成されます。
-これをTestemに食わせます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// testem.json</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;framework&quot;</span> <span class="o">:</span> <span class="s2">&quot;mocha&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;src_files&quot;</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>    <span class="s2">&quot;vendor/chai.js&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;vendor/underscore.js&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;backbone.test.js&quot;</span>
-</span><span class='line'>  <span class="p">]</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これでTestemでテストできるようになりました、<code>tsc</code> には <code>watch</code> があるので、これを使って 変更監視 -> 自動コンパイル -> テスト自動実行 というすてき環境を作ります。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">tsc</span> <span class="o">--</span><span class="nx">watch</span> <span class="o">-</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">test</span><span class="p">.</span><span class="nx">js</span> <span class="nx">test</span><span class="o">/</span><span class="nx">bootstrap</span><span class="p">.</span><span class="nx">js</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>やったー！これでいける！
-・・・と思ったんですが、どうもちゃんと <code>watch</code> が動いていなくて、うまくコンパイルできません。
-なので<a href="https://github.com/yaakaito/typebone/blob/master/Guardfile">Guardで代用</a>しました。</p>
-
-<p>ちょっと面倒ですが、すてき環境ができましたね！</p>
-
-<h2>カバレッジ</h2>
-
-<p>カバレッジをとるときは、<code>backbone.js</code>側に<code>jscoverage</code>をかける必要があるので、別々にコンパイルが必要です。
-となると、さっきの <code>test/bootstrap.js</code> なんかで依存関係を解決しながらコンパイルできないので、個別にコンパイルします。
-個別にコンパイルしたテストを全部 <code>cat</code>で繋げて、<code>all-tests.js</code> みたいなのを作ります。あとは前回を参考にしてください。</p>
-
-<p>Makefileにするとこんな感じ</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">compile</span><span class="o">:</span>
-</span><span class='line'>  <span class="nx">tsc</span> <span class="o">--</span><span class="nx">out</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">src</span><span class="o">/</span><span class="nx">backbone</span><span class="p">.</span><span class="nx">ts</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">compile</span><span class="o">-</span><span class="nx">test</span><span class="o">:</span>
-</span><span class='line'>  <span class="nx">tsc</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">ts</span>
-</span><span class='line'>  <span class="nx">cat</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span> <span class="o">&gt;</span> <span class="nx">all</span><span class="o">-</span><span class="nx">tests</span><span class="p">.</span><span class="nx">js</span>
-</span><span class='line'>  <span class="nx">rm</span> <span class="nx">test</span><span class="o">/*</span><span class="p">.</span><span class="nx">js</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">cover</span><span class="o">:</span> <span class="nx">compile</span> <span class="nx">compile</span><span class="o">-</span><span class="nx">test</span>
-</span><span class='line'>  <span class="nx">jscoverage</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">js</span> <span class="nx">backbone</span><span class="p">.</span><span class="nx">cover</span><span class="p">.</span><span class="nx">js</span>
-</span><span class='line'>  <span class="nx">mocha</span><span class="o">-</span><span class="nx">phantomjs</span> <span class="o">-</span><span class="nx">R</span> <span class="nx">json</span><span class="o">-</span><span class="nx">cov</span> <span class="nx">cover</span><span class="o">-</span><span class="nx">runner</span><span class="p">.</span><span class="nx">html</span> <span class="o">|</span> <span class="nx">json2htmlcov</span> <span class="o">&gt;</span> <span class="nx">cover</span><span class="p">.</span><span class="nx">html</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>とりあえず</h2>
-
-<p>こんな感じで一旦は不満なく開発できる環境ができました。</p>
-
-<p>TypeScriptまだ勝手がよく分かってないので、コードはあんまり見ないでーーー＾ー＾</p>
-
-<p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
-無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
-なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
 ]]></content>
   </entry>
   

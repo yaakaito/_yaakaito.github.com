@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-08T14:29:05+09:00</updated>
+  <updated>2013-05-16T01:40:55+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,133 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScript0.9をNode+Gruntで使うよ]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node/"/>
+    <updated>2013-05-16T00:52:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/16/using-typescript-09-on-node</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScript0.9がちょっと前に出ましたね。
+npm経由でインストールできなくてだるいので使ってなかったんですが、0.9の機能試したくなったのでがんばって使えるようにすることにしました。</p>
+
+<h2>TypeScriptのコンパイル</h2>
+
+<p>developをコンパイルすると大体いい感じだと思うのでそうしましょう。
+この辺は<a href="http://typescript.codeplex.com/wikipage?title=Build%20The%20Source&amp;referringTitle=Home">本家にも載ってますね</a>。リポジトリでけぇ。
+<code>jake</code>が必要なのでいれます。</p>
+
+<p><code>
+$ npm install -g jake
+$ git clone https://git01.codeplex.com/typescript
+$ cd typescript
+$ git checkout develop
+$ jake local
+$ chmod +x bin/tsc
+</code></p>
+
+<p>これで <code>typescript/bin/tsc</code> が使えるようになります。</p>
+
+<p>```
+$ ./bin/tsc
+Version 0.9.0.0
+Syntax:   tsc [options] [file ..]</p>
+
+<p>Examples: tsc hello.ts</p>
+
+<pre><code>      tsc --out foo.js foo.ts
+      tsc @args.txt
+</code></pre>
+
+<p>// ...
+```</p>
+
+<p>やったー！！</p>
+
+<h2>grunt-typescript</h2>
+
+<p>普段のビルドは<code>grunt-typesript</code>を使っているので、これが動くと便利な訳です。
+どういう指定になってるのかなーと見てみたら、</p>
+
+<p>```javascript
+resolveTypeScriptBinPath = function (currentPath, depth) {</p>
+
+<pre><code>var targetPath = path.resolve(__dirname,
+    (new Array(depth + 1)).join("../../"),
+    "../node_modules/typescript/bin");
+if (path.resolve(currentPath, "node_modules/typescript/bin").length &gt; targetPath.length) {
+    return;
+}
+if (fs.existsSync(path.resolve(targetPath, "typescript.js"))) {
+    return targetPath;
+}
+
+return resolveTypeScriptBinPath(currentPath, ++depth);
+</code></pre>
+
+<p>}
+```</p>
+
+<p>なるほど？
+つまりはこいつのnode_moduleに入ってるtypescriptを丸ごと置き換えちゃえば動くんじゃないかなーーーーーーーーやっちゃえーーーーーー＾ー＾</p>
+
+<p><code>
+$ rm /path/to/grunt-typescript/node_modules/typescript
+$ cp -r typescript /path/to/grunt-typescript/node_modules
+</code></p>
+
+<p>動いた気がする、これはひどい。</p>
+
+<p>適当なファイルをコンパイルしてみる。</p>
+
+<p>```
+Running "typescript:compile" (typescript) task
+Warning: Object module Hoge {</p>
+
+<pre><code>export class Fuga {
+    constructor(public a: string) { }
+}
+</code></pre>
+
+<p>} has no method 'contents' Use --force to continue.</p>
+
+<p>Aborted due to warnings.
+```</p>
+
+<p>うーん、なんか駄目っぽい。
+普通に<code>tsc</code>でコンパイルする分にはいけるので、追う意味あんまりないし、<code>tsc</code>でコンパイルしよう。</p>
+
+<h2>grunt-exec</h2>
+
+<p><code>
+$ npm install grunt-exec --save-dev
+</code></p>
+
+<p>Gruntfileはこんな感じで</p>
+
+<p>```coffeescript
+tsc = "path/to/tsc"</p>
+
+<p>module.exports = (grunt) -></p>
+
+<pre><code>grunt.initConfig
+    pkg: grunt.file.readJSON 'package.json'
+    exec:
+        compile:
+            cmd: () -&gt; "#{tsc} --out compiled/src --declaration src/*.ts"
+        test:
+            cmd: () -&gt; "#{tsc} --out compiled/test test/*.ts"
+
+grunt.loadNpmTasks 'grunt-exec'
+</code></pre>
+
+<p>```</p>
+
+<p>コンパイルできた！</p>
+
+<p>あとはgruntのエイリアスよしなにして、とりあえずこれで使えそう。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptのコーディング規約を考える]]></title>
@@ -903,43 +1030,6 @@ connect:</p>
 <li>いままで似たような事を、ちゃんとやっていたJavaScripterな方にはかなりおすすめです</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TypeScript + SourceMap でデバッグしてみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap/"/>
-    <updated>2013-03-28T03:43:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-SourceMap便利ですよね！TypeScriptでも使ってみましょう。</p>
-
-<p>といってもそんなにやることないです。
-<code>tsc</code>でコンパイルするときに <code>--sourcemap</code> オプションをつけてあげれば生成されます。</p>
-
-<p><code>
-$ tsc &lt;file&gt; --sourcemap
-</code></p>
-
-<p>単体で吐いてもいいですが、<a href="https://github.com/yaakaito/typebone">前から使ってこのリポジトリ</a>みたいに、<code>reference</code>だけしてるファイルをコンパイルしているような場合でも、ちゃんと吐いてくれます。</p>
-
-<p><code>
-$ tsc --out backbone.test.js test/bootstrap.ts --sourcemap
-</code></p>
-
-<p>こんな感じにすると、<code>backbone.test.js.map</code>が出てくるので、Chormeで使ってみましょう。</p>
-
-<p><img src="/images/ts-sourcemap-setting.png"></p>
-
-<p><code>Enable source maps</code>をonにして、</p>
-
-<p><img src="/images/ts-sourcemap-show.png"></p>
-
-<p>読み込めばこんな感じに<code>.ts</code>が出てくるので、</p>
-
-<p><img src="/images/ts-sourcemap-debug.png"></p>
-
-<p>BP打つなりして使います、便利ですね！</p>
 ]]></content>
   </entry>
   
