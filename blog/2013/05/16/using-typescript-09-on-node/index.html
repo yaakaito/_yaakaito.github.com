@@ -230,9 +230,9 @@ npm経由でインストールできなくてだるいので使ってなかっ�
 </span><span class='line'>        <span class="nv">pkg: </span><span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">readJSON</span> <span class="s">&#39;package.json&#39;</span>
 </span><span class='line'>        <span class="nv">exec:</span>
 </span><span class='line'>            <span class="nv">compile:</span>
-</span><span class='line'>                <span class="nv">cmd: </span><span class="nf">() -&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/src --declaration src/*.ts&quot;</span>
+</span><span class='line'>                <span class="nv">cmd: </span><span class="o">-&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/src --declaration src/*.ts&quot;</span>
 </span><span class='line'>            <span class="nv">test:</span>
-</span><span class='line'>                <span class="nv">cmd: </span><span class="nf">() -&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/test test/*.ts&quot;</span>
+</span><span class='line'>                <span class="nv">cmd: </span><span class="o">-&gt;</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tsc</span><span class="si">}</span><span class="s"> --out compiled/test test/*.ts&quot;</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="nx">grunt</span><span class="p">.</span><span class="nx">loadNpmTasks</span> <span class="s">&#39;grunt-exec&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
