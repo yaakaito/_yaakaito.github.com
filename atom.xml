@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-16T01:53:58+09:00</updated>
+  <updated>2013-05-16T14:53:43+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,223 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptのGenerics試してみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/16/typescript-generics/"/>
+    <updated>2013-05-16T06:34:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/16/typescript-generics</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScript0.9alpha使える環境作ったのでジェネリクス試すよ！
+<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identify</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
+
+<h2>使い方</h2>
+
+<p><code>class</code>か<code>interface</code>で名前与えられたものと、<code>string</code> <code>number</code> なんかを使う事が出来ます。
+シンタックスはよくある感じで、特に違和感もない。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">value</span><span class="o">:</span> <span class="nx">T</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">NumberIdentify</span> <span class="kr">implements</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">StringIdentify</span> <span class="kr">implements</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">numberIdentify</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NumberIdentify</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">stringIdentify</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">StringIdentify</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>クラスのときはこんな感じ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identify</span><span class="o">:</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>推論</h2>
+
+<p>上の<code>Entity</code>みたいなやつの場合、コンストラクタで推論してくれる。
+さっき作った<code>numberIdentify</code>を使ってみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これの<code>identify</code>を<code>stringIdentify</code>で上書きしようとすると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</span><span class='line'><span class="nx">entity</span><span class="p">.</span><span class="nx">identify</span> <span class="o">=</span> <span class="nx">stringIdentify</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こうなる</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">error</span> <span class="nx">TS2012</span><span class="o">:</span> <span class="nx">Cannot</span> <span class="nx">convert</span> <span class="s1">&#39;StringIdentify&#39;</span> <span class="nx">to</span> <span class="s1">&#39;NumberIdentify&#39;</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">Types</span> <span class="nx">of</span> <span class="nx">property</span> <span class="s1">&#39;value&#39;</span> <span class="nx">of</span> <span class="nx">types</span> <span class="s1">&#39;StringIdentify&#39;</span> <span class="nx">and</span> <span class="s1">&#39;NumberIdentify&#39;</span> <span class="nx">are</span> <span class="nx">incompatible</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>やりましたね！</p>
+
+<p>もちろんですが、こういう風にも書けます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>推論できない場合には明示的に書く必要があります。</p>
+
+<h2>ネスト</h2>
+
+<p>ネストも出来ます。<code>Repository</code>を考えたときに、これは<code>Entity&lt;T&gt;</code>の集合なので、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こう書けます。
+本体もとりあえず書いてみる。(めんどくさいし説明用なので、ただ<code>value</code>にいれて返すだけにした)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">E</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">store</span><span class="p">(</span><span class="nx">entity</span><span class="o">:</span> <span class="nx">E</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">findByIdentify</span><span class="p">(</span><span class="nx">identify</span><span class="o">:</span> <span class="nx">I</span><span class="p">)</span><span class="o">:</span> <span class="nx">E</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これの場合は推論できないので、このクラスを直接使う場合は、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">repository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'><span class="nx">repository</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">entity</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じになります。</p>
+
+<h2>もうちょっと書いてみる</h2>
+
+<p>ここまでのを元に<code>Person</code>モデルと<code>PersonRepository</code>を作ってみる、実装はない。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Person</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identify</span><span class="o">:</span> <span class="nx">NumberIdentify</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kr">super</span><span class="p">(</span><span class="nx">identify</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">PersonRepository</span> <span class="kr">extends</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Person</span><span class="p">,</span> <span class="nx">NumberIdentify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">personRepository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonRepository</span><span class="p">();</span>
+</span><span class='line'><span class="nx">repository</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ。</p>
+
+<h2>関数</h2>
+
+<p>引数の前に書く。</p>
+
+<h2>ところで・・・</h2>
+
+<p>試してて途中で気づいたんだけど、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Fuga</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hoge</span><span class="o">:</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Fuga</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これが通るようになってた。で、2時間くらいハマってた。空のクラス定義にすると<code>Array&lt;Hoge&gt;</code>に<code>array.push("ばーか")</code>とかできるよ、やりましたね。
+試したのは<code>release-0.9.0-alpha</code>と<code>develop@c3835ab</code>で、どっちも通った。</p>
+
+<p>これって<code>0.8.x</code>だと<code>Cannot convert 'Fuga' to 'Hoge'</code>とかで通らなくて、やりたいなら<code>Interface</code>通してね、
+みたいな感じになってたと思うんだけど、変更あったんだろうか？
+いくらか探してみたんだけど、それっぽいものを見つけられなくて、よくわかっていない。
+眠いし見落としてる可能性もあるので、知ってる人いたら教えてほしい。
+挙動は分からんでもないし、バグかなーと思ったんだけど、さすがにテストでこけるんじゃぁ・・・的な。ツッコミなければ投げるつもり。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScript0.9alphaをMac+Gruntで使うよ]]></title>
@@ -3697,215 +3914,6 @@ SourceMap便利ですよね！TypeScriptでも使ってみましょう。</p>
 
 <p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
 Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[【解決した】TypeScriptで複数ファイルに渡って同一moduleを定義したくてハマってる]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/25/typescript-module-division-files/"/>
-    <updated>2013-03-25T08:42:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/25/typescript-module-division-files</id>
-    <content type="html"><![CDATA[<h2>解決した</h2>
-
-<p>どうも俺が0.8.3だと思っていた<code>tsc</code>は0.8.0だった。
-バージョンが古いなんて生易しいもんじゃねぇ、気がついたらnode環境がぶっ壊れていた、何を言っているかわからねーと思うが(ry
-npm listで出てくるtscと、パスが通ってるtscが違った。とりあえず直した、お騒がせしました。</p>
-
-<p>本来下に書いてある</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="kr">export</span> <span class="kd">var</span> <span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>というのは、0.8.3時点でコンパイルでエラーになるようになっています、<code>Hoge</code>をexportしろ、とのことです。
-で、Hogeの中でさらにインナークラスとか呼んでると、それもexportしなくちゃいけなくてヤダーなので、ほしいメソッドだけ<code>interface</code>にしました。</p>
-
-<p>あと、<code>reference</code>を反対にするとなんかおかしい問題は健在っぽいです。
-いろいろ邪推してみましたが、それにあんまり意味はないので、issueにしてこようと思います。</p>
-
-<hr />
-
-<p>　</p>
-
-<p>こんにちは！うきょーです！分からないので誰か教えてください。
-TypeScriptに<code>module</code>って機能があるんですが、こいつでハマってる。</p>
-
-<p>というのもこれって、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいにしておくと、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">A</span><span class="p">;</span>
-</span><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">A</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">function</span> <span class="nx">Hoge</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="nx">Hoge</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">})();</span>
-</span><span class='line'><span class="p">})(</span><span class="nx">A</span> <span class="o">||</span> <span class="p">(</span><span class="nx">A</span> <span class="o">=</span> <span class="p">{}));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こうなるわけ。
-で、<code>module</code>は複数のファイルに渡って同一のものを定義できるらしい。
-実際そういう感じになっているし、そうなんだろう、分かる。</p>
-
-<p>問題はこのモジュール内で変数定義しようとしたときに起こった。
-例えばシングルトン的な感じでオブジェクトを外に出したいときに、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="kr">export</span> <span class="kd">var</span> <span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とすれば、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">A</span><span class="p">;</span>
-</span><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">A</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kd">function</span> <span class="nx">Hoge</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="nx">Hoge</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">})();</span>
-</span><span class='line'>    <span class="nx">A</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
-</span><span class='line'><span class="p">})(</span><span class="nx">A</span> <span class="o">||</span> <span class="p">(</span><span class="nx">A</span> <span class="o">=</span> <span class="p">{}));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>となる、ここまではよい。
-もう一個同じ<code>module</code>を実装しているファイルがあるとする、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">class</span> <span class="nx">Fuga</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で、この二つを個別にコンパイルする分には何も起こらないし、普通に実行できてるっぽいんだけど、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// ...</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="kr">export</span> <span class="kd">var</span> <span class="nx">hoge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Hoge</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という風にreferenceすると <code>export var hoge = new Hoge();</code> でHogeが見つからなくなる。真上にあるが・・・。</p>
-
-<p>例えばこういう感じにしてビルドしてみても駄目。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;Hogeの方.ts&quot; /&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>なんだけど、順番を入れ替えると・・・</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;Hogeの方.ts&quot; /&gt;</span>
-</span><span class='line'><span class="c1">/// &lt;reference path=&quot;Fugaの方.ts&quot; /&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>なんか知らんが通る。そんな参照で大丈夫か？</p>
-
-<p>要するに、コンパイルするときに</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">module</span> <span class="nx">A</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という状態になると、二番目以降の<code>module</code>内で参照が死ぬ。
-けど<code>class</code>とかでプロパティに持つ分には大丈夫という謎状況。</p>
-
-<p>バグなのかな、バグならバグでよいんだけど。</p>
-
-<p>で、ここまで説明してきたんだけど、これエラーは出るけど、コンパイルはちゃんと通った跡がある、どっちやねん。</p>
-
-<p>一番いい解説を頼む。</p>
-
-<p>(誰も知らなさそうなら公式に投げてみようと思います。)</p>
 ]]></content>
   </entry>
   
