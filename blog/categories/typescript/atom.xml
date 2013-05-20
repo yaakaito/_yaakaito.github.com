@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-20T17:14:58+09:00</updated>
+  <updated>2013-05-21T00:38:53+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -150,7 +150,7 @@ error TS2081: Supplied parameters do not match any signature of call target.
     <updated>2013-05-16T06:34:00+09:00</updated>
     <id>http://yaakaito.org/blog/2013/05/16/typescript-generics</id>
     <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScript0.9alpha使える環境作ったのでジェネリクス試すよ！
-<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identify</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
+<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identity</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
 
 <h2>使い方</h2>
 
@@ -158,37 +158,37 @@ error TS2081: Supplied parameters do not match any signature of call target.
 シンタックスはよくある感じで、特に違和感もない。</p>
 
 <p>```javascript
-interface Identify<T> {</p>
+interface Identity<T> {</p>
 
 <pre><code>value: T;
 </code></pre>
 
 <p>}</p>
 
-<p>class NumberIdentify implements Identify<number> {</p>
+<p>class NumberIdentity implements Identity<number> {</p>
 
 <pre><code>constructor(public value: number) { }
 </code></pre>
 
 <p>}</p>
 
-<p>class StringIdentify implements Identify<string> {</p>
+<p>class StringIdentity implements Identity<string> {</p>
 
 <pre><code>constructor(public value: string) { }
 </code></pre>
 
 <p>}</p>
 
-<p>var numberIdentify = new NumberIdentify(1);
-var stringIdentify = new StringIdentify("A");
+<p>var numberIdentity = new NumberIdentity(1);
+var stringIdentity = new StringIdentity("A");
 ```</p>
 
 <p>クラスのときはこんな感じ。</p>
 
 <p>```javascript
-class Entity<T extends Identify> {</p>
+class Entity<T extends Identity> {</p>
 
-<pre><code>constructor(public identify: T) { }
+<pre><code>constructor(public identity: T) { }
 </code></pre>
 
 <p>}
@@ -197,24 +197,24 @@ class Entity<T extends Identify> {</p>
 <h2>推論</h2>
 
 <p>上の<code>Entity</code>みたいなやつの場合、コンストラクタで推論してくれる。
-さっき作った<code>numberIdentify</code>を使ってみる。</p>
+さっき作った<code>numberIdentity</code>を使ってみる。</p>
 
 <p><code>javascript
-var entity = new Entity(numberIdentify);
+var entity = new Entity(numberIdentity);
 </code></p>
 
-<p>これの<code>identify</code>を<code>stringIdentify</code>で上書きしようとすると、</p>
+<p>これの<code>identity</code>を<code>stringIdentity</code>で上書きしようとすると、</p>
 
 <p><code>javascript
-var entity = new Entity(numberIdentify);
-entity.identify = stringIdentify;
+var entity = new Entity(numberIdentity);
+entity.identity = stringIdentity;
 </code></p>
 
 <p>こうなる</p>
 
 <p><code>
-error TS2012: Cannot convert 'StringIdentify' to 'NumberIdentify':
-  Types of property 'value' of types 'StringIdentify' and 'NumberIdentify' are incompatible.
+error TS2012: Cannot convert 'StringIdentity' to 'NumberIdentity':
+  Types of property 'value' of types 'StringIdentity' and 'NumberIdentity' are incompatible.
 </code></p>
 
 <p>やりましたね！</p>
@@ -222,7 +222,7 @@ error TS2012: Cannot convert 'StringIdentify' to 'NumberIdentify':
 <p>もちろんですが、こういう風にも書けます。</p>
 
 <p><code>javascript
-var entity = new Entity&lt;NumberIdentify&gt;(numberIdentify);
+var entity = new Entity&lt;NumberIdentity&gt;(numberIdentity);
 </code></p>
 
 <p>推論できない場合には明示的に書く必要があります。</p>
@@ -232,7 +232,7 @@ var entity = new Entity&lt;NumberIdentify&gt;(numberIdentify);
 <p>ネストも出来ます。<code>Repository</code>を考えたときに、これは<code>Entity&lt;T&gt;</code>の集合なので、</p>
 
 <p><code>javascript
-class Repository&lt;E extends Entity&lt;I&gt;, I extends Identify&gt; {
+class Repository&lt;E extends Entity&lt;I&gt;, I extends Identity&gt; {
 }
 </code></p>
 
@@ -240,7 +240,7 @@ class Repository&lt;E extends Entity&lt;I&gt;, I extends Identify&gt; {
 本体もとりあえず書いてみる。(めんどくさいし説明用なので、ただ<code>value</code>にいれて返すだけにした)</p>
 
 <p>```javascript
-class Repository<E extends Entity<I>, I extends Identify> {</p>
+class Repository<E extends Entity<I>, I extends Identity> {</p>
 
 <pre><code>public value: E = null;
 
@@ -248,7 +248,7 @@ store(entity: E) {
     this.value = entity;
 }
 
-findByIdentify(identify: I): E {
+findByIdentity(identity: I): E {
     return this.value;
 }
 </code></pre>
@@ -259,7 +259,7 @@ findByIdentify(identify: I): E {
 <p>これの場合は推論できないので、このクラスを直接使う場合は、</p>
 
 <p><code>javascript
-var repository = new Repository&lt;Entity&lt;NumberIdentify&gt;, NumberIdentify&gt;();
+var repository = new Repository&lt;Entity&lt;NumberIdentity&gt;, NumberIdentity&gt;();
 repository.store(entity);
 </code></p>
 
@@ -270,19 +270,19 @@ repository.store(entity);
 <p>ここまでのを元に<code>Person</code>モデルと<code>PersonRepository</code>を作ってみる、実装はない。</p>
 
 <p>```javascript
-class Person extends Entity<NumberIdentify> {</p>
+class Person extends Entity<NumberIdentity> {</p>
 
-<pre><code>constructor(public identify: NumberIdentify) {
-    super(identify);
+<pre><code>constructor(public identity: NumberIdentity) {
+    super(identity);
 }
 </code></pre>
 
 <p>}</p>
 
-<p>class PersonRepository extends Repository&lt;Person, NumberIdentify> {
+<p>class PersonRepository extends Repository&lt;Person, NumberIdentity> {
 }</p>
 
-<p>var person = new Person(numberIdentify);
+<p>var person = new Person(numberIdentity);
 var personRepository = new PersonRepository();
 repository.store(person);
 ```</p>
@@ -530,7 +530,7 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 
 <p>var name: string = Names.at(0);</p>
 
-<p>public name: string = null;
+<p>name: string = null;
 ```</p>
 
 <h3>関数の返り値</h3>
@@ -541,11 +541,11 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 
 
 <p>```
-public voidFunction() {</p>
+voidFunction() {</p>
 
 <p>}</p>
 
-<p>public stringFunction(): string {</p>
+<p>stringFunction(): string {</p>
 
 <pre><code>return "hoge";
 </code></pre>
@@ -663,13 +663,41 @@ var name: string = names[0];
 
 
 <p>```
-class Hoge {</p>
+class Person {</p>
 
-<pre><code>public fullName: string;
+<pre><code>fullName: string;
 
 constructor(public firstName: string, public lastName: string, private age: number) {
     this.fullName = [firstName, lastName].join(" ");
 }
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>追加</h2>
+
+<ul>
+<li>プロパティやメソッドが<code>public</code>である場合、<code>public</code>を明記しない。
+
+<ul>
+<li>コンストラクタでのプロパティ宣言は明記する。
+これは書いても書かなくともよくて(省略された場合は自動的に<code>public</code>)、好みだと思うんだけど、最近Scalaを書くようになって、あっちが<code>public</code>はない、というルールなので、それに合わせる事に。</li>
+</ul>
+</li>
+</ul>
+
+
+<p>```javascript
+class Person {</p>
+
+<pre><code>fullName: string;
+private room: Room = null;
+constructor(public firstName: string, public lastName: string, private age: number) {
+    this.fullName = [firstName, lastName].join(" ");
+}
+openDoor() { }
+private lookDoor() { }
 </code></pre>
 
 <p>}

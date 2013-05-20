@@ -152,7 +152,7 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 </span><span class='line'>
 </span><span class='line'><span class="kd">var</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="nx">Names</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'><span class="kr">public</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="nx">name</span><span class="o">:</span> <span class="nx">string</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -170,11 +170,11 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">public</span> <span class="nx">voidFunction</span><span class="p">()</span> <span class="p">{</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">voidFunction</span><span class="p">()</span> <span class="p">{</span>
 </span><span class='line'>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kr">public</span> <span class="nx">stringFunction</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span> <span class="p">{</span>
+</span><span class='line'><span class="nx">stringFunction</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span> <span class="p">{</span>
 </span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;hoge&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -304,12 +304,46 @@ JavaScriptほどあーだーこーだというものでもないと思うので�
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kr">public</span> <span class="nx">fullName</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Person</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">fullName</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">firstName</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="kr">public</span> <span class="nx">lastName</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="kr">private</span> <span class="nx">age</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">fullName</span> <span class="o">=</span> <span class="p">[</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
 </span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>追加</h2>
+
+<ul>
+<li>プロパティやメソッドが<code>public</code>である場合、<code>public</code>を明記しない。
+
+<ul>
+<li>コンストラクタでのプロパティ宣言は明記する。
+これは書いても書かなくともよくて(省略された場合は自動的に<code>public</code>)、好みだと思うんだけど、最近Scalaを書くようになって、あっちが<code>public</code>はない、というルールなので、それに合わせる事に。</li>
+</ul>
+</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Person</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">fullName</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="kr">private</span> <span class="nx">room</span><span class="o">:</span> <span class="nx">Room</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">firstName</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="kr">public</span> <span class="nx">lastName</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="kr">private</span> <span class="nx">age</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">fullName</span> <span class="o">=</span> <span class="p">[</span><span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">openDoor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>    <span class="kr">private</span> <span class="nx">lookDoor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 

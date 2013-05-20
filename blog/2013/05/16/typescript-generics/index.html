@@ -10,7 +10,7 @@
 
   
   <meta name="description" content="こんにちは！うきょーです！TypeScript0.9alpha使える環境作ったのでジェネリクス試すよ！
-typescript-dddbaseというのをはじめていたので、これを0.9対応することを見越して、Identify Entity Repositoryをジェネリクス使って考えてみる。 使い方 &hellip;">
+typescript-dddbaseというのをはじめていたので、これを0.9対応することを見越して、Identity Entity Repositoryをジェネリクス使って考えてみる。 使い方 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,7 +80,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 
 
 <div class="entry-content"><p>こんにちは！うきょーです！TypeScript0.9alpha使える環境作ったのでジェネリクス試すよ！
-<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identify</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
+<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identity</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
 
 <h2>使い方</h2>
 
@@ -101,20 +101,20 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">Identity</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="nx">value</span><span class="o">:</span> <span class="nx">T</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kr">class</span> <span class="nx">NumberIdentify</span> <span class="kr">implements</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'><span class="kr">class</span> <span class="nx">NumberIdentity</span> <span class="kr">implements</span> <span class="nx">Identity</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kr">class</span> <span class="nx">StringIdentify</span> <span class="kr">implements</span> <span class="nx">Identify</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'><span class="kr">class</span> <span class="nx">StringIdentity</span> <span class="kr">implements</span> <span class="nx">Identity</span><span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">numberIdentify</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NumberIdentify</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">stringIdentify</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">StringIdentify</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">numberIdentity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NumberIdentity</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">stringIdentity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">StringIdentity</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -123,8 +123,8 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identify</span><span class="o">:</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kr">extends</span> <span class="nx">Identity</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identity</span><span class="o">:</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -132,19 +132,19 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <h2>推論</h2>
 
 <p>上の<code>Entity</code>みたいなやつの場合、コンストラクタで推論してくれる。
-さっき作った<code>numberIdentify</code>を使ってみる。</p>
+さっき作った<code>numberIdentity</code>を使ってみる。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentity</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>これの<code>identify</code>を<code>stringIdentify</code>で上書きしようとすると、</p>
+<p>これの<code>identity</code>を<code>stringIdentity</code>で上書きしようとすると、</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
-</span><span class='line'><span class="nx">entity</span><span class="p">.</span><span class="nx">identify</span> <span class="o">=</span> <span class="nx">stringIdentify</span><span class="p">;</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">numberIdentity</span><span class="p">);</span>
+</span><span class='line'><span class="nx">entity</span><span class="p">.</span><span class="nx">identity</span> <span class="o">=</span> <span class="nx">stringIdentity</span><span class="p">;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -152,8 +152,8 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">error</span> <span class="nx">TS2012</span><span class="o">:</span> <span class="nx">Cannot</span> <span class="nx">convert</span> <span class="s1">&#39;StringIdentify&#39;</span> <span class="nx">to</span> <span class="s1">&#39;NumberIdentify&#39;</span><span class="o">:</span>
-</span><span class='line'>  <span class="nx">Types</span> <span class="nx">of</span> <span class="nx">property</span> <span class="s1">&#39;value&#39;</span> <span class="nx">of</span> <span class="nx">types</span> <span class="s1">&#39;StringIdentify&#39;</span> <span class="nx">and</span> <span class="s1">&#39;NumberIdentify&#39;</span> <span class="nx">are</span> <span class="nx">incompatible</span><span class="p">.</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">error</span> <span class="nx">TS2012</span><span class="o">:</span> <span class="nx">Cannot</span> <span class="nx">convert</span> <span class="s1">&#39;StringIdentity&#39;</span> <span class="nx">to</span> <span class="s1">&#39;NumberIdentity&#39;</span><span class="o">:</span>
+</span><span class='line'>  <span class="nx">Types</span> <span class="nx">of</span> <span class="nx">property</span> <span class="s1">&#39;value&#39;</span> <span class="nx">of</span> <span class="nx">types</span> <span class="s1">&#39;StringIdentity&#39;</span> <span class="nx">and</span> <span class="s1">&#39;NumberIdentity&#39;</span> <span class="nx">are</span> <span class="nx">incompatible</span><span class="p">.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -162,7 +162,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <p>もちろんですが、こういう風にも書けます。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentity</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">numberIdentity</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -174,7 +174,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identity</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -194,7 +194,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identify</span><span class="o">&gt;</span> <span class="p">{</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">E</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">I</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">I</span> <span class="kr">extends</span> <span class="nx">Identity</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="kr">public</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">E</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 </span><span class='line'>
@@ -202,7 +202,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 </span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">;</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="nx">findByIdentify</span><span class="p">(</span><span class="nx">identify</span><span class="o">:</span> <span class="nx">I</span><span class="p">)</span><span class="o">:</span> <span class="nx">E</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">findByIdentity</span><span class="p">(</span><span class="nx">identity</span><span class="o">:</span> <span class="nx">I</span><span class="p">)</span><span class="o">:</span> <span class="nx">E</span> <span class="p">{</span>
 </span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
@@ -213,7 +213,7 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">repository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">NumberIdentify</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">repository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentity</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">NumberIdentity</span><span class="o">&gt;</span><span class="p">();</span>
 </span><span class='line'><span class="nx">repository</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">entity</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -236,16 +236,16 @@ typescript-dddbaseというのをはじめていたので、これを0.9対応�
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Person</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentify</span><span class="o">&gt;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identify</span><span class="o">:</span> <span class="nx">NumberIdentify</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="kr">super</span><span class="p">(</span><span class="nx">identify</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Person</span> <span class="kr">extends</span> <span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">NumberIdentity</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">identity</span><span class="o">:</span> <span class="nx">NumberIdentity</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kr">super</span><span class="p">(</span><span class="nx">identity</span><span class="p">);</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kr">class</span> <span class="nx">PersonRepository</span> <span class="kr">extends</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Person</span><span class="p">,</span> <span class="nx">NumberIdentify</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'><span class="kr">class</span> <span class="nx">PersonRepository</span> <span class="kr">extends</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">Person</span><span class="p">,</span> <span class="nx">NumberIdentity</span><span class="o">&gt;</span> <span class="p">{</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">numberIdentify</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">numberIdentity</span><span class="p">);</span>
 </span><span class='line'><span class="kd">var</span> <span class="nx">personRepository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonRepository</span><span class="p">();</span>
 </span><span class='line'><span class="nx">repository</span><span class="p">.</span><span class="nx">store</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
