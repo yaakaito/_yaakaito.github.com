@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-16T15:12:55+09:00</updated>
+  <updated>2013-05-20T17:14:58+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,137 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptでのコンストラクタ関数の扱い]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/20/typescript-constructor-function/"/>
+    <updated>2013-05-20T16:44:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/20/typescript-constructor-function</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+JavaScriptでコンストラクタ関数を</p>
+
+<p><code>javascript
+var Hoge = function(){ }
+var Fuga = Hoge;
+var fuga = new Fuga();
+</code></p>
+
+<p>こういう感じに使うのって割とやると思うんだけど、TypeScriptだとどういう扱いになってるのか試してみる。</p>
+
+<p>tscは<code>0.9 alpha</code></p>
+
+<h2>とりあえず</h2>
+
+<p>こんな感じにしてみる</p>
+
+<p>```javascript
+class Hoge {</p>
+
+<pre><code>constructor() { }
+method() { }
+</code></pre>
+
+<p>}</p>
+
+<p>var Hoge2 = Hoge;
+```</p>
+
+<p>これは普通に通って、JavaScriptだとこうなる、普通。</p>
+
+<p>```javascript
+var Hoge = (function () {</p>
+
+<pre><code>function Hoge() {
+}
+Hoge.prototype.method = function () {
+};
+return Hoge;
+</code></pre>
+
+<p>})();</p>
+
+<p>var Hoge2 = Hoge;
+```</p>
+
+<p>ここで<code>Hoge2</code>がどういう型になっているかというと、こうなっている。</p>
+
+<p><code>
+new() =&gt; Hoge
+</code></p>
+
+<p>コンストラクタで引数を取るようにするとこうなる</p>
+
+<p>```javascript
+class Hoge {</p>
+
+<pre><code>constructor(public fuga: string) { }
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>javascript
+new(fuga: string) =&gt; Hoge
+</code></p>
+
+<p>これは普通に型として使えるので、厳密に書くと、</p>
+
+<p><code>javascript
+var Hoge2:new(fuga: string) =&gt; Hoge = Hoge;
+</code></p>
+
+<p>こういう感じになる。とりあえず問題なく扱える感じがする。</p>
+
+<h2>Genericsとの組み合わせとか</h2>
+
+<p>結構感動したのがこれ。</p>
+
+<p>```javascript
+class Hoge {</p>
+
+<pre><code>constructor() { }
+</code></pre>
+
+<p>}</p>
+
+<p>class Fuga<T> {</p>
+
+<pre><code>constructor(public TT: new() =&gt; T) { } 
+public create(): T {
+    return new this.TT();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こういう感じにすることができる。
+で、これは、</p>
+
+<p><code>javascript
+var fuga = new Fuga(Hoge);
+</code></p>
+
+<p>という感じにすると推論される。コンストラクタの形の違うクラスを使ってみると、</p>
+
+<p>```javascript
+class Foo {</p>
+
+<pre><code>constructor(public fuga: string) { }   
+</code></pre>
+
+<p>}</p>
+
+<p>var fuga2 = new Fuga(Foo);
+```</p>
+
+<p><code>
+error TS2081: Supplied parameters do not match any signature of call target.
+</code></p>
+
+<p>すごいぞTypeScript。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JavaScriptの似非オーバーロードが気に入らない]]></title>
@@ -651,132 +782,6 @@ NSLog([[error userInfo] objectForKey:@"msg"]); // えらー
 
 <p>}
 ```</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Chaplin Overview オレオレ意訳]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja/"/>
-    <updated>2013-03-15T07:22:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/15/chaplin-overview-ja</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです。
-このエントリは<a href="http://chaplinjs.org/">Chaplin</a>の<a href="https://github.com/chaplinjs/chaplin/blob/master/docs/overview.md">Overview</a>のオレオレ意訳です。あんまり信用はしないでください。
-おかしいだろそれ、というのあれば教えてください。</p>
-
-<p><em>italic</em>はこうでは、と思ったのを勝手に足してるところです。</p>
-
-<h2>アーキテクチャ</h2>
-
-<p>ChaplinはJavaScriptでWebアプリケーションを作るためのアーキテクチャで、backboneをベースにしてるよ。
-<a href="http://moviepilot.com">moviepilot.com</a>みたいな単一ページの大規模プロジェクトに使われてるよ。</p>
-
-<h2>フレームワーク</h2>
-
-<h3>Application</h3>
-
-<p>ブートストラップ。Chaplinを利用する上で重要なとこだよ。</p>
-
-<h3>Router</h3>
-
-<p>定義されたURLマッピングにしたがって、<code>Controller</code>の各アクションを呼び出すことを助ける部分だよ。
-URLの変更などを監視して、責任を持つよ。
-でも、<code>Router</code>が直接<code>Controller</code>をキックするんじゃなくて、それは<code>Dispatcher</code>の仕事だよ。</p>
-
-<h3>Route</h3>
-
-<p>Railsに似たURLマッピングを提供するよ。<code>route.coffee</code>みたいなファイル作るといいよ。
-こんな感じで定義するよ。</p>
-
-<p><code>coffeescript
-match 'likes/:id', 'likes#show'
-</code></p>
-
-<p>ルートにマッチしたら、GETパラメータと、パターン一致部分(例で言えば<code>id</code>) <em>と、オプションの引数</em> を持って、<code>matchRoute</code>イベントを発行するよ。
-これは<code>Dispacther</code>に引き継がれるよ。</p>
-
-<h3>Dispachter</h3>
-
-<p>ルーティングに関するイベントをListenしてるよ。
-対象のイベントが発生したら、それに対応する<code>Controller</code>のインスタンスを生成して、対象のアクション(<code>Controller</code>のメソッド)を呼び出すよ。</p>
-
-<h3>Layout</h3>
-
-<p><code>Layout</code>はアプリケーションの中で一番外側にあるビューだよ。新しい<code>Controller</code>が起動されると、<code>Layout</code>は新しい<code>Controller</code>をメインビューにするよ。</p>
-
-<p><code>Layout</code>はアプリケーション内でのリンクをうまく処理する役割ももつよ。たとえば<code>&lt;a href="http://yaakaito.org/foo"&gt;</code>というリンクなんかも、正しく機能するようにしてくれるよ。</p>
-
-<p>そして、<code>window</code>や<code>document</code>などのトップレイヤーに対するイベントハンドリングなどは<code>Layout</code>で行うよ。</p>
-
-<h3>Mediator</h3>
-
-<p><code>Mediator</code>はpub/subを実装するためのブローカーだよ。
-Chaplinアプリケーションでは、ほとんどのモジュール間通信で利用されるべきだよ。
-モジュールは<code>this.publishEvent</code>でイベントを発行できるし、<code>this.subscribeEvent</code>でイベントをリッスンできるよ。
-例えばユーザーモデルのような永続的でグローバルにアクセス可能なものを共有するために使ったりもできるよ。</p>
-
-<h3>Controller</h3>
-
-<p><em>BackboneのControllerを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Controller</code>は<code>Model</code>とそれに結びつけられる<code>View</code>をインスタンス化して、管理するよ。
-１つの<code>Controller</code>はアプリケーションの１画面を構成するようにするのが普通だよ。
-けど、メインビュー的なものを提供して、他に現在のURLを表すためのコントローラーが存在することもあるよ。 <em>(多分HeaderとかFooterなんかの共通パーツのこと？)</em></p>
-
-<p>コントローラーはアプリケーションの機能を定義することが多いよ。
-<code>Controller</code>は<code>index</code>や<code>show</code>、<code>edit</code>のようなアクションメソッドを提供することができるよ。
-そしてこれらのアクションはURLが一致したときに<code>Dispacther</code>から呼び出されるよ。</p>
-
-<h3>Model</h3>
-
-<p><em>BackboneのModelを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p>データと、それに操作を行うためのロジックをもってるよ。</p>
-
-<h3>Collection</h3>
-
-<p><em>BackboneのCollectionを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Model</code>のリストを持つためのものだよ。クライアントサイドでフィルタリングをしたり、ソートしたりするためのロジックをもってるよ。</p>
-
-<h3>View</h3>
-
-<p><em>BackboneのViewを継承してるよ。だからBackboneの方もちゃんと見た方がいいよ。</em></p>
-
-<p><code>Model</code>をテンプレートを使って描画したり、その中に含まれるユーザーイベントなどを管理するよ。</p>
-
-<h3>Collection View</h3>
-
-<p><code>Collection</code>のためのビューだよ。それぞれの<code>Model</code>に対する<code>View</code>を作って、それを管理するよ。</p>
-
-<h2>アプリケーションの起動フロー</h2>
-
-<p>アプリケーションは、<code>Chaplin.Application</code>を継承したところから始まるよ。
-<code>Application</code>では<code>Dispacther</code> <code>Layout</code> <code>Mediator</code> <code>Router</code> の順で、これらをインスタンス化してセットアップしてね。</p>
-
-<p><code>Router</code>に<code>Route</code>を登録するよ。普通は設定ファイルとして<code>route.coffee</code>か<code>route.js</code>使うよ。
-<code>Route</code>は<code>Controller</code>のアクションにURLパターンをマッピングするよ、たとえば<code>/</code>なら<code>HomeController</code>の<code>index</code>、という感じだよ。</p>
-
-<p>ここまで終わったら、<code>initRouter</code>を呼び出して、URLの監視を始めよう。URLにマッチするパターンであれば、<code>Dispacther</code>や他のモジュールへ通知するよ。</p>
-
-<p><code>Dispacther</code>まで来たら、対象の<code>Controller</code>をインスタンス化して、対応するアクションを呼び出すよ。
-<code>Dispachter</code>はアクティブな<code>Controller</code>を管理していて、必要ないものを破棄するよ。</p>
-
-<p>対応するアクションが呼び出されたら、<code>Model</code>や<code>Collection</code>を<code>Ctonroller</code>で生成して、それに対応する<code>View</code>をレンダリングしていくのがよくある流れだよ。
-<code>Model</code>や<code>Collection</code>は必要に応じてサーバーからデータを取得したりするよ。
-<code>Model</code>や<code>Collection</code>と、それに対応する<code>View</code>は、<code>Controller</code>によって管理されるのが通例だよ。</p>
-
-<h2>メモリ管理について</h2>
-
-<p>Chaplinでは、適切なメモリ管理を行う、というのがコアにあるよ。</p>
-
-<p>みんな、あまりJavaScriptでGCやメモリ管理に関する議論をしないけど、それは重要なトピックだよ。
-イベントドリブンで動くシステムは、イベントを登録するときにオブジェクト間の参照が発生するし、それが削除されないと、メモリ解放されないよ。</p>
-
-<p>だから、ChaplinではBackboneのModel、Collection、View、Controllerを拡張して、それらのクリーンアップを保証して、パワフルな処理プロセスを実装できるようにしているよ。</p>
-
-<h2>終わり</h2>
-
-<p>起動フローとかはコードと付き合わせないと分かりにくいところが多いと思うので、<a href="https://github.com/paulmillr/ostio/blob/master/app/application.coffee">ost.ioのブート</a>とか合わせて読むといいと思います。</p>
 ]]></content>
   </entry>
   

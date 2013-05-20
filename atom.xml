@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-16T15:12:55+09:00</updated>
+  <updated>2013-05-20T17:14:58+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,164 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptでのコンストラクタ関数の扱い]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/20/typescript-constructor-function/"/>
+    <updated>2013-05-20T16:44:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/20/typescript-constructor-function</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+JavaScriptでコンストラクタ関数を</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="p">}</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Fuga</span> <span class="o">=</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">fuga</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Fuga</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じに使うのって割とやると思うんだけど、TypeScriptだとどういう扱いになってるのか試してみる。</p>
+
+<p>tscは<code>0.9 alpha</code></p>
+
+<h2>とりあえず</h2>
+
+<p>こんな感じにしてみる</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>    <span class="nx">method</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Hoge2</span> <span class="o">=</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これは普通に通って、JavaScriptだとこうなる、普通。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">Hoge</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">Hoge</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span><span class='line'><span class="p">})();</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Hoge2</span> <span class="o">=</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ここで<code>Hoge2</code>がどういう型になっているかというと、こうなっている。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">new</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">Hoge</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>コンストラクタで引数を取るようにするとこうなる</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">fuga</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">new</span><span class="p">(</span><span class="nx">fuga</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Hoge</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これは普通に型として使えるので、厳密に書くと、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Hoge2</span><span class="o">:</span><span class="k">new</span><span class="p">(</span><span class="nx">fuga</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">Hoge</span> <span class="o">=</span> <span class="nx">Hoge</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じになる。とりあえず問題なく扱える感じがする。</p>
+
+<h2>Genericsとの組み合わせとか</h2>
+
+<p>結構感動したのがこれ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Hoge</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">class</span> <span class="nx">Fuga</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">TT</span><span class="o">:</span> <span class="k">new</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>    <span class="kr">public</span> <span class="nx">create</span><span class="p">()</span><span class="o">:</span> <span class="nx">T</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">TT</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにすることができる。
+で、これは、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">fuga</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Fuga</span><span class="p">(</span><span class="nx">Hoge</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という感じにすると推論される。コンストラクタの形の違うクラスを使ってみると、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span><span class="kr">public</span> <span class="nx">fuga</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">fuga2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Fuga</span><span class="p">(</span><span class="nx">Foo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">error</span> <span class="nx">TS2081</span><span class="o">:</span> <span class="nx">Supplied</span> <span class="nx">parameters</span> <span class="k">do</span> <span class="nx">not</span> <span class="nx">match</span> <span class="nx">any</span> <span class="nx">signature</span> <span class="nx">of</span> <span class="nx">call</span> <span class="nx">target</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>すごいぞTypeScript。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptのGenerics試してみる]]></title>
@@ -3883,44 +4041,6 @@ SourceMap便利ですよね！TypeScriptでも使ってみましょう。</p>
 <p><img src="http://yaakaito.org/images/ts-sourcemap-debug.png"></p>
 
 <p>BP打つなりして使います、便利ですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[OverlineにNSDateFormatter系のショートハンドを追加したいのだが]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands/"/>
-    <updated>2013-03-28T02:26:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/28/overline-nsdateformatter-shorthands</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="https://github.com/yaakaito/Overline/">Overline</a>であんまり気が向かなかった<code>NSDateFormatter</code>系のところに手をつけ始めました。
-わりと意見を求めている記事です。</p>
-
-<p>といっても、そんなにやることはないかなーとか思っていて、<code>NSDateFormatter</code>をそのまま使っちゃって、あれ・・・和暦・・・みたいなトラップを意識的に回避できればそれでよいのかなーと思ってます。</p>
-
-<p>んで、以下の２つのメソッドを追加した。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">dateFormatterWithCalendarIndetifiter:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">calendar</span>
-</span><span class='line'>                                   <span class="nf">LocaleIdentifiter:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">locale</span>
-</span><span class='line'>                                <span class="nf">timeZoneAbbreviation:</span><span class="p">(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">timeZone</span><span class="p">;</span>
-</span><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">instancetype</span><span class="p">)</span><span class="nf">userDefaultFormatter</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>１個目はカレンダー、ロケール、タイムゾーンを忘れずに設定してね、というのを明確にするために作ったメソッド。
-なんかこの辺は設定するかなーというものを引数にとってる。</p>
-
-<p>２個目は、デフォルトのものを返してくるよ、というもの。
-つまりは単純に<code>alloc init</code>した状態のものなんだけど、そもそもの話その状態が分かりにくいんだよ・・・ってことで名前を付けたもの。
-ちょっとは分かりやすくなるのかなーと思ってる。</p>
-
-<h2>意見があったらほしいです</h2>
-
-<p>僕はこれでよいかなーとか思っているのですが、これあったほうがいいだろJKとか、いやそれは違う、というのがあれば意見をもらいたいです。
-Twitterとかはあんまり追ってないので、下のDisqusにもらえるとありがたいです。</p>
 ]]></content>
   </entry>
   
