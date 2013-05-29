@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testem | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testem/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-29T15:08:17+09:00</updated>
+  <updated>2013-05-29T15:11:32+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -59,8 +59,7 @@ TypeScript0.9を使っているので、Typescriptなんかも用意してあげ
 <h3>ビルド環境を整えます</h3>
 
 <p>とりあえずTestemを動かす為に、まずはnodeが必要です。nvm経由でインストールします。
-Macの場合<code>/User/Shared/Jenkins</code>が出来きます。
-めんどくさいので、Jenkins氏にユーザーを切り替えて、node環境を構築してTestemをいれます。</p>
+Macの場合<code>/User/Shared/Jenkins</code>が作られるので、Jenkins氏にユーザーを切り替えて、node環境を構築してTestemをいれます。</p>
 
 <p><code>
 $ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
