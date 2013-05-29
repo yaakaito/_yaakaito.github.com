@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-21T00:47:05+09:00</updated>
+  <updated>2013-05-29T15:08:17+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,145 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TestemをJenkinsで動かしてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/29/testem-on-jenkins/"/>
+    <updated>2013-05-29T03:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/29/testem-on-jenkins</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Testem使ってますか？便利ですよね！便利なのはいいんですが、
+CIモードやばい！はよくみるけど、CIモードを実際にJenkinsに乗せました、みたいなのを見ないので乗せてみました。</p>
+
+<h2>環境</h2>
+
+<p>残念ながら僕はマシンを余らせてないのでローカルのMacです。</p>
+
+<p>プロジェクトは、昨日から書き始めた <a href="https://github.com/yaakaito/Katana">Katana</a> というのを使います。
+TypeScript0.9を使っているので、Typescriptなんかも用意してあげる必要があります。</p>
+
+<h2>導入の仕方</h2>
+
+<p>ちゃんと公式にドキュメントがあります。</p>
+
+<ul>
+<li>https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md</li>
+</ul>
+
+
+<p>英語読むのがめんどくさい人の為に要約すると、</p>
+
+<ul>
+<li>TAPプラグイン入れる</li>
+<li><code>testem ci</code>の結果を適当なファイルに書く(<code>tests.tap</code>)</li>
+<li>これをTAPプラグインに喰わせる</li>
+<li>べんりーーーーーー＾ー＾</li>
+</ul>
+
+
+<p>ってことです。</p>
+
+<h2>準備</h2>
+
+<h3>Jenkinsをインストールします</h3>
+
+<p>適当にやってください。</p>
+
+<h3>ビルド環境を整えます</h3>
+
+<p>とりあえずTestemを動かす為に、まずはnodeが必要です。nvm経由でインストールします。
+Macの場合<code>/User/Shared/Jenkins</code>が出来きます。
+めんどくさいので、Jenkins氏にユーザーを切り替えて、node環境を構築してTestemをいれます。</p>
+
+<p><code>
+$ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+$ source .nvm/nvm.sh
+$ nvm install 0.8
+$ nvm use 0.8
+$ npm install -g testem
+</code></p>
+
+<p><code>testem launchers</code>してみます。</p>
+
+<p>```
+$ testem launchers
+Have 5 launchers available; auto-launch info displayed on the right.</p>
+
+<p>Launcher      Type          CI  Dev</p>
+
+<hr />
+
+<p>Chrome        browser       ✔         <br/>
+Firefox       browser       ✔         <br/>
+Safari        browser       ✔         <br/>
+Opera         browser       ✔         <br/>
+PhantomJS     browser       ✔         <br/>
+```</p>
+
+<p>とりあえずこんな感じになればOkです。</p>
+
+<p>他にも必要なものを入れていきます。
+gruntとか使ってるなら</p>
+
+<p><code>
+$ npm install -g grunt-cli
+</code></p>
+
+<p>とかやっておきます。</p>
+
+<h3>Jenkinsにプラグインをそろえる</h3>
+
+<p>今回は Tapプラグインとgitプラグインを準備します。</p>
+
+<p>この辺です。</p>
+
+<p><img src="/images/jenkins-plugins.png"></p>
+
+<h3>Gitの設定をする</h3>
+
+<p>適当にJenkinsのgitをセットアップします。</p>
+
+<p><code>
+$ git config --global user.email yaakaito+jenkins@yaakaito.org
+$ git config --global user.name yaakaito+jenkins
+</code></p>
+
+<h2>ジョブの構築</h2>
+
+<p>準備も整ったの、ジョブを作ります。<code>Build a free-style software project</code> です。</p>
+
+<p><img src="/images/jenkins-setting-testem.png"></p>
+
+<h3>コード管理</h3>
+
+<p>githubから取ってくるようにします</p>
+
+<h3>ビルド</h3>
+
+<p>ここで<code>testem ci</code>するようにします。npmを使っているので、それらも実行します。</p>
+
+<p><code>
+source ~/.nvm/nvm.sh
+nvm use 0.8
+npm install
+testem ci -p 12333 &gt; tests.tap
+</code></p>
+
+<h3>ビルド後の処理</h3>
+
+<p>TAPプラグインで、出力した<code>tests.tap</code>を喰います</p>
+
+<h2>ビルドしてみる</h2>
+
+<p>やったーーー</p>
+
+<p><img src="/images/testem-tap-result.png"></p>
+
+<h2>うまくいかないとき</h2>
+
+<p>workspaceで<code>testem ci</code>してみたり、ログ見てなんとかする。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS部で話したViewControllerのテストとかのまとめ]]></title>
@@ -1179,235 +1318,6 @@ compile:
 <p>あと、Backboneの移植をやってるからか、テスト側がどうしてもほとんどJavaScriptっぽい感じになるんですが、
 無駄にコンパイラに怒られてだるいなーと思う事も。(まあ当然なのだが)
 なんでこういう場合は、テスト側は生のJavaScriptでも十分なのかなーと思った。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Mocha + Testem + HTMLCov 出来るようにする]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov/"/>
-    <updated>2013-03-23T14:32:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/23/testing-mocha-testem-htmlcov</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！だるくなくJavaScript開発できる環境を探しています。</p>
-
-<p>というわけでタイトル通りなんですが、Mocha + Testem + HTML-Cov環境を試してみようと思うので、それの作り方です。
-想定している使い方としては、普段はTestemを使ってChrome、Firefox、Safariあたりでテストを回しつつ、たまにカバレッジを確認して〜くらいの割と普通な感じです。
-CIは今回はやりません。本当は同じランナーでやりたかったんですが、めんどいので分けました。
-もっといいやり方知ってる人いたら教えてください！</p>
-
-<p><a href="https://github.com/yaakaito/mocha-testem-htmlcov">作られたリポジトリはgithubにあります。</a></p>
-
-<h2>必要な物の準備</h2>
-
-<p>せっかくなので？ node 0.10.1 を使います。</p>
-
-<p><code>
-$ nvm install 0.10.1
-</code></p>
-
-<p>必要なモジュールをいれます。</p>
-
-<ul>
-<li>testem</li>
-<li>mocha</li>
-<li>jscoverage</li>
-<li>json2htmlcov</li>
-<li>mocha-phantomjs
-
-<ul>
-<li>phantomjs</li>
-</ul>
-</li>
-</ul>
-
-
-<p><code>
-$ brew install phantomjs
-</code></p>
-
-<p><code>
-$ npm install -g testem mocha mocha-phantomjs jscoverage json2htmlcov
-</code></p>
-
-<p>メンドーだったので僕は<code>Makefile</code>使ってますが、<code>grunt</code>とかがいいですって人はそれもいれるといいと思います。</p>
-
-<h3>chaiとsinonをとってくる</h3>
-
-<p>chaiとsinonを使いたいので、とってきます。sinon-chaiは別にいらないかなーと思ってる子なので入れてません。
-<code>/test/vendor</code> みたいなところに配置しておきます。</p>
-
-<p><code>
-$ curl -O http://chaijs.com/chai.js
-$ curl -O http://sinonjs.org/releases/sinon-1.6.0.js
-</code></p>
-
-<h2>適当にテスト用のjs書く</h2>
-
-<p>サンプル用に適当に</p>
-
-<p>```javascript
-// /src/sample.js
-var A = (function(){
-  function A() {</p>
-
-<p>  }
-  A.prototype.method = function(v) {</p>
-
-<pre><code>if (v) {
-  return "YES";
-}
-else {
-  return "NO";
-}
-</code></pre>
-
-<p>  }
-  return A;
-})();
-```</p>
-
-<p>テストはこんな感じ、<code>NO</code>の方は通らないようにしてあります。</p>
-
-<p>```javascript
-// /test/tests/sample-tests.js
-describe('Sample', function(){
-  var a;
-  beforeEach(function(){</p>
-
-<pre><code>a = new A();
-</code></pre>
-
-<p>  });</p>
-
-<p>  it('YES', function(){</p>
-
-<pre><code>chai.expect(a.method(true)).to.equals('YES');
-</code></pre>
-
-<p>  })
-});
-```</p>
-
-<h2>testem.jsonを書く</h2>
-
-<p>chaiやsinonを一緒に混ぜるようにして、<code>testem.json</code>を作ります。</p>
-
-<p>```javascript
-{
-  "framework" : "mocha",
-  "src_files" : [</p>
-
-<pre><code>"src/**/*.js",
-"test/vendor/chai.js",
-"test/vendor/sinon.js",
-"test/tests/**/*-tests.js"
-</code></pre>
-
-<p>  ]
-}
-```</p>
-
-<p>これでtestem側は終わりです。走らせてみましょう。</p>
-
-<p><code>
-$ testem
-</code></p>
-
-<p><img src="/images/testem-run.png"></p>
-
-<p>テストしたいブラウザで <code>http://localhost:7357</code> を開きます。あとは開きっぱでよいです。</p>
-
-<p><img src="/images/testem-browsers.png"></p>
-
-<p><img src="/images/testem-result.png"></p>
-
-<p>テストしてくれます、便利ですね。</p>
-
-<h2>HTMLCovでカバレッジを出す</h2>
-
-<p>こういう感じにカバレッジを出す事ができます。</p>
-
-<p><img src="/images/htmlcov.png"></p>
-
-<p>適当にいろいろなブラウザでテストした結果をマージできると理想だけど、面倒そうなのでphantomjsで・・・ 、というか<a href="https://github.com/visionmedia/mocha/issues/281">サポートされていない</a>のかな。
-<a href="https://github.com/visionmedia/mocha/pull/506">こういうのもあったけど</a>今回はスルーで。</p>
-
-<p>手順としては</p>
-
-<ul>
-<li><code>jscoverage</code> で対象のjsを変換</li>
-<li><code>mocha-phantomjs</code> で実行して <code>jsoncov</code> の形で吐き出す</li>
-<li><code>json2htmlcov</code> を通して HTMLCov へ変換</li>
-</ul>
-
-
-<p>と、ちょっと面倒くさい。</p>
-
-<h3>ランナーを用意する</h3>
-
-<p><code>mocha</code> のランナーを用意します。</p>
-
-<p><code>
-$ mocha init [dir]
-</code></p>
-
-<p>吐き出されたのを適当に <code>coverage-runner.html</code> みたいなのにリネームして、必要なファイルを読み込むようにする。</p>
-
-<p>```html</p>
-
-<script src="../cover/sample.js"></script>
-
-
-<script src="./vendor/mocha.js"></script>
-
-
-<script src="./vendor/chai.js"></script>
-
-
-<script src="./vendor/sinon.js"></script>
-
-
-<script>mocha.setup('bdd')</script>
-
-
-<script src="./tests/sample-tests.js"></script>
-
-
-<p>```</p>
-
-<p>僕はカバレッジに使うjsを<code>cover</code>というディレクトリに吐き出すようにしたので、こんな感じで。</p>
-
-<p><code>mocha-phantomjs</code> を使えるようにブートを置き換えます。</p>
-
-<p>```javascript</p>
-
-<script>
-  if (window.mochaPhantomJS) {
-    mochaPhantomJS.run()
-  }
-  else {
-    mocha.run();
-  }
-</script>
-
-
-<p>```</p>
-
-<h3>カバレッジを出すコマンド</h3>
-
-<p>さっきの手順に従ったコマンドで実行します。</p>
-
-<p><code>
-$ jscoverage src/sample.js ./cover/
-$ mocha-phantomjs -R json-cov test/cover-runner.html | json2htmlcov &gt; cover.html
-</code></p>
-
-<p>こんな感じで <code>cover.html</code> が作られるので、あとはそれを<code>open</code>すればよいです。</p>
-
-<p>ちょっと面倒ですが、簡単な部類でしたね。</p>
-
-<h2>ちなみに</h2>
-
-<p>僕は Buster.JS 派です。</p>
 ]]></content>
   </entry>
   

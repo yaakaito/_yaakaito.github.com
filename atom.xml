@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-21T00:47:05+09:00</updated>
+  <updated>2013-05-29T15:08:17+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,160 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TestemをJenkinsで動かしてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/29/testem-on-jenkins/"/>
+    <updated>2013-05-29T03:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/29/testem-on-jenkins</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Testem使ってますか？便利ですよね！便利なのはいいんですが、
+CIモードやばい！はよくみるけど、CIモードを実際にJenkinsに乗せました、みたいなのを見ないので乗せてみました。</p>
+
+<h2>環境</h2>
+
+<p>残念ながら僕はマシンを余らせてないのでローカルのMacです。</p>
+
+<p>プロジェクトは、昨日から書き始めた <a href="https://github.com/yaakaito/Katana">Katana</a> というのを使います。
+TypeScript0.9を使っているので、Typescriptなんかも用意してあげる必要があります。</p>
+
+<h2>導入の仕方</h2>
+
+<p>ちゃんと公式にドキュメントがあります。</p>
+
+<ul>
+<li>https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md</li>
+</ul>
+
+
+<p>英語読むのがめんどくさい人の為に要約すると、</p>
+
+<ul>
+<li>TAPプラグイン入れる</li>
+<li><code>testem ci</code>の結果を適当なファイルに書く(<code>tests.tap</code>)</li>
+<li>これをTAPプラグインに喰わせる</li>
+<li>べんりーーーーーー＾ー＾</li>
+</ul>
+
+
+<p>ってことです。</p>
+
+<h2>準備</h2>
+
+<h3>Jenkinsをインストールします</h3>
+
+<p>適当にやってください。</p>
+
+<h3>ビルド環境を整えます</h3>
+
+<p>とりあえずTestemを動かす為に、まずはnodeが必要です。nvm経由でインストールします。
+Macの場合<code>/User/Shared/Jenkins</code>が出来きます。
+めんどくさいので、Jenkins氏にユーザーを切り替えて、node環境を構築してTestemをいれます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+</span><span class='line'>$ source .nvm/nvm.sh
+</span><span class='line'>$ nvm install 0.8
+</span><span class='line'>$ nvm use 0.8
+</span><span class='line'>$ npm install -g testem</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>testem launchers</code>してみます。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ testem launchers
+</span><span class='line'>Have 5 launchers available; auto-launch info displayed on the right.
+</span><span class='line'>
+</span><span class='line'>Launcher      Type          CI  Dev
+</span><span class='line'>------------  ------------  --  ---
+</span><span class='line'>Chrome        browser       ✔           
+</span><span class='line'>Firefox       browser       ✔           
+</span><span class='line'>Safari        browser       ✔           
+</span><span class='line'>Opera         browser       ✔           
+</span><span class='line'>PhantomJS     browser       ✔           </span></code></pre></td></tr></table></div></figure>
+
+
+<p>とりあえずこんな感じになればOkです。</p>
+
+<p>他にも必要なものを入れていきます。
+gruntとか使ってるなら</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g grunt-cli</span></code></pre></td></tr></table></div></figure>
+
+
+<p>とかやっておきます。</p>
+
+<h3>Jenkinsにプラグインをそろえる</h3>
+
+<p>今回は Tapプラグインとgitプラグインを準備します。</p>
+
+<p>この辺です。</p>
+
+<p><img src="http://yaakaito.org/images/jenkins-plugins.png"></p>
+
+<h3>Gitの設定をする</h3>
+
+<p>適当にJenkinsのgitをセットアップします。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git config --global user.email yaakaito+jenkins@yaakaito.org
+</span><span class='line'>$ git config --global user.name yaakaito+jenkins</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>ジョブの構築</h2>
+
+<p>準備も整ったの、ジョブを作ります。<code>Build a free-style software project</code> です。</p>
+
+<p><img src="http://yaakaito.org/images/jenkins-setting-testem.png"></p>
+
+<h3>コード管理</h3>
+
+<p>githubから取ってくるようにします</p>
+
+<h3>ビルド</h3>
+
+<p>ここで<code>testem ci</code>するようにします。npmを使っているので、それらも実行します。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>source ~/.nvm/nvm.sh
+</span><span class='line'>nvm use 0.8
+</span><span class='line'>npm install
+</span><span class='line'>testem ci -p 12333 &gt; tests.tap</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>ビルド後の処理</h3>
+
+<p>TAPプラグインで、出力した<code>tests.tap</code>を喰います</p>
+
+<h2>ビルドしてみる</h2>
+
+<p>やったーーー</p>
+
+<p><img src="http://yaakaito.org/images/testem-tap-result.png"></p>
+
+<h2>うまくいかないとき</h2>
+
+<p>workspaceで<code>testem ci</code>してみたり、ログ見てなんとかする。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptでのコンストラクタ関数の扱い]]></title>
@@ -4039,43 +4193,6 @@ Objective-C用ユーティリティ、<a href="https://github.com/yaakaito">Over
 <li>いままで似たような事を、ちゃんとやっていたJavaScripterな方にはかなりおすすめです</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TypeScript + SourceMap でデバッグしてみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap/"/>
-    <updated>2013-03-28T03:43:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/28/typescript-with-sorucemap</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-SourceMap便利ですよね！TypeScriptでも使ってみましょう。</p>
-
-<p>といってもそんなにやることないです。
-<code>tsc</code>でコンパイルするときに <code>--sourcemap</code> オプションをつけてあげれば生成されます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ tsc &lt;file&gt; --sourcemap</span></code></pre></td></tr></table></div></figure>
-
-
-<p>単体で吐いてもいいですが、<a href="https://github.com/yaakaito/typebone">前から使ってこのリポジトリ</a>みたいに、<code>reference</code>だけしてるファイルをコンパイルしているような場合でも、ちゃんと吐いてくれます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ tsc --out backbone.test.js test/bootstrap.ts --sourcemap</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じにすると、<code>backbone.test.js.map</code>が出てくるので、Chormeで使ってみましょう。</p>
-
-<p><img src="http://yaakaito.org/images/ts-sourcemap-setting.png"></p>
-
-<p><code>Enable source maps</code>をonにして、</p>
-
-<p><img src="http://yaakaito.org/images/ts-sourcemap-show.png"></p>
-
-<p>読み込めばこんな感じに<code>.ts</code>が出てくるので、</p>
-
-<p><img src="http://yaakaito.org/images/ts-sourcemap-debug.png"></p>
-
-<p>BP打つなりして使います、便利ですね！</p>
 ]]></content>
   </entry>
   

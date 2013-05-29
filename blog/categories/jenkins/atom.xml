@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Jenkins | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/jenkins/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-21T00:47:05+09:00</updated>
+  <updated>2013-05-29T15:08:17+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,145 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TestemをJenkinsで動かしてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/05/29/testem-on-jenkins/"/>
+    <updated>2013-05-29T03:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/05/29/testem-on-jenkins</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Testem使ってますか？便利ですよね！便利なのはいいんですが、
+CIモードやばい！はよくみるけど、CIモードを実際にJenkinsに乗せました、みたいなのを見ないので乗せてみました。</p>
+
+<h2>環境</h2>
+
+<p>残念ながら僕はマシンを余らせてないのでローカルのMacです。</p>
+
+<p>プロジェクトは、昨日から書き始めた <a href="https://github.com/yaakaito/Katana">Katana</a> というのを使います。
+TypeScript0.9を使っているので、Typescriptなんかも用意してあげる必要があります。</p>
+
+<h2>導入の仕方</h2>
+
+<p>ちゃんと公式にドキュメントがあります。</p>
+
+<ul>
+<li>https://github.com/airportyh/testem/blob/master/docs/use_with_jenkins.md</li>
+</ul>
+
+
+<p>英語読むのがめんどくさい人の為に要約すると、</p>
+
+<ul>
+<li>TAPプラグイン入れる</li>
+<li><code>testem ci</code>の結果を適当なファイルに書く(<code>tests.tap</code>)</li>
+<li>これをTAPプラグインに喰わせる</li>
+<li>べんりーーーーーー＾ー＾</li>
+</ul>
+
+
+<p>ってことです。</p>
+
+<h2>準備</h2>
+
+<h3>Jenkinsをインストールします</h3>
+
+<p>適当にやってください。</p>
+
+<h3>ビルド環境を整えます</h3>
+
+<p>とりあえずTestemを動かす為に、まずはnodeが必要です。nvm経由でインストールします。
+Macの場合<code>/User/Shared/Jenkins</code>が出来きます。
+めんどくさいので、Jenkins氏にユーザーを切り替えて、node環境を構築してTestemをいれます。</p>
+
+<p><code>
+$ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+$ source .nvm/nvm.sh
+$ nvm install 0.8
+$ nvm use 0.8
+$ npm install -g testem
+</code></p>
+
+<p><code>testem launchers</code>してみます。</p>
+
+<p>```
+$ testem launchers
+Have 5 launchers available; auto-launch info displayed on the right.</p>
+
+<p>Launcher      Type          CI  Dev</p>
+
+<hr />
+
+<p>Chrome        browser       ✔         <br/>
+Firefox       browser       ✔         <br/>
+Safari        browser       ✔         <br/>
+Opera         browser       ✔         <br/>
+PhantomJS     browser       ✔         <br/>
+```</p>
+
+<p>とりあえずこんな感じになればOkです。</p>
+
+<p>他にも必要なものを入れていきます。
+gruntとか使ってるなら</p>
+
+<p><code>
+$ npm install -g grunt-cli
+</code></p>
+
+<p>とかやっておきます。</p>
+
+<h3>Jenkinsにプラグインをそろえる</h3>
+
+<p>今回は Tapプラグインとgitプラグインを準備します。</p>
+
+<p>この辺です。</p>
+
+<p><img src="/images/jenkins-plugins.png"></p>
+
+<h3>Gitの設定をする</h3>
+
+<p>適当にJenkinsのgitをセットアップします。</p>
+
+<p><code>
+$ git config --global user.email yaakaito+jenkins@yaakaito.org
+$ git config --global user.name yaakaito+jenkins
+</code></p>
+
+<h2>ジョブの構築</h2>
+
+<p>準備も整ったの、ジョブを作ります。<code>Build a free-style software project</code> です。</p>
+
+<p><img src="/images/jenkins-setting-testem.png"></p>
+
+<h3>コード管理</h3>
+
+<p>githubから取ってくるようにします</p>
+
+<h3>ビルド</h3>
+
+<p>ここで<code>testem ci</code>するようにします。npmを使っているので、それらも実行します。</p>
+
+<p><code>
+source ~/.nvm/nvm.sh
+nvm use 0.8
+npm install
+testem ci -p 12333 &gt; tests.tap
+</code></p>
+
+<h3>ビルド後の処理</h3>
+
+<p>TAPプラグインで、出力した<code>tests.tap</code>を喰います</p>
+
+<h2>ビルドしてみる</h2>
+
+<p>やったーーー</p>
+
+<p><img src="/images/testem-tap-result.png"></p>
+
+<h2>うまくいかないとき</h2>
+
+<p>workspaceで<code>testem ci</code>してみたり、ログ見てなんとかする。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hosted CIでiOSライブラリ(Overline)のテスト回してみた]]></title>
