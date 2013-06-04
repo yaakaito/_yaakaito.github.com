@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Scala | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/scala/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-06-04T23:45:09+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptで似非Option型作るよ]]></title>
+    <link href="http://yaakaito.org/blog/2013/06/04/typescript-like-option/"/>
+    <updated>2013-06-04T23:28:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/06/04/typescript-like-option</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Scalaに<code>Option</code>というものがあって、これが本当に素晴らしいんですよ。
+ところで、TypeScriptでも<code>Option</code>使いたいですよね？作りました。</p>
+
+<h2>何が出来るのか</h2>
+
+<p><code>Option</code>は要するに値があるかもしれない、という型です。
+みなさんこういうコードを書くかと思いますが、</p>
+
+<p>```javascript
+var hoge = fuga.getHoge();
+if (!hoge) {</p>
+
+<pre><code>hoge = "default";
+</code></pre>
+
+<p>}
+return hoge;
+```</p>
+
+<p>これをエレガントにこう書けます</p>
+
+<p><code>javascript
+return fuga.getHoge().getOrElse(() =&gt; "default")
+</code></p>
+
+<p>無駄な変数も<code>if</code>もなくて素晴らしいですね。</p>
+
+<h2>Scalaじゃないのでダサいところ</h2>
+
+<h3>match</h3>
+
+<p>とりあえず<code>match</code>はダサいです。それっぽく書く為に適当なインターフェイスが作ってあって、</p>
+
+<p>```javascript
+option.match({</p>
+
+<pre><code>Some: (x) =&gt; {
+
+},
+None: () =&gt; {
+
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<p>こう書けますが、あんまりかっこ良くないですね。</p>
+
+<h3>生成</h3>
+
+<p>Scalaのように<code>Some</code>が<code>Some.apply</code>になるわけでもないので、普通に<code>new</code>します。</p>
+
+<p><code>javascript
+new Some('a');
+new None&lt;string&gt;();
+</code></p>
+
+<p>うーん。</p>
+
+<h3>flatten</h3>
+
+<p><code>implicit</code>とかないので実行時エラーですね。まあテストで分かるのでこれがそこまで問題になる事はないはず・・・。</p>
+
+<h2>コード</h2>
+
+<p>こんな感じです</p>
+
+<p>```javascript
+module Katana {</p>
+
+<pre><code>export interface IOptionMatcher&lt;A&gt; {
+    Some?(value: A): void;
+    None?(): void;
+}
+
+export interface Option&lt;A&gt; {
+    get(): A;
+    getOrElse(defaultValue: () =&gt; A): A;
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt;;
+    match(matcher: IOptionMatcher&lt;A&gt;);
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt;;
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt;;
+    flatten&lt;B&gt;(): Option&lt;B&gt;;
+}
+
+export class Some&lt;A&gt; implements Option&lt;A&gt; {
+
+    constructor(private value :A) { }
+
+    get(): A {
+        return this.value;
+    }
+
+    getOrElse(defaultValue: () =&gt; A): A {
+        return this.value;
+    }
+
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt; {
+        return this;
+    }
+
+    match(matcher: IOptionMatcher&lt;A&gt;) {
+        if (matcher.Some) {
+            matcher.Some(this.value);
+        }
+    }
+
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt; {
+        return new Some&lt;B&gt;(f(this.get()));
+    }
+
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt; {
+        return f(this.get());
+    }
+
+    flatten&lt;B&gt;(): Option&lt;B&gt; {
+        if (this.value instanceof Some) {
+            // :-|
+            return &lt;Some&lt;B&gt;&gt;(&lt;any&gt;this.value);
+        }
+        else if (this.value instanceof None) {
+            return new None&lt;B&gt;();
+        }
+        else {
+            throw new Error('Cannot prove that.');
+        }
+        return null;
+    }
+
+}
+
+
+export class None&lt;A&gt; implements Option&lt;A&gt; {
+
+    get(): A {
+        throw new Error('No such element.');
+    }
+
+    getOrElse(defaultValue: () =&gt; A): A {
+        return defaultValue();
+    }
+
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt; {
+        return alternative();
+    }
+
+    match(matcher: IOptionMatcher&lt;A&gt;) {
+        if (matcher.None) {
+            matcher.None();
+        }
+    }
+
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+
+    flatten&lt;B&gt;(): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>foreach</code>とか作ってないんですが、それっぽく使えるはずです。</p>
+]]></content>
+  </entry>
+  
+</feed>

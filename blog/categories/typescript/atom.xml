@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-05-29T15:11:32+09:00</updated>
+  <updated>2013-06-04T23:45:09+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,186 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptで似非Option型作るよ]]></title>
+    <link href="http://yaakaito.org/blog/2013/06/04/typescript-like-option/"/>
+    <updated>2013-06-04T23:28:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/06/04/typescript-like-option</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+Scalaに<code>Option</code>というものがあって、これが本当に素晴らしいんですよ。
+ところで、TypeScriptでも<code>Option</code>使いたいですよね？作りました。</p>
+
+<h2>何が出来るのか</h2>
+
+<p><code>Option</code>は要するに値があるかもしれない、という型です。
+みなさんこういうコードを書くかと思いますが、</p>
+
+<p>```javascript
+var hoge = fuga.getHoge();
+if (!hoge) {</p>
+
+<pre><code>hoge = "default";
+</code></pre>
+
+<p>}
+return hoge;
+```</p>
+
+<p>これをエレガントにこう書けます</p>
+
+<p><code>javascript
+return fuga.getHoge().getOrElse(() =&gt; "default")
+</code></p>
+
+<p>無駄な変数も<code>if</code>もなくて素晴らしいですね。</p>
+
+<h2>Scalaじゃないのでダサいところ</h2>
+
+<h3>match</h3>
+
+<p>とりあえず<code>match</code>はダサいです。それっぽく書く為に適当なインターフェイスが作ってあって、</p>
+
+<p>```javascript
+option.match({</p>
+
+<pre><code>Some: (x) =&gt; {
+
+},
+None: () =&gt; {
+
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<p>こう書けますが、あんまりかっこ良くないですね。</p>
+
+<h3>生成</h3>
+
+<p>Scalaのように<code>Some</code>が<code>Some.apply</code>になるわけでもないので、普通に<code>new</code>します。</p>
+
+<p><code>javascript
+new Some('a');
+new None&lt;string&gt;();
+</code></p>
+
+<p>うーん。</p>
+
+<h3>flatten</h3>
+
+<p><code>implicit</code>とかないので実行時エラーですね。まあテストで分かるのでこれがそこまで問題になる事はないはず・・・。</p>
+
+<h2>コード</h2>
+
+<p>こんな感じです</p>
+
+<p>```javascript
+module Katana {</p>
+
+<pre><code>export interface IOptionMatcher&lt;A&gt; {
+    Some?(value: A): void;
+    None?(): void;
+}
+
+export interface Option&lt;A&gt; {
+    get(): A;
+    getOrElse(defaultValue: () =&gt; A): A;
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt;;
+    match(matcher: IOptionMatcher&lt;A&gt;);
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt;;
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt;;
+    flatten&lt;B&gt;(): Option&lt;B&gt;;
+}
+
+export class Some&lt;A&gt; implements Option&lt;A&gt; {
+
+    constructor(private value :A) { }
+
+    get(): A {
+        return this.value;
+    }
+
+    getOrElse(defaultValue: () =&gt; A): A {
+        return this.value;
+    }
+
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt; {
+        return this;
+    }
+
+    match(matcher: IOptionMatcher&lt;A&gt;) {
+        if (matcher.Some) {
+            matcher.Some(this.value);
+        }
+    }
+
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt; {
+        return new Some&lt;B&gt;(f(this.get()));
+    }
+
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt; {
+        return f(this.get());
+    }
+
+    flatten&lt;B&gt;(): Option&lt;B&gt; {
+        if (this.value instanceof Some) {
+            // :-|
+            return &lt;Some&lt;B&gt;&gt;(&lt;any&gt;this.value);
+        }
+        else if (this.value instanceof None) {
+            return new None&lt;B&gt;();
+        }
+        else {
+            throw new Error('Cannot prove that.');
+        }
+        return null;
+    }
+
+}
+
+
+export class None&lt;A&gt; implements Option&lt;A&gt; {
+
+    get(): A {
+        throw new Error('No such element.');
+    }
+
+    getOrElse(defaultValue: () =&gt; A): A {
+        return defaultValue();
+    }
+
+    orElse(alternative: () =&gt; Option&lt;A&gt;): Option&lt;A&gt; {
+        return alternative();
+    }
+
+    match(matcher: IOptionMatcher&lt;A&gt;) {
+        if (matcher.None) {
+            matcher.None();
+        }
+    }
+
+    map&lt;B&gt;(f: (value: A) =&gt; B): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+
+    flatMap&lt;B&gt;(f: (value: A) =&gt; Option&lt;B&gt;): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+
+    flatten&lt;B&gt;(): Option&lt;B&gt; {
+        return new None&lt;B&gt;();
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>foreach</code>とか作ってないんですが、それっぽく使えるはずです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptでのコンストラクタ関数の扱い]]></title>
@@ -707,325 +887,6 @@ private lookDoor() { }
 <h2>こんな感じかなぁ</h2>
 
 <p>追加あれば書く。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TypeScriptのInterfaceとStructural Subtyping]]></title>
-    <link href="http://yaakaito.org/blog/2013/05/02/typescript-subtyping/"/>
-    <updated>2013-05-02T02:58:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/05/02/typescript-subtyping</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-TypeScriptにはInterfaceとStructural Subtypingがあるのでそれについて書こうと思います。まだ0.8.x系です。</p>
-
-<h2>Interface</h2>
-
-<p>JavaやC#でいうinterfaceと似ていますが、ある形をしたオブジェクトに対する別名というのが正しいと思います。</p>
-
-<p>```javascript
-interface Rider {</p>
-
-<pre><code>name: string;
-henshin: () =&gt; void;
-</code></pre>
-
-<p>}</p>
-
-<p>var wizard: Rider = {</p>
-
-<pre><code>name: '仮面ライダーウィザード',
-henshin: () =&gt; {
-    console.log('ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!');
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こうすると <code>wizard</code> は <code>Rider</code> であることになります。
-JavaScriptには存在しないシンタックスなので、コンパイルするとinterfaceは当然ですが消えます。</p>
-
-<p>```javascript
-var wizard = {</p>
-
-<pre><code>name: '仮面ライダーウィザード',
-henshin: function () {
-    console.log('ｼｬﾊﾞﾄﾞｭﾋﾞﾀｯﾁﾍﾝｼｰﾝ!');
-}
-</code></pre>
-
-<p>};
-```</p>
-
-<p>同じように <code>beast</code> も作ってみます。</p>
-
-<p>```javascript
-var beast: Rider = {</p>
-
-<pre><code>name: '仮面ライダービースト',
-henshin: () =&gt; {
-    console.log('L・I・O・N!ﾗｲｵｰﾝ!');
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>やりましたね。</p>
-
-<p>このinterfaceはそのまま型のように扱うことが出来るので、</p>
-
-<p>```javascript
-var please = function(rider: Rider) {</p>
-
-<pre><code>rider.henshin();
-</code></pre>
-
-<p>}</p>
-
-<p>please(wizard);
-please(beast);
-```</p>
-
-<p>こういう風に使う事も出来ます。便利ですね。</p>
-
-<p>もちろんclassにimplementsすることも出来ます。</p>
-
-<p>```javascript
-class WizardInfinity implements Rider {</p>
-
-<pre><code>public name: string = '仮面ライダーウィザード インフィニティ';
-
-public henshin(): void {
-    console.log('ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!');
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>実装が欠けている場合は、こういう感じのエラーになります。</p>
-
-<p><code>
-Class 'WizardInfinity' declares interface 'Rider' but does not implement it: Type 'WizardInfinity' is missing property 'name' from type 'Rider'
-Class 'WizardInfinity' declares interface 'Rider' but does not implement it: Type 'WizardInfinity' is missing property 'henshin' from type 'Rider'
-</code></p>
-
-<p>Functionにも適用することができて、</p>
-
-<p>```javascript
-class Ring {</p>
-
-<pre><code>public name: string = 'ドライバーオンウィザードリング';
-</code></pre>
-
-<p>}</p>
-
-<p>interface DriverOn {</p>
-
-<pre><code>(ring: Ring): void;
-</code></pre>
-
-<p>}</p>
-
-<p>var driverOn: DriverOn = function(ring: Ring) {</p>
-
-<pre><code>if (ring.name === 'ドライバーオンウィザードリング') {
-    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こういう感じに書けます。これだけだと別に利点が分からなくて、</p>
-
-<p>```javascript
-var driverOn = (ring: Ring): void => {</p>
-
-<pre><code>if (ring.name === 'ドライバーオンウィザードリング') {
-    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>これで別によくね、となるんですが、いうならオーバーロードみたいなことが出来るのでちょっと便利です。こういう感じで書く事が出来るので、</p>
-
-<p>```javascript
-interface DriverOn {</p>
-
-<pre><code>(ring: Ring): void;
-(love: Love): void;
-</code></pre>
-
-<p>}
-```</p>
-
-<p>全体でこんな感じになってると、<code>Phantom</code>を受け付けません。</p>
-
-<p>```javascript
-class Ring {</p>
-
-<pre><code>public name: string = 'ドライバーオンウィザードリング';
-</code></pre>
-
-<p>}</p>
-
-<p>class Love {</p>
-
-<pre><code>public target: string = 'こよみ';
-</code></pre>
-
-<p>}</p>
-
-<p>class Phantom {</p>
-
-<pre><code>public original: string = 'ミサ';
-</code></pre>
-
-<p>}</p>
-
-<p>interface DriverOn {</p>
-
-<pre><code>(ring: Ring): void;
-(love: Love): void;
-</code></pre>
-
-<p>}</p>
-
-<p>var driverOn: DriverOn = function(power: any) {</p>
-
-<pre><code>if (power instanceof Ring &amp;&amp; power.name === 'ドライバーオンウィザードリング') {
-    console.log('ﾄﾞﾗｲﾊﾞｰｵｰﾝｯ!ﾌﾟﾘｨｨｨｽﾞ!');
-}
-else if (power instanceof Love &amp;&amp; power.target === 'こよみ') {
-    console.log('ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!ｲﾝｯﾌｨﾆﾃｨｨ!');
-}
-</code></pre>
-
-<p>}</p>
-
-<p>driverOn(new Ring());
-driverOn(new Love());
-driverOn(new Phantom()); // Supplied parameters do not match any signature of call target
-```</p>
-
-<p>あとは <code>interface A extends B</code> と出来たり、同じ<code>interface</code>を2回定義する事で拡張できたりします。</p>
-
-<h2>Structural Subtyping</h2>
-
-<p>ようするにダックタイピングみたいなやつです。
-さっきの<code>please</code>関数の引数を、</p>
-
-<p>```javascript
-function please(rider: { name: string; henshin: () => void; }): void {</p>
-
-<p>}
-```</p>
-
-<p>みたいに出来ます、言ってしまえばそれだけです。</p>
-
-<p>なんの役に立つかよくわかんないと思うので、<code>each</code>関数みたいなのを作るのを想定してみましょう。
-ウィザードで説明するのに限界を感じ(飽き)ました。</p>
-
-<p><code>each</code>って基本的には<code>Array</code>を受け取ると思うんですが、JavaScriptには<code>Array</code>っぽいものというのが存在しますよね。
-オブジェクトとしては、数値でインデックスアクセスできて、<code>length</code>を持っている、というものです。</p>
-
-<p>で、これをさっきの例に当てはめると、</p>
-
-<p>```javascript
-function each(list: { [index: number]: any; length: number; }, func: (obj: any) => void): void {</p>
-
-<pre><code>return [];
-</code></pre>
-
-<p>}
-```</p>
-
-<p>まあこんな感じになるわけです。
-これで例えば<code>Array</code>っぽい<code>arguments</code>とかが通るようになります。</p>
-
-<p><code>javascript
-() =&gt; each(arguments, (obj: any) =&gt; {})
-</code></p>
-
-<p>ただこのままだと、<code>map([1,2,3])</code>が通らないので、<code>any[]</code>も受け付けるようにオーバーロードします。</p>
-
-<p>```javascript
-function each(list: any[], func: (obj: any) => void): void;
-function each(list: { [index: number]: any; length: any; }, func: (obj: any) => void): void;
-function each(list: any, func: (obj: any) => void): void {</p>
-
-<pre><code>for (var i = 0, l = list.length; i &lt; l; i++) {
-    func(list[i]);
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>こんな感じ。長い。こうすると</p>
-
-<p><code>javascript
-each([1,2,3], (obj: any) =&gt; {})
-() =&gt; each(arguments, (obj: any) =&gt; {})
-</code></p>
-
-<p>は通るけど、</p>
-
-<p><code>javascript
-each(1, (obj: any) =&gt; {})
-</code></p>
-
-<p>とかは通らなくなります、よかったですね！</p>
-
-<p>あとは<code>func</code>をInterfaceにまとめて、</p>
-
-<p>```javascript
-interface EachFunc {</p>
-
-<pre><code>(obj: any): void;
-</code></pre>
-
-<p>}</p>
-
-<p>function each(list: any[], func: EachFunc): void;
-function each(list: { [index: number]: any; length: any; }, func: EachFunc): void;
-function each(list: any, func: EachFunc): void {
-}
-```</p>
-
-<p>こうなって、さらにさっきのをInterfaceを経由するようにすると、</p>
-
-<p>```javascript
-interface EachFunc {</p>
-
-<pre><code>(obj: any): void;
-</code></pre>
-
-<p>}</p>
-
-<p>interface LikeArray {</p>
-
-<pre><code>[index: number]: any;
-length: any;
-</code></pre>
-
-<p>}</p>
-
-<p>function each(list: any[], func: EachFunc): void;
-function each(list: LikeArray, func: EachFunc): void;
-function each(list: any, func: EachFunc): void {
-}
-```</p>
-
-<p>とか書いたりできます。</p>
-
-<h2>まとめ</h2>
-
-<p>ﾋｰｽｲﾌｰﾄﾞｰﾎﾞｰｻﾞﾊﾞﾋﾞｭｰﾄﾞｺﾞｰﾝ!</p>
 ]]></content>
   </entry>
   
