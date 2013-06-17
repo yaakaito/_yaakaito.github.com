@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-C | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-04T23:45:09+09:00</updated>
+  <updated>2013-06-18T04:52:11+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -128,7 +128,7 @@ OCMockの解説はiOS部では初めての方が居たので軽く説明しま�
 
 <p>サンプルとしてこんな感じの画面を使います。</p>
 
-<p><img src="/images/viewcontroller-testing-sample.png" width="240"></p>
+<p>{% img /images/viewcontroller-testing-sample.png 240 %}</p>
 
 <p>この画面はモーダルとして呼び出されて、メモを作成&amp;編集できる画面です。
 以下のような要件で作られています。</p>
@@ -510,19 +510,19 @@ $ pod install
 
 <p>Storyboardに最初に出てくるViewControllerのクラスを<code>ECSlidingViewController</code>にする。</p>
 
-<p><img src="/images/storyboard-sliding-base.png"></p>
+<p>{% img /images/storyboard-sliding-base.png %}</p>
 
 <p>MenuViewControllerみたいなのをUITableViewControllerで作って、Storyboardで関連付ける。
 Menuというidentifierを与えておく。</p>
 
-<p><img src="/images/storyboard-sliding-menu.png"></p>
+<p>{% img /images/storyboard-sliding-menu.png %}</p>
 
 <p>これでAppDelegateをいじるのかなーと思ったんだけど、ついてくるサンプルを読んだら、
 InitialSlidingViewControllerみたいなを作って、これで初期化してた、こっちの方が綺麗な感じがするのでこっちでやることにする。
 最初に表示されるViewControllerを設定しているので、それを作つくるんだけど、ついでなので2つ追加して全体でこんなStoryboardにした。
 それぞれにFirstViewとSecondViewでidentifiterを与えている。</p>
 
-<p><img src="/images/storyboard-sliding.png"></p>
+<p>{% img /images/storyboard-sliding.png %}</p>
 
 <p><code>topViewController</code>というのが生えているので、ここへFirstViewControllerみたいなのを入れる。</p>
 
@@ -578,7 +578,7 @@ InitialSlidingViewControllerみたいなを作って、これで初期化して�
 
 <p>こんなかんじ！</p>
 
-<p><img src="/images/storyboard-sliding-sample.png" width="320"></p>
+<p>{% img /images/storyboard-sliding-sample.png 320 %}</p>
 
 <h2>メニューの実装してみる</h2>
 
@@ -700,7 +700,7 @@ Storyboard出来がよくて、iOSっぽいUIを作る分にはぽちぽちし�
 
 <p>別にそれぞれで大きく変わる訳でもないと思うので、最初に貼っておくととりあえずこんな感じのStoryboard作った。</p>
 
-<p><img src="/images/sample-story-board.png"></p>
+<p>{% img /images/sample-story-board.png %}</p>
 
 <p>めんどくさいので最初のVCをSSViewController、遷移先をSSSecondViewControllerにしてある。</p>
 
@@ -1064,11 +1064,11 @@ Book:
 
 <p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
 
-<p><img src="/images/mr-to-many.png"></p>
+<p>{% img /images/mr-to-many.png %}</p>
 
 <p><code>Class</code>とかも忘れずに設定する。</p>
 
-<p><img src="/images/mr-class.png" width="240"></p>
+<p>{% img /images/mr-class.png 240 %}</p>
 
 <h2>エンティティのモデルクラス作る</h2>
 

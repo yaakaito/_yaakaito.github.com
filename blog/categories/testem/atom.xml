@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testem | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testem/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-04T23:45:09+09:00</updated>
+  <updated>2013-06-18T04:52:11+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -103,7 +103,7 @@ $ npm install -g grunt-cli
 
 <p>この辺です。</p>
 
-<p><img src="/images/jenkins-plugins.png"></p>
+<p>{% img /images/jenkins-plugins.png %}</p>
 
 <h3>Gitの設定をする</h3>
 
@@ -118,7 +118,7 @@ $ git config --global user.name yaakaito+jenkins
 
 <p>準備も整ったの、ジョブを作ります。<code>Build a free-style software project</code> です。</p>
 
-<p><img src="/images/jenkins-setting-testem.png"></p>
+<p>{% img /images/jenkins-setting-testem.png %}</p>
 
 <h3>コード管理</h3>
 
@@ -143,7 +143,7 @@ testem ci -p 12333 &gt; tests.tap
 
 <p>やったーーー</p>
 
-<p><img src="/images/testem-tap-result.png"></p>
+<p>{% img /images/testem-tap-result.png %}</p>
 
 <h2>うまくいかないとき</h2>
 
@@ -760,13 +760,13 @@ describe('Sample', function(){
 $ testem
 </code></p>
 
-<p><img src="/images/testem-run.png"></p>
+<p>{% img /images/testem-run.png %}</p>
 
 <p>テストしたいブラウザで <code>http://localhost:7357</code> を開きます。あとは開きっぱでよいです。</p>
 
-<p><img src="/images/testem-browsers.png"></p>
+<p>{% img /images/testem-browsers.png %}</p>
 
-<p><img src="/images/testem-result.png"></p>
+<p>{% img /images/testem-result.png %}</p>
 
 <p>テストしてくれます、便利ですね。</p>
 
@@ -774,7 +774,7 @@ $ testem
 
 <p>こういう感じにカバレッジを出す事ができます。</p>
 
-<p><img src="/images/htmlcov.png"></p>
+<p>{% img /images/htmlcov.png %}</p>
 
 <p>適当にいろいろなブラウザでテストした結果をマージできると理想だけど、面倒そうなのでphantomjsで・・・ 、というか<a href="https://github.com/visionmedia/mocha/issues/281">サポートされていない</a>のかな。
 <a href="https://github.com/visionmedia/mocha/pull/506">こういうのもあったけど</a>今回はスルーで。</p>

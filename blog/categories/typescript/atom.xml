@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-04T23:45:09+09:00</updated>
+  <updated>2013-06-18T04:52:11+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,143 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptは引数の値によって関数定義を変えられるっぽい]]></title>
+    <link href="http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/"/>
+    <updated>2013-06-18T04:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！僕は元気です！
+<code>lib.d.ts</code>を眺めていたら面白い記述があったので、ちょっと調べてみました。これができるのは、<code>0.9.0</code>からっぽいです。</p>
+
+<p>codeplexの行パーマリンクの貼り方がよくわかんないので、申し訳ないんですが。
+<a href="http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts">lib.d.ts</a>を<code>0.9.0</code>で開いて<code>interface Document</code>とかでサーチするとこんな感じのが出てきます。</p>
+
+<p>```javascript
+// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts
+interface Document extends Node, /<em> .... </em>/ {</p>
+
+<pre><code>// ...
+createElement(tagName: string): HTMLElement;
+createElement(tagName: "a"): HTMLAnchorElement;
+createElement(tagName: "abbr"): HTMLElement;
+createElement(tagName: "address"): HTMLElement;
+createElement(tagName: "area"): HTMLAreaElement;
+createElement(tagName: "article"): HTMLElement;
+createElement(tagName: "aside"): HTMLElement;
+// ...
+</code></pre>
+
+<p>}
+```</p>
+
+<p>おなじみの<code>createElement</code>です。オーバーロードっぽいですが、よく見ると返り値が<code>tagName</code>によって違います。
+どうやら、渡った値によって関数の定義が変わるっぽい。
+実際に動かしてみると、確かに変わってた。</p>
+
+<h2>自分で書く事もできて</h2>
+
+<p>例えばこんな感じで書けば自分で定義したものに使う事も出来ます。</p>
+
+<p>```javascript
+interface HOGE {</p>
+
+<pre><code>f(a: string): any;
+f(a: "string"): string;
+f(a: "number"): number;
+</code></pre>
+
+<p>}</p>
+
+<p>var hoge: HOGE = {</p>
+
+<pre><code>f(a: any): any {
+    return null;
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<h2>引数も変えられるっぽい</h2>
+
+<p><code>interface SVGSVGElementEventHandlers</code>とかがそうなんですが、こういう感じになってる。</p>
+
+<p>```javascript
+// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts
+interface SVGSVGElementEventHandlers {</p>
+
+<pre><code>onresize: (ev: UIEvent) =&gt; any;
+addEventListener(type: "resize", listener: (ev: UIEvent) =&gt; void, useCapture?: boolean): void;
+onunload: (ev: Event) =&gt; any;
+addEventListener(type: "unload", listener: (ev: Event) =&gt; any, useCapture?: boolean): void;
+onscroll: (ev: UIEvent) =&gt; any;
+addEventListener(type: "scroll", listener: (ev: UIEvent) =&gt; any, useCapture?: boolean): void;
+onerror: (ev: Event) =&gt; any;
+addEventListener(type: "error", listener: (ev: Event) =&gt; any, useCapture?: boolean): void;
+onzoom: (ev: any) =&gt; any;
+addEventListener(type: "zoom", listener: (ev: any) =&gt; any, useCapture?: boolean): void;
+onabort: (ev: UIEvent) =&gt; any;
+addEventListener(type: "abort", listener: (ev: UIEvent) =&gt; any, useCapture?: boolean): void;
+addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>イベント名によって<code>listener</code>としてとれる関数が変わる。
+<code>listener</code>は<code>interface EventListener</code>で定義されていて、<code>EventListener</code>が取りうる形で制限をかけることができる。
+一番最後の</p>
+
+<p><code>javascript
+addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
+</code></p>
+
+<p>を<code>listener: EventListener</code>じゃなくて、<code>listener: (ev: any) =&gt; any</code>とかやると、全部これと解釈されるっぽい。</p>
+
+<p>こっちも自分で書く事ができて、簡単に書けばこんな感じ。</p>
+
+<p>```javascript
+interface FF {</p>
+
+<pre><code>(v: string): void;
+(v: number): void;
+</code></pre>
+
+<p>}</p>
+
+<p>interface HOGE {</p>
+
+<pre><code>f(a: number, ff: FF): any;
+f(a: "string", ff: (v: string) =&gt; void): string;
+f(a: "number", ff: (v: number) =&gt; void): number;
+</code></pre>
+
+<p>}</p>
+
+<p>var hoge: HOGE = {</p>
+
+<pre><code>f(a: any, ff: FF): any {
+    return null;
+}
+</code></pre>
+
+<p>};
+```</p>
+
+<h2>使えるのはstringだけっぽい</h2>
+
+<p>数字とか突っ込んでみたけど、パースエラーだった。使えるのはstringだけっぽい。
+特に今回みたいなイベント関連とかのために作られた仕様なんかなーという感じ。</p>
+
+<p>あくまで既存のJavaScriptを安全に使う、というの貫いててすげーなと思う。</p>
+
+<h2>まとめ</h2>
+
+<p>型推論でほとんど隠蔽されるので、意識したり、使うところもほとんどないと思いますけど、
+フレームワークとか作る人は覚えておくと便利かもしれません。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptで似非Option型作るよ]]></title>
@@ -635,258 +772,6 @@ grunt.loadNpmTasks 'grunt-exec'
 <p>コンパイルできた！</p>
 
 <p>あとはgruntのエイリアスよしなにして、とりあえずこれで使えそう。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TypeScriptのコーディング規約を考える]]></title>
-    <link href="http://yaakaito.org/blog/2013/05/05/typescript-codeconventions/"/>
-    <updated>2013-05-05T19:30:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/05/05/typescript-codeconventions</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-TypeScript書いてますか？？？おすすめです！！！
-ところでTypeScriptのコーディング規約がよくわからなかったので、コンパイラをみてきました。
-JavaScriptほどあーだーこーだというものでもないと思うので、ほんとにコーディング規約みたいな感じです。</p>
-
-<h2>基本的なところ</h2>
-
-<h3>インデント</h3>
-
-<ul>
-<li>ソフトインデントで4個</li>
-</ul>
-
-
-<h3>1行の文字数</h3>
-
-<p>これはコンパイラの方は結構自由に感じた・・・。
-ので、JavaScriptよりはJavaとか参考にした方がいいだろうってことで <a href="http://www.oracle.com/technetwork/java/javase/documentation/codeconventions-136091.html#313">Oracle</a> のを参考にすることに。</p>
-
-<ul>
-<li><s>1行は80文字</s></li>
-</ul>
-
-
-<h4>追記</h4>
-
-<p>いまどき80文字じゃなくてよくない？というツッコミがあったので考え直した。</p>
-
-<p>僕は、80文字で結構いけるんじゃないかなーと思っている。なのであんまり80文字なってる理由については深追いしてない。
-というのも、80文字あったら結構書けるよなーと思うので、オーバーするなら分割する基準になるんでは、というところが大きい。
-ただ、シンタックス上長くなっちゃうよねーというのも、もちろんあると思う。(下の方で85文字のがある。)
-その都度柔軟に変えばよいというのも、その通りだけど、自分が書いていくのにある程度基準がほしいなーとは思う。</p>
-
-<p>元々は80文字しか表示できないから系(表現あれだけど)の理由らしいんだけど、じゃあ今だとどうなのかなと考えてみた。
-で、僕はGithubをよく使う方だと思うので(エンタープライズ含め)、そこで横スクロールしちゃうのはやだなーと思った。
-というわけでGithubの100%表示で何文字入るのか数えてみた、122文字らしい。</p>
-
-<p>なので個人で書く範囲では</p>
-
-<ul>
-<li>1行は120文字</li>
-</ul>
-
-
-<p>ということにしようかなと思う。</p>
-
-<p>改行ルールとかもこっちを参考にして、</p>
-
-<ul>
-<li>コンマのあと</li>
-<li>オペレーターの前</li>
-<li>改行するときは8個インデント</li>
-</ul>
-
-
-<h3>型の為のコロンの位置</h3>
-
-<ul>
-<li>変数名にくっつけてスペースを一つ入れる</li>
-</ul>
-
-
-<p>```javascript
-(name: string) => { }</p>
-
-<p>var name: string = Names.at(0);</p>
-
-<p>name: string = null;
-```</p>
-
-<h3>関数の返り値</h3>
-
-<ul>
-<li>voidの時は宣言しない</li>
-</ul>
-
-
-<p>```
-voidFunction() {</p>
-
-<p>}</p>
-
-<p>stringFunction(): string {</p>
-
-<pre><code>return "hoge";
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>命名規則</h2>
-
-<ul>
-<li>変数/関数/メソッドはキャメルケール</li>
-</ul>
-
-
-<h3>クラスとモジュールの命名規則</h3>
-
-<ul>
-<li>アッパーキャメルケース</li>
-</ul>
-
-
-<p>```javascript
-module Hoge {</p>
-
-<pre><code>class HogeClass {
-    // ...
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<h3>Enumの命名規則</h3>
-
-<ul>
-<li>アッパーキャメルケース</li>
-</ul>
-
-
-<p>```javascript
-enum Fruit {</p>
-
-<pre><code>Apple,
-Orange,
-KiwiFruit
-</code></pre>
-
-<p>}
-```</p>
-
-<h3>定数の命名規則</h3>
-
-<ul>
-<li>大文字スネークケース</li>
-</ul>
-
-
-<p><code>javascript
-var HOGE_FUGA = 'a';
-</code></p>
-
-<h3>インターフェイスの命名規則</h3>
-
-<ul>
-<li>頭に <code>I</code> をつける</li>
-</ul>
-
-
-<p>```javascript
-interface IHoge {</p>
-
-<pre><code>// ...
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>varの型宣言</h2>
-
-<ul>
-<li>基本的には宣言しない</li>
-<li>anyとして返されるものに対してには宣言する</li>
-</ul>
-
-
-<p><code>
-var name = 'yaakaito';
-var name: string = names[0];
-</code></p>
-
-<h2>即時関数</h2>
-
-<p>よくわからなかった。JavaScriptのまんま書いてある感じもする。</p>
-
-<p>```javascript
-(function(x) {</p>
-
-<pre><code>return x * x
-</code></pre>
-
-<p>})(10);
-```</p>
-
-<p>TypeScript的にはこんな感じなんだろうか？</p>
-
-<p><code>javascript
-(x =&gt; x * x)(10)
-</code></p>
-
-<h2>コンストラクタでのプロパティの宣言</h2>
-
-<ul>
-<li>コンストラクタに渡された値をそのまま利用する場合はコンストラクタの引数で宣言する</li>
-</ul>
-
-
-<p>```
-class Person {</p>
-
-<pre><code>fullName: string;
-
-constructor(public firstName: string, public lastName: string, private age: number) {
-    this.fullName = [firstName, lastName].join(" ");
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>追加</h2>
-
-<ul>
-<li>プロパティやメソッドが<code>public</code>である場合、<code>public</code>を明記しない。
-
-<ul>
-<li>コンストラクタでのプロパティ宣言は明記する。</li>
-</ul>
-</li>
-</ul>
-
-
-<p>これは書いても書かなくともよくて(省略された場合は自動的に<code>public</code>)、好みだと思うんだけど、最近Scalaを書くようになって、あっちが<code>public</code>はない、というルールなので、それに合わせる事に。</p>
-
-<p>```javascript
-class Person {</p>
-
-<pre><code>fullName: string;
-private room: Room = null;
-constructor(public firstName: string, public lastName: string, private age: number) {
-    this.fullName = [firstName, lastName].join(" ");
-}
-openDoor() { }
-private lookDoor() { }
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>こんな感じかなぁ</h2>
-
-<p>追加あれば書く。</p>
 ]]></content>
   </entry>
   

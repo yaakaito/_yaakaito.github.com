@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>TypeScriptは引数の値によって関数定義を変えられるっぽい - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！僕は元気です！
+lib.d.tsを眺めていたら面白い記述があったので、ちょっと調べてみました。これができるのは、0.9.0からっぽいです。 codeplexの行パーマリンクの貼り方がよくわかんないので、申し訳ないんですが。
+lib.d.tsを0.9. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">TypeScriptは引数の値によって関数定義を変えられるっぽい</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-18T04:24:00+09:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/typescript/'>TypeScript</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！僕は元気です！
+<code>lib.d.ts</code>を眺めていたら面白い記述があったので、ちょっと調べてみました。これができるのは、<code>0.9.0</code>からっぽいです。</p>
+
+<p>codeplexの行パーマリンクの貼り方がよくわかんないので、申し訳ないんですが。
+<a href="http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts">lib.d.ts</a>を<code>0.9.0</code>で開いて<code>interface Document</code>とかでサーチするとこんな感じのが出てきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts</span>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">Document</span> <span class="kr">extends</span> <span class="nx">Node</span><span class="p">,</span> <span class="cm">/* .... */</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLAnchorElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;abbr&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;address&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;area&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLAreaElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;article&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;aside&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>おなじみの<code>createElement</code>です。オーバーロードっぽいですが、よく見ると返り値が<code>tagName</code>によって違います。
+どうやら、渡った値によって関数の定義が変わるっぽい。
+実際に動かしてみると、確かに変わってた。</p>
+
+<h2>自分で書く事もできて</h2>
+
+<p>例えばこんな感じで書けば自分で定義したものに使う事も出来ます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">HOGE</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;number&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">number</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hoge</span><span class="o">:</span> <span class="nx">HOGE</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>引数も変えられるっぽい</h2>
+
+<p><code>interface SVGSVGElementEventHandlers</code>とかがそうなんですが、こういう感じになってる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts</span>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">SVGSVGElementEventHandlers</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">onresize</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;resize&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onunload</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;unload&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onscroll</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;scroll&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onerror</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onzoom</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;zoom&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onabort</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;abort&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="nx">EventListener</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>イベント名によって<code>listener</code>としてとれる関数が変わる。
+<code>listener</code>は<code>interface EventListener</code>で定義されていて、<code>EventListener</code>が取りうる形で制限をかけることができる。
+一番最後の</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="nx">EventListener</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>を<code>listener: EventListener</code>じゃなくて、<code>listener: (ev: any) =&gt; any</code>とかやると、全部これと解釈されるっぽい。</p>
+
+<p>こっちも自分で書く事ができて、簡単に書けばこんな感じ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">FF</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">HOGE</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="nx">FF</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="nx">number</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hoge</span><span class="o">:</span> <span class="nx">HOGE</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="nx">FF</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>使えるのはstringだけっぽい</h2>
+
+<p>数字とか突っ込んでみたけど、パースエラーだった。使えるのはstringだけっぽい。
+特に今回みたいなイベント関連とかのために作られた仕様なんかなーという感じ。</p>
+
+<p>あくまで既存のJavaScriptを安全に使う、というの貫いててすげーなと思う。</p>
+
+<h2>まとめ</h2>
+
+<p>型推論でほとんど隠蔽されるので、意識したり、使うところもほとんどないと思いますけど、
+フレームワークとか作る人は覚えておくと便利かもしれません。</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-18T04:24:00+09:00" pubdate data-updated="true">Jun 18<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/" data-via="" data-counturl="http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/06/04/typescript-like-option/" title="Previous Post: TypeScriptで似非Option型作るよ">&laquo; TypeScriptで似非Option型作るよ</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-04T23:45:09+09:00</updated>
+  <updated>2013-06-18T04:51:47+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,178 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptは引数の値によって関数定義を変えられるっぽい]]></title>
+    <link href="http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value/"/>
+    <updated>2013-06-18T04:24:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/06/18/typescript-overload-by-value</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！僕は元気です！
+<code>lib.d.ts</code>を眺めていたら面白い記述があったので、ちょっと調べてみました。これができるのは、<code>0.9.0</code>からっぽいです。</p>
+
+<p>codeplexの行パーマリンクの貼り方がよくわかんないので、申し訳ないんですが。
+<a href="http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts">lib.d.ts</a>を<code>0.9.0</code>で開いて<code>interface Document</code>とかでサーチするとこんな感じのが出てきます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts</span>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">Document</span> <span class="kr">extends</span> <span class="nx">Node</span><span class="p">,</span> <span class="cm">/* .... */</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLAnchorElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;abbr&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;address&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;area&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLAreaElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;article&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;aside&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>おなじみの<code>createElement</code>です。オーバーロードっぽいですが、よく見ると返り値が<code>tagName</code>によって違います。
+どうやら、渡った値によって関数の定義が変わるっぽい。
+実際に動かしてみると、確かに変わってた。</p>
+
+<h2>自分で書く事もできて</h2>
+
+<p>例えばこんな感じで書けば自分で定義したものに使う事も出来ます。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">HOGE</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;number&quot;</span><span class="p">)</span><span class="o">:</span> <span class="nx">number</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hoge</span><span class="o">:</span> <span class="nx">HOGE</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>引数も変えられるっぽい</h2>
+
+<p><code>interface SVGSVGElementEventHandlers</code>とかがそうなんですが、こういう感じになってる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// http://typescript.codeplex.com/SourceControl/latest#bin/lib.d.ts</span>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">SVGSVGElementEventHandlers</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">onresize</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;resize&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onunload</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;unload&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onscroll</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;scroll&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onerror</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">Event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onzoom</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;zoom&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">onabort</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;abort&quot;</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="p">(</span><span class="nx">ev</span><span class="o">:</span> <span class="nx">UIEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="nx">EventListener</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>イベント名によって<code>listener</code>としてとれる関数が変わる。
+<code>listener</code>は<code>interface EventListener</code>で定義されていて、<code>EventListener</code>が取りうる形で制限をかけることができる。
+一番最後の</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">type</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">listener</span><span class="o">:</span> <span class="nx">EventListener</span><span class="p">,</span> <span class="nx">useCapture</span><span class="o">?:</span> <span class="kr">boolean</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>を<code>listener: EventListener</code>じゃなくて、<code>listener: (ev: any) =&gt; any</code>とかやると、全部これと解釈されるっぽい。</p>
+
+<p>こっちも自分で書く事ができて、簡単に書けばこんな感じ。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">interface</span> <span class="nx">FF</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span><span class="o">:</span> <span class="k">void</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">interface</span> <span class="nx">HOGE</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="nx">FF</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="nx">string</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="p">(</span><span class="nx">v</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">)</span><span class="o">:</span> <span class="nx">number</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">hoge</span><span class="o">:</span> <span class="nx">HOGE</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">(</span><span class="nx">a</span><span class="o">:</span> <span class="nx">any</span><span class="p">,</span> <span class="nx">ff</span><span class="o">:</span> <span class="nx">FF</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>使えるのはstringだけっぽい</h2>
+
+<p>数字とか突っ込んでみたけど、パースエラーだった。使えるのはstringだけっぽい。
+特に今回みたいなイベント関連とかのために作られた仕様なんかなーという感じ。</p>
+
+<p>あくまで既存のJavaScriptを安全に使う、というの貫いててすげーなと思う。</p>
+
+<h2>まとめ</h2>
+
+<p>型推論でほとんど隠蔽されるので、意識したり、使うところもほとんどないと思いますけど、
+フレームワークとか作る人は覚えておくと便利かもしれません。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptで似非Option型作るよ]]></title>
@@ -4297,136 +4469,6 @@ jQuery PlugingとかBackboneの拡張とか、Angularの拡張はたくさんあ
 <h2>sqliteのビュアーとか</h2>
 
 <p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Overline0.2.0とBlocksKit併用版を公開しました]]></title>
-    <link href="http://yaakaito.org/blog/2013/03/30/overline-020-release/"/>
-    <updated>2013-03-30T19:13:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/03/30/overline-020-release</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-Objective-C用ユーティリティ、<a href="https://github.com/yaakaito">Overline</a> 0.2.0を公開しました。0.1.5は6時間くらいの命でした。
-同時に0.1.xで問題になっていたBlocksKitと一緒に使うとassertで死ぬ問題を回避した、Overline-BlocksKitを公開しています。</p>
-
-<h2>BlocksKitと一緒に使う場合</h2>
-
-<p>Overline-BlocksKitを利用します。Podfileはこんな感じ。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pod 'BlocksKit'
-</span><span class='line'>pod 'Overline-BlocksKit'</span></code></pre></td></tr></table></div></figure>
-
-
-<p>重複を解決するために、いくつかショートハンドのメソッドを削除しています。
-削除されているのは、<code>NSArray</code> <code>NSDictionary</code> <code>NSSet</code> にある以下のメソッドです。</p>
-
-<ul>
-<li><code>each:</code></li>
-<li><code>map:</code></li>
-<li><code>reduce:memo:</code></li>
-<li><code>filter:</code></li>
-<li><code>reject:</code></li>
-</ul>
-
-
-<p>ショートハンドは削除されますが、Objective-Cっぽい方はそのまま使えます。このあたりはBlocksKitが実装してくれているので、そちらをご利用ください。</p>
-
-<h2>追加された機能とか</h2>
-
-<p>たらたらと紹介していきます。全部書くのはだるいので全部じゃないです。0.1.0から0.2.0までの変更のうちいろいろという感じです。</p>
-
-<h3>NSArray arrayWithRange</h3>
-
-<p>指定した範囲のNSArrayを作ります、NSNumber自体が使いにくいので、あんまり使わないですかね。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="nl">arrayWithRangeFrom:</span><span class="mi">0</span> <span class="nl">to:</span><span class="mi">10</span><span class="p">];</span>
-</span><span class='line'><span class="c1">// @[@0, @1, @2, @3, @4, @5, @6, @7, @8, @9]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>逆方向にも行けます</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">array2</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSArray</span> <span class="nl">arrayWithRangeFrom:</span><span class="mi">0</span> <span class="nl">to:</span><span class="o">-</span><span class="mi">10</span> <span class="nl">step:</span><span class="mi">2</span><span class="p">];</span>
-</span><span class='line'><span class="c1">// @[@0, @-2, @-4, @-6, @-8]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>NSArray uniqueObjects</h3>
-
-<p>まんま、ユニークなものだけ返ってきます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSArray</span> <span class="o">*</span><span class="n">uniqueObjects</span> <span class="o">=</span> <span class="p">[</span><span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="mi">1</span><span class="p">,</span> <span class="err">@</span><span class="mi">2</span><span class="p">,</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span> <span class="err">@</span><span class="mi">1</span><span class="p">,</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span> <span class="err">@</span><span class="mi">4</span><span class="p">,</span> <span class="err">@</span><span class="mi">5</span><span class="p">]</span> <span class="n">uniqueObjects</span><span class="p">];</span>
-</span><span class='line'><span class="c1">// @[@1, @2, @3, @4, @5]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>比較の部分をBlocksで書ける <code>uniqueObjectsUsingEqualsBlock:</code> もあります。</p>
-
-<h3>その他NSArray</h3>
-
-<p><code>subArray</code> <code>diffrence</code> <code>reversed</code> とかが地味に増えました。</p>
-
-<h3>NSDictionary arrayMap</h3>
-
-<p>そもそも<code>map</code>おかしくね？となって、追加した。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="err">@</span><span class="p">{</span>
-</span><span class='line'>    <span class="s">@&quot;a&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">1</span><span class="p">,</span>
-</span><span class='line'>    <span class="s">@&quot;b&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">2</span><span class="p">,</span>
-</span><span class='line'>    <span class="s">@&quot;c&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">3</span><span class="p">,</span>
-</span><span class='line'>    <span class="s">@&quot;d&quot;</span> <span class="o">:</span> <span class="err">@</span><span class="mi">4</span>
-</span><span class='line'><span class="p">}</span> <span class="nl">mappedArrayUsingBlock:</span><span class="o">^</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="err">@</span><span class="p">([</span><span class="n">obj</span> <span class="n">integerValue</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
-</span><span class='line'><span class="p">}];</span>
-</span><span class='line'><span class="c1">// @[@2,@4,@6,@8]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>NSDictionary objectForKey:transformBlock: pathForKey:</h3>
-
-<p><code>objectForKey:</code>したあとに変換してーというのが面倒なので、Blocksでまとめられるようにしました。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">NSDate</span> <span class="o">*</span><span class="n">date</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSON</span> <span class="nl">objectForKey:</span><span class="s">@&quot;date8601&quot;</span> <span class="nl">transformBlock:</span><span class="o">^</span><span class="kt">id</span><span class="p">(</span><span class="kt">id</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">NSDateFormatter</span> <span class="o">*</span><span class="n">formatter</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSDateFormatter</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">[</span><span class="n">formatter</span> <span class="nl">setDateFormat:</span><span class="s">@&quot;yyyy/MM/dd HH:mm:ss Z&quot;</span><span class="p">];</span>
-</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">formatter</span> <span class="nl">dateFromString:</span><span class="n">obj</span><span class="p">];</span>
-</span><span class='line'><span class="p">}];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>とか、あとは<code>stringForKey:</code> <code>dateForKey:usingFormat:</code> <code>bookForKey:withTrueValue:</code> <code>integerForKey:</code> などもろもろ。多いのでREADMEかテストを見てください。</p>
-
-<p><code>objectForPath:</code> は <code>hoge.fuga</code> みたいなので階層を辿れる。 <code>valueForKey</code> とか <code>valueForKeyPath</code> でも出来たはずだけど、本来その目的に使う物ではないはずなので、あんまり使っちゃ駄目だと思います。</p>
-
-<p>こっちの<code>transform</code>とかの対応そういえばやってなかった・・・</p>
-
-<p>多分大きめなのはこれくらいかと思います。はい。</p>
-
-<h2>よろしくね！</h2>
-
-<p><a href="https://github.com/yaakaito">Overline</a></p>
 ]]></content>
   </entry>
   
