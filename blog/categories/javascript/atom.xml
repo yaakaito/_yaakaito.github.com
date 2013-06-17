@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JavaScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T04:52:11+09:00</updated>
+  <updated>2013-06-18T04:53:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -204,9 +204,7 @@ function(a) {
 
 <p>@kazuhoさんからこんなコメントをもらって、確かにそう読めると思ったので補足する。</p>
 
-<p>{% blockquote @kazuho https://twitter.com/kazuho/status/322496581867810816 %}
-正論なんだけど、それ以前に、そもそも引数としてundefined渡すのが間違い。null使うべき
-{% endblockquote %}</p>
+<p><blockquote><p>正論なんだけど、それ以前に、そもそも引数としてundefined渡すのが間違い。null使うべき</p><footer><strong>@kazuho</strong> <cite><a href='https://twitter.com/kazuho/status/322496581867810816'>twitter.com/kazuho/status/&hellip;</a></cite></footer></blockquote></p>
 
 <p>これは、<code>f()</code>と<code>f(hoge)</code>で挙動が違うことを前提にしているのであれば、その実装は正確には間違っている(<code>f(undefined)</code>も引数一つとして扱われるべき)、という主張です。
 <code>undefined</code>を使って書いているのは、省略されたときにその引数は<code>undefined</code>になるのだから、
@@ -517,13 +515,13 @@ describe('Sample', function(){
 $ testem
 </code></p>
 
-<p>{% img /images/testem-run.png %}</p>
+<p><img src="/images/testem-run.png"></p>
 
 <p>テストしたいブラウザで <code>http://localhost:7357</code> を開きます。あとは開きっぱでよいです。</p>
 
-<p>{% img /images/testem-browsers.png %}</p>
+<p><img src="/images/testem-browsers.png"></p>
 
-<p>{% img /images/testem-result.png %}</p>
+<p><img src="/images/testem-result.png"></p>
 
 <p>テストしてくれます、便利ですね。</p>
 
@@ -531,7 +529,7 @@ $ testem
 
 <p>こういう感じにカバレッジを出す事ができます。</p>
 
-<p>{% img /images/htmlcov.png %}</p>
+<p><img src="/images/htmlcov.png"></p>
 
 <p>適当にいろいろなブラウザでテストした結果をマージできると理想だけど、面倒そうなのでphantomjsで・・・ 、というか<a href="https://github.com/visionmedia/mocha/issues/281">サポートされていない</a>のかな。
 <a href="https://github.com/visionmedia/mocha/pull/506">こういうのもあったけど</a>今回はスルーで。</p>

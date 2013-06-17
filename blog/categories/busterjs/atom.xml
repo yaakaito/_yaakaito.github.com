@@ -4,7 +4,7 @@
   <title><![CDATA[Category: BusterJS | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/busterjs/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T04:52:11+09:00</updated>
+  <updated>2013-06-18T04:53:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -21,9 +21,7 @@
     <content type="html"><![CDATA[<p>こんにちは！うきょーです。
 <a href="http://yaakaito.github.com/blog/2013/03/01/buster-testbed-and-boot/">前回BusterJSのtestbedの話</a>を書いたのですが、</p>
 
-<p>{% blockquote @y_imaya https://twitter.com/y_imaya/status/307347977712848896 %}
-@yaakaito HTMLを用意するまでもない場合は buster-html-doc とかも良いと思いますがどうでしょう！
-{% endblockquote %}</p>
+<p><blockquote><p>@yaakaito HTMLを用意するまでもない場合は buster-html-doc とかも良いと思いますがどうでしょう！</p><footer><strong>@y_imaya</strong> <cite><a href='https://twitter.com/y_imaya/status/307347977712848896'>twitter.com/y_imaya/status/&hellip;</a></cite></footer></blockquote></p>
 
 <p>という意見をもらったので、こっちのことも書いておこうと思いました。</p>
 
@@ -227,7 +225,7 @@ resources : {
 で、テスト用のファイルを読み込まなきゃいけないわけで(sourcesとかtestsに設定してるやつ)、それがどこに埋め込まれるのかなーというと、コードを見てみた感じ、</p>
 
 <ol>
-<li><code>{% raw %}{{scripts}}{% endraw %}</code> という文字列を探して、あったらそこを置き換える</li>
+<li><code>{{scripts}}</code> という文字列を探して、あったらそこを置き換える</li>
 <li><code>&lt;/body&gt;</code> を探して、あったらその直前に置く</li>
 <li><code>&lt;/html&gt;</code> を探して、あったらその直前に置く</li>
 <li>何も見つからなかったら、一番最後に連結する</li>
@@ -255,14 +253,14 @@ initialize({
 
 <p>```</p>
 
-<p><code>{% raw %}{{scripts}}{% endraw %}</code> を使って、</p>
+<p><code>{{scripts}}</code> を使って、</p>
 
 <p>```html</p>
 
 <script src="hoge.js"></script>
 
 
-<p>{% raw %}{{scripts}}{% endraw %}</p>
+<p>{{scripts}}</p>
 
 <script>
 initialize({

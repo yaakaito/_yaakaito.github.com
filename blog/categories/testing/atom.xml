@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T04:52:11+09:00</updated>
+  <updated>2013-06-18T04:53:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -103,7 +103,7 @@ $ npm install -g grunt-cli
 
 <p>この辺です。</p>
 
-<p>{% img /images/jenkins-plugins.png %}</p>
+<p><img src="/images/jenkins-plugins.png"></p>
 
 <h3>Gitの設定をする</h3>
 
@@ -118,7 +118,7 @@ $ git config --global user.name yaakaito+jenkins
 
 <p>準備も整ったの、ジョブを作ります。<code>Build a free-style software project</code> です。</p>
 
-<p>{% img /images/jenkins-setting-testem.png %}</p>
+<p><img src="/images/jenkins-setting-testem.png"></p>
 
 <h3>コード管理</h3>
 
@@ -143,7 +143,7 @@ testem ci -p 12333 &gt; tests.tap
 
 <p>やったーーー</p>
 
-<p>{% img /images/testem-tap-result.png %}</p>
+<p><img src="/images/testem-tap-result.png"></p>
 
 <h2>うまくいかないとき</h2>
 
@@ -266,7 +266,7 @@ OCMockの解説はiOS部では初めての方が居たので軽く説明しま�
 
 <p>サンプルとしてこんな感じの画面を使います。</p>
 
-<p>{% img /images/viewcontroller-testing-sample.png 240 %}</p>
+<p><img src="/images/viewcontroller-testing-sample.png" width="240"></p>
 
 <p>この画面はモーダルとして呼び出されて、メモを作成&amp;編集できる画面です。
 以下のような要件で作られています。</p>

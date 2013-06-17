@@ -4,7 +4,7 @@
   <title><![CDATA[Category: OCMock | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/ocmock/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T04:52:11+09:00</updated>
+  <updated>2013-06-18T04:53:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -128,7 +128,7 @@ OCMockの解説はiOS部では初めての方が居たので軽く説明しま�
 
 <p>サンプルとしてこんな感じの画面を使います。</p>
 
-<p>{% img /images/viewcontroller-testing-sample.png 240 %}</p>
+<p><img src="/images/viewcontroller-testing-sample.png" width="240"></p>
 
 <p>この画面はモーダルとして呼び出されて、メモを作成&amp;編集できる画面です。
 以下のような要件で作られています。</p>

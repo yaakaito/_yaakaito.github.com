@@ -4,7 +4,7 @@
   <title><![CDATA[Category: confWD | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/confwd/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T04:52:11+09:00</updated>
+  <updated>2013-06-18T04:53:16+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -47,7 +47,7 @@
 
 <p>2/23(土)にグリー株式会社でiOSエンジニアのためのカンファレンスイベント「conferenceWithDevelopers」を開催します！</p>
 
-<p>{% img /images/confwd.png 660 %}</p>
+<p><img src="/images/confwd.png" width="660"></p>
 
 <p><a href="http://conference-with-developers.info/">公式サイト</a></p>
 
