@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T05:31:54+09:00</updated>
+  <updated>2013-07-30T02:59:29+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,308 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[いい感じのViewControllerのテストの書き方を考えてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/07/30/view-controller-testing-practice/"/>
+    <updated>2013-07-30T02:57:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/07/30/view-controller-testing-practice</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+いろいろあって落ち着いてなかったのでブログ全然書けてなかった！</p>
+
+<p>すごい昔の話しだけど、TwitterみてたらViewControllerのテストがあーだこーだあったので自分の考えを書いてみるよ。
+<a href="http://yaakaito.org/blog/2013/05/03/view-controller-testing/">前回は手法的な話</a>だけをしたから、今回は実際どう書くのがいいの的な話。
+モックとかの使い方は分かってる前提＆一旦非同期はないものとして考えて書いてみる。</p>
+
+<h3>ViewControllerの実装はほぼプライベートなんだけど的な話</h3>
+
+<p>あってると思う。それで正しい。
+ただViewControllerの利用者はフレームワークなので、例えばボタンをタップしたときにどれを呼び出すかというポインタをフレームワークは知っている。
+なのでテストがプライベートにアクセスしたりするのは結構正しくて、テストはフレームワークのフリをして書けばよいと思う。</p>
+
+<h3>自作自演っぽくなる</h3>
+
+<p>これに関しては多分テストする単位が小さいんじゃないだろうかと思う。
+シナリオ単位でテストするのがよいと思っている。
+単純にメソッドが動いてるーはあんまり意味がない感じがする。</p>
+
+<h3>いわゆる単体テストではないのでは説</h3>
+
+<p>あってそう、テストの性質が異なっているのは確か。
+そういう場合はテストフレームワークを分けるといいとかって話もあるし、KIFとか使って書くのでもいいんじゃないかな。
+ただ、ViewControllerのテスト、というと感覚的にこの2つの中間くらいの話なのかなって気もするので、そこまで大げさにしなくてもいいのかなと思う。
+モデルのテストはSenTestingKitだけど、ViewControllerのテストはSpecta、みたいなのもわりとありかなと思ってる。</p>
+
+<h2>というわけで例</h2>
+
+<p>ログイン画面とかで考えてみる。</p>
+
+<h3>ありそうな流れ</h3>
+
+<ul>
+<li>ログインが必要になると、ログイン画面が表示される</li>
+<li>ユーザーがidとパスワードを入力</li>
+<li>サーバーに問い合わせる</li>
+<li>成功したら「ログインした」とか出して、画面を戻す</li>
+<li>失敗したら「ログインに失敗した」とか出して、もう一度入力させる
+
+<ul>
+<li>この時にパスワードはクリアされるとユーザーに優しそう</li>
+<li>パスワードが間違っていますとか、赤字で残ってるとユーザーに優しそう</li>
+</ul>
+</li>
+</ul>
+
+
+<p>みたいな感じですかね。</p>
+
+<h3>テストのシナリオ</h3>
+
+<p>画面だすところは別のViewControllerのテストかと思うので、そこは省く。</p>
+
+<p>こんな感じだろうか。この辺を書いておけばいい感じになるような気がする。</p>
+
+<h4>成功</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに成功する</li>
+<li>「ログインした」と表示される</li>
+<li>画面を戻す</li>
+</ol>
+
+
+<h4>失敗 => 成功</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+<li>再度パスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに成功する</li>
+<li>「ログインした」と表示される</li>
+<li>画面を戻す</li>
+</ol>
+
+
+<h4>失敗 => 失敗 => &#8230;</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+<li>再度パスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+</ol>
+
+
+<h3>いい感じに見せる方法を考えてみる</h3>
+
+<h4>ヘルパーメソッドを作ってそれっぽく見せる</h4>
+
+<p>スタブに毎回ユーザー入力のフリを直接いれていくのも芸がない(というか意図が伝わり難い)ので、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;hogefuga&quot;</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう感じにするとよいんじゃないかな。</p>
+
+<h4>画面が変わる単位でまとめる</h4>
+
+<p>今回の場合はエラー画面なんだけど、毎回エラーと表示された、パスワードがクリアされた、とかアサーションするのはだるい。
+こういうことをしたときに、エラー画面になるよ、という風にかけるといいんじゃないかと思う。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeErrorIf:</span><span class="o">^</span><span class="p">(){</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="n">confirm</span><span class="p">];</span>
+</span><span class='line'><span class="p">}];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じ。</p>
+
+<h4>状況によってはカテゴリでファサードみたいなのするとよさそう</h4>
+
+<p>上と似たような感じだけど、状況によってはViewControllerをテスト用に拡張するとよいかもしれない。
+今回はこっちは考えずに一旦は上の2つでやってみる。</p>
+
+<h3>XUnitと仮定してざっと書いてみる</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testLoginSuccess</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeSuccess:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;valid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="n">confirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testLoginFailureAndSuccessOnRetry</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">userInputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="n">userConfirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeSuccess:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;valid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="n">confirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testLoginFailureAndFailureOnRetry</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">userInputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="n">userConfirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;valid-password-2&quot;</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">self</span> <span class="n">confirm</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>それっぽい！</p>
+
+<h3>XSpecだと仮定してざっと書いてみる</h3>
+
+<p>KiwiやSpectaだと<code>self</code>がないので、テスト用のオブジェクトとか作ればいいんだろうか？
+今回は雰囲気がみたいので、コンパイルできないけど<code>self</code>で書いてみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">describe</span><span class="p">(</span><span class="s">@&quot;Login Controller&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>    <span class="n">describe</span><span class="p">(</span><span class="s">@&quot;Login&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="n">context</span><span class="p">(</span><span class="s">@&quot;When login succeed&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>            <span class="n">it</span><span class="p">(</span><span class="s">@&quot;should display Success message&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeSuccess:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="nl">inputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;valid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="n">confirm</span><span class="p">];</span>
+</span><span class='line'>                <span class="p">}];</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">context</span><span class="p">(</span><span class="s">@&quot;When login failed&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>            <span class="n">it</span><span class="p">(</span><span class="s">@&quot;should display Failure message&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="nl">userInputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="n">userConfirm</span><span class="p">];</span>
+</span><span class='line'>                <span class="p">}];</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">context</span><span class="p">(</span><span class="s">@&quot;But, retry it and succeed&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="n">it</span><span class="p">(</span><span class="s">@&quot;should display Success message&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                        <span class="p">[</span><span class="n">self</span> <span class="nl">userInputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>                        <span class="p">[</span><span class="n">self</span> <span class="n">userConfirm</span><span class="p">];</span>
+</span><span class='line'>                    <span class="p">}];</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">context</span><span class="p">(</span><span class="s">@&quot;But, retry it and failed&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="n">it</span><span class="p">(</span><span class="s">@&quot;should display Failure message&quot;</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                    <span class="p">[</span><span class="n">self</span> <span class="nl">shouldSeeError:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                        <span class="p">[</span><span class="n">self</span> <span class="nl">userInputId:</span><span class="s">@&quot;yaakaito&quot;</span> <span class="nl">andPassword:</span><span class="s">@&quot;invalid-password&quot;</span><span class="p">];</span>
+</span><span class='line'>                        <span class="p">[</span><span class="n">self</span> <span class="n">userConfirm</span><span class="p">];</span>
+</span><span class='line'>                    <span class="p">}];</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>英語があっているかすごく微妙だけど、なかなかよいんじゃないか？</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypeScriptは引数の値によって関数定義を変えられるっぽい]]></title>
@@ -4343,132 +4645,6 @@ jQuery PlugingとかBackboneの拡張とか、Angularの拡張はたくさんあ
 この辺は多分<code>git clone</code>してきてるだけなので、元のリポジトリ依存っぽいような臭いがします。(たいして調べてないのでテキトーです。)</p>
 
 <p>ただでさえ汚くなりがちなJavaScriptのリポジトリですが、<code>components</code>をgitignoreしておけばちょっとは綺麗になりそうですね。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[MagicalRecordの始め方忘れたので思い出しながら書く]]></title>
-    <link href="http://yaakaito.org/blog/2013/04/01/magical-record-setup/"/>
-    <updated>2013-04-01T00:49:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/04/01/magical-record-setup</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a>使うかーと思ったけど、やりかた覚えてなかったので書く！やっぱブログ書かないと駄目ですね。</p>
-
-<h2>プロジェクト作る</h2>
-
-<p><code>Use Core Data</code> をチェックする</p>
-
-<h2>xcdatamodeldをいじる</h2>
-
-<p>とりあえずサンプルとして</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Book:
-</span><span class='line'>  name: string
-</span><span class='line'>  bookId: integer 16
-</span><span class='line'>  authors: [Author]
-</span><span class='line'>
-</span><span class='line'>Author:
-</span><span class='line'>  name: string
-</span><span class='line'>  type: string
-</span><span class='line'>  book: [Book]</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
-
-<p><img src="http://yaakaito.org/images/mr-to-many.png"></p>
-
-<p><code>Class</code>とかも忘れずに設定する。</p>
-
-<p><img src="http://yaakaito.org/images/mr-class.png" width="240"></p>
-
-<h2>エンティティのモデルクラス作る</h2>
-
-<p><a href="http://rentzsch.github.com/mogenerator/">mogenerator</a>を使うのが一般的っぽいですが、僕は別に使わなくていいかなーと思ってます。
-というのも、mogeneratorって「自動生成されるやつだと変更したあとにマージが大変・・・、なのでCoreDataとビジネスロジックをカテゴリで分ける」的な使われ方をするのかなーと思ってるんだけど、それってそりゃそーじゃね、と思うのです。</p>
-
-<p>僕は、CoreDataから出てきたものは、いうならJSON形式のレスポンスをそのまま<code>NSDicitionary</code>として使ってるのとそんなに違わないよなーと思っていて、なので内部的に<code>NSManagedObject</code>をもってるビジネスロジックを担当するクラスを作ればいいと思う。</p>
-
-<p>とはいえただの決めの問題だし、どっちにしろmogenerator使えば楽出来ることに変わりはないと思うので、mogenerator使っときます。(ていうかこれじゃないと駄目なんだっけ？大丈夫だよね？)</p>
-
-<p>(入ってない人は)<code>brew</code>でmogeneratorをインストールします。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install mogenerator</span></code></pre></td></tr></table></div></figure>
-
-
-<p>mogeneratorが吐き出すクラスを入れるディレクトリなんかを作る。とりあえず <code>CoreData</code> とかにしておく。</p>
-
-<p>準備したらmogeneratorでクラスを吐き出す。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ mogenerator -m [YourCoreData].xcdatamodeld/[YourCoreData].xcdatamodel -O CoreData/ --template-var arc=true</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じ！ <code>--template-var arc=true</code> 付けないとARC用のコードが出てこないっぽいので注意。</p>
-
-<h2>MagicalRecord入れる</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pod `'MagicalRecord'</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ pod install</span></code></pre></td></tr></table></div></figure>
-
-
-<p>いい時代になりましたね。</p>
-
-<h2>MagicalRecord使う</h2>
-
-<p>インポートします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="cp">#define MR_SHORTHAND 1</span>
-</span><span class='line'><span class="cp">#import &quot;CoreData+MagicalRecord.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>セットアップします。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[</span><span class="n">MagicalRecord</span> <span class="nl">setupCoreDataStackWithStoreNamed:</span><span class="s">@&quot;YourCoreData.sqlite&quot;</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>使います。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">MGBook</span> <span class="o">*</span><span class="n">book</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGBook</span> <span class="n">createEntity</span><span class="p">];</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">@&quot;Objective-C&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="n">book</span><span class="p">.</span><span class="n">bookId</span> <span class="o">=</span> <span class="err">@</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">[</span><span class="n">context</span> <span class="n">saveToPersistentStoreAndWait</span><span class="p">];</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>簡単ですね！</p>
-
-<p>いつの間にか <code>MR_save</code> じゃなくて、<code>MR_saveToPersistentStoreAndWait</code> と <code>MR_saveToPersistentStoreWithCompletion:</code> になったんですね。こっちの方がいいと思います！！！！</p>
-
-<h2>sqliteのビュアーとか</h2>
-
-<p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
 ]]></content>
   </entry>
   

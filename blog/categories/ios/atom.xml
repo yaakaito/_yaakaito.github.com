@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-06-18T05:31:54+09:00</updated>
+  <updated>2013-07-30T02:59:29+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,255 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[いい感じのViewControllerのテストの書き方を考えてみる]]></title>
+    <link href="http://yaakaito.org/blog/2013/07/30/view-controller-testing-practice/"/>
+    <updated>2013-07-30T02:57:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/07/30/view-controller-testing-practice</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+いろいろあって落ち着いてなかったのでブログ全然書けてなかった！</p>
+
+<p>すごい昔の話しだけど、TwitterみてたらViewControllerのテストがあーだこーだあったので自分の考えを書いてみるよ。
+<a href="http://yaakaito.org/blog/2013/05/03/view-controller-testing/">前回は手法的な話</a>だけをしたから、今回は実際どう書くのがいいの的な話。
+モックとかの使い方は分かってる前提＆一旦非同期はないものとして考えて書いてみる。</p>
+
+<h3>ViewControllerの実装はほぼプライベートなんだけど的な話</h3>
+
+<p>あってると思う。それで正しい。
+ただViewControllerの利用者はフレームワークなので、例えばボタンをタップしたときにどれを呼び出すかというポインタをフレームワークは知っている。
+なのでテストがプライベートにアクセスしたりするのは結構正しくて、テストはフレームワークのフリをして書けばよいと思う。</p>
+
+<h3>自作自演っぽくなる</h3>
+
+<p>これに関しては多分テストする単位が小さいんじゃないだろうかと思う。
+シナリオ単位でテストするのがよいと思っている。
+単純にメソッドが動いてるーはあんまり意味がない感じがする。</p>
+
+<h3>いわゆる単体テストではないのでは説</h3>
+
+<p>あってそう、テストの性質が異なっているのは確か。
+そういう場合はテストフレームワークを分けるといいとかって話もあるし、KIFとか使って書くのでもいいんじゃないかな。
+ただ、ViewControllerのテスト、というと感覚的にこの2つの中間くらいの話なのかなって気もするので、そこまで大げさにしなくてもいいのかなと思う。
+モデルのテストはSenTestingKitだけど、ViewControllerのテストはSpecta、みたいなのもわりとありかなと思ってる。</p>
+
+<h2>というわけで例</h2>
+
+<p>ログイン画面とかで考えてみる。</p>
+
+<h3>ありそうな流れ</h3>
+
+<ul>
+<li>ログインが必要になると、ログイン画面が表示される</li>
+<li>ユーザーがidとパスワードを入力</li>
+<li>サーバーに問い合わせる</li>
+<li>成功したら「ログインした」とか出して、画面を戻す</li>
+<li>失敗したら「ログインに失敗した」とか出して、もう一度入力させる
+
+<ul>
+<li>この時にパスワードはクリアされるとユーザーに優しそう</li>
+<li>パスワードが間違っていますとか、赤字で残ってるとユーザーに優しそう</li>
+</ul>
+</li>
+</ul>
+
+
+<p>みたいな感じですかね。</p>
+
+<h3>テストのシナリオ</h3>
+
+<p>画面だすところは別のViewControllerのテストかと思うので、そこは省く。</p>
+
+<p>こんな感じだろうか。この辺を書いておけばいい感じになるような気がする。</p>
+
+<h4>成功</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに成功する</li>
+<li>「ログインした」と表示される</li>
+<li>画面を戻す</li>
+</ol>
+
+
+<h4>失敗 => 成功</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+<li>再度パスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに成功する</li>
+<li>「ログインした」と表示される</li>
+<li>画面を戻す</li>
+</ol>
+
+
+<h4>失敗 => 失敗 => ...</h4>
+
+<ol>
+<li>idとパスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+<li>再度パスワードを入力</li>
+<li>サーバーに問い合わせる(フリをする)</li>
+<li>ログインに失敗する</li>
+<li>「ログイン失敗した」と表示される</li>
+<li>エラー画面になる</li>
+</ol>
+
+
+<h3>いい感じに見せる方法を考えてみる</h3>
+
+<h4>ヘルパーメソッドを作ってそれっぽく見せる</h4>
+
+<p>スタブに毎回ユーザー入力のフリを直接いれていくのも芸がない(というか意図が伝わり難い)ので、</p>
+
+<p><code>objective-c
+[self inputId:@"yaakaito" andPassword:@"hogefuga"];
+</code></p>
+
+<p>こういう感じにするとよいんじゃないかな。</p>
+
+<h4>画面が変わる単位でまとめる</h4>
+
+<p>今回の場合はエラー画面なんだけど、毎回エラーと表示された、パスワードがクリアされた、とかアサーションするのはだるい。
+こういうことをしたときに、エラー画面になるよ、という風にかけるといいんじゃないかと思う。</p>
+
+<p>```objective-c
+[self shouldSeeErrorIf:<sup>(){</sup></p>
+
+<pre><code>[self inputId:@"yaakaito" andPassword:@"invalid"];
+[self confirm];
+</code></pre>
+
+<p>}];
+```</p>
+
+<p>こんな感じ。</p>
+
+<h4>状況によってはカテゴリでファサードみたいなのするとよさそう</h4>
+
+<p>上と似たような感じだけど、状況によってはViewControllerをテスト用に拡張するとよいかもしれない。
+今回はこっちは考えずに一旦は上の2つでやってみる。</p>
+
+<h3>XUnitと仮定してざっと書いてみる</h3>
+
+<p>```objective-c
+- (void)testLoginSuccess {</p>
+
+<pre><code>[self shouldSeeSuccess:^{
+    [self inputId:@"yaakaito" andPassword:@"valid-password"];
+    [self confirm];
+}];
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li><p>(void)testLoginFailureAndSuccessOnRetry {</p>
+
+<p>  [self shouldSeeError:<sup>{</sup></p>
+
+<pre><code>  [self userInputId:@"yaakaito" andPassword:@"invalid-password"];
+  [self userConfirm];
+</code></pre>
+
+<p>  }];</p>
+
+<p>  [self shouldSeeSuccess:<sup>{</sup></p>
+
+<pre><code>  [self inputId:@"yaakaito" andPassword:@"valid-password"];
+  [self confirm];
+</code></pre>
+
+<p>  }];
+}</p></li>
+<li><p>(void)testLoginFailureAndFailureOnRetry {</p>
+
+<p>  [self shouldSeeError:<sup>{</sup></p>
+
+<pre><code>  [self userInputId:@"yaakaito" andPassword:@"invalid-password"];
+  [self userConfirm];
+</code></pre>
+
+<p>  }];</p>
+
+<p>  [self shouldSeeError:<sup>{</sup></p>
+
+<pre><code>  [self inputId:@"yaakaito" andPassword:@"valid-password-2"];
+  [self confirm];
+</code></pre>
+
+<p>  }];
+}</p></li>
+</ul>
+
+
+<p>```</p>
+
+<p>それっぽい！</p>
+
+<h3>XSpecだと仮定してざっと書いてみる</h3>
+
+<p>KiwiやSpectaだと<code>self</code>がないので、テスト用のオブジェクトとか作ればいいんだろうか？
+今回は雰囲気がみたいので、コンパイルできないけど<code>self</code>で書いてみる。</p>
+
+<p>```objective-c</p>
+
+<p>describe(@"Login Controller", ^{</p>
+
+<pre><code>describe(@"Login", ^{
+    context(@"When login succeed", ^{
+        it(@"should display Success message", ^{
+            [self shouldSeeSuccess:^{
+                [self inputId:@"yaakaito" andPassword:@"valid-password"];
+                [self confirm];
+            }];
+        });
+    });
+
+    context(@"When login failed", ^{
+        it(@"should display Failure message", ^{
+            [self shouldSeeError:^{
+                [self userInputId:@"yaakaito" andPassword:@"invalid-password"];
+                [self userConfirm];
+            }];
+        });
+
+        context(@"But, retry it and succeed", ^{
+            it(@"should display Success message", ^{
+                [self shouldSeeError:^{
+                    [self userInputId:@"yaakaito" andPassword:@"invalid-password"];
+                    [self userConfirm];
+                }];
+            });
+        });
+
+        context(@"But, retry it and failed", ^{
+            it(@"should display Failure message", ^{
+                [self shouldSeeError:^{
+                    [self userInputId:@"yaakaito" andPassword:@"invalid-password"];
+                    [self userConfirm];
+                }];
+            });
+        });
+    });
+});
+</code></pre>
+
+<p>});
+```</p>
+
+<p>英語があっているかすごく微妙だけど、なかなかよいんじゃないか？</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS部で話したViewControllerのテストとかのまとめ]]></title>
@@ -1031,117 +1280,6 @@ NLTHTTPStubServer *server = [NLTHTTPStubServer sharedServer];
 <h2>バグなどの報告</h2>
 
 <p><a href="https://github.com/yaakaito/NLTHTTPStubServer/issues">Github Issue</a>で受け付けています。(日本語可)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[MagicalRecordの始め方忘れたので思い出しながら書く]]></title>
-    <link href="http://yaakaito.org/blog/2013/04/01/magical-record-setup/"/>
-    <updated>2013-04-01T00:49:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/04/01/magical-record-setup</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-<a href="https://github.com/magicalpanda/MagicalRecord">MagicalRecord</a>使うかーと思ったけど、やりかた覚えてなかったので書く！やっぱブログ書かないと駄目ですね。</p>
-
-<h2>プロジェクト作る</h2>
-
-<p><code>Use Core Data</code> をチェックする</p>
-
-<h2>xcdatamodeldをいじる</h2>
-
-<p>とりあえずサンプルとして</p>
-
-<p>```
-Book:
-  name: string
-  bookId: integer 16
-  authors: [Author]</p>
-
-<p>Author:
-  name: string
-  type: string
-  book: [Book]
-```</p>
-
-<p>という感じにした、<code>Book</code>と<code>Author</code>は一対多なので、<code>To-Many Relationship</code>を設定する。</p>
-
-<p><img src="/images/mr-to-many.png"></p>
-
-<p><code>Class</code>とかも忘れずに設定する。</p>
-
-<p><img src="/images/mr-class.png" width="240"></p>
-
-<h2>エンティティのモデルクラス作る</h2>
-
-<p><a href="http://rentzsch.github.com/mogenerator/">mogenerator</a>を使うのが一般的っぽいですが、僕は別に使わなくていいかなーと思ってます。
-というのも、mogeneratorって「自動生成されるやつだと変更したあとにマージが大変・・・、なのでCoreDataとビジネスロジックをカテゴリで分ける」的な使われ方をするのかなーと思ってるんだけど、それってそりゃそーじゃね、と思うのです。</p>
-
-<p>僕は、CoreDataから出てきたものは、いうならJSON形式のレスポンスをそのまま<code>NSDicitionary</code>として使ってるのとそんなに違わないよなーと思っていて、なので内部的に<code>NSManagedObject</code>をもってるビジネスロジックを担当するクラスを作ればいいと思う。</p>
-
-<p>とはいえただの決めの問題だし、どっちにしろmogenerator使えば楽出来ることに変わりはないと思うので、mogenerator使っときます。(ていうかこれじゃないと駄目なんだっけ？大丈夫だよね？)</p>
-
-<p>(入ってない人は)<code>brew</code>でmogeneratorをインストールします。</p>
-
-<p><code>
-$ brew install mogenerator
-</code></p>
-
-<p>mogeneratorが吐き出すクラスを入れるディレクトリなんかを作る。とりあえず <code>CoreData</code> とかにしておく。</p>
-
-<p>準備したらmogeneratorでクラスを吐き出す。</p>
-
-<p><code>
-$ mogenerator -m [YourCoreData].xcdatamodeld/[YourCoreData].xcdatamodel -O CoreData/ --template-var arc=true
-</code></p>
-
-<p>こんな感じ！ <code>--template-var arc=true</code> 付けないとARC用のコードが出てこないっぽいので注意。</p>
-
-<h2>MagicalRecord入れる</h2>
-
-<p><code>
-pod `'MagicalRecord'
-</code></p>
-
-<p><code>
-$ pod install
-</code></p>
-
-<p>いい時代になりましたね。</p>
-
-<h2>MagicalRecord使う</h2>
-
-<p>インポートします。</p>
-
-<p>```objective-c</p>
-
-<h1>define MR_SHORTHAND 1</h1>
-
-<h1>import "CoreData+MagicalRecord.h"</h1>
-
-<p>```</p>
-
-<p>セットアップします。</p>
-
-<p><code>objective-c
-[MagicalRecord setupCoreDataStackWithStoreNamed:@"YourCoreData.sqlite"];
-</code></p>
-
-<p>使います。</p>
-
-<p>```objective-c
-MGBook *book = [MGBook createEntity];
-book.name = @"Objective-C";
-book.bookId = @(123);</p>
-
-<p>[context saveToPersistentStoreAndWait];
-```</p>
-
-<p>簡単ですね！</p>
-
-<p>いつの間にか <code>MR_save</code> じゃなくて、<code>MR_saveToPersistentStoreAndWait</code> と <code>MR_saveToPersistentStoreWithCompletion:</code> になったんですね。こっちの方がいいと思います！！！！</p>
-
-<h2>sqliteのビュアーとか</h2>
-
-<p><a href="https://itunes.apple.com/jp/app/liya/id455484422?mt=12">Liya</a>がおすすめですかね。</p>
 ]]></content>
   </entry>
   
