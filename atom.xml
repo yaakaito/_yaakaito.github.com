@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-07-30T02:59:29+09:00</updated>
+  <updated>2013-07-30T03:28:05+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,89 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypescriptのジェネリクスをObject Type Literalと組み合わせると結構強力]]></title>
+    <link href="http://yaakaito.org/blog/2013/07/30/typescript-generics-with-object-type-literal/"/>
+    <updated>2013-07-30T03:20:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/07/30/typescript-generics-with-object-type-literal</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+TypeScriptのジェネリクスとObject Type Literalを組み合わせると結構強力なのでその紹介。</p>
+
+<h2>Object Type Literalとはなんぞや</h2>
+
+<p>例えばこういうオブジェクトに対して、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">a</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">b</span><span class="o">:</span> <span class="mi">123</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こういう型注釈を与えられるのがObject Type Literalです。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">v</span><span class="o">:</span> <span class="p">{</span><span class="nx">a</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span> <span class="nx">number</span><span class="p">}</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">a</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">b</span><span class="o">:</span> <span class="mi">123</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TypeScriptのinterfaceはこのObject Type Literalに別名を与えられるもので、本質的には同じです。
+大抵の場合は型推論されたり、interfaceを使うので、あんまり書く事はありません。(その方が見やすいしね)</p>
+
+<p>なんですが、本質的に同じものなので、これをinterfaceのようにジェネリクスの引数型に<code>extends</code>させたりすることができます。</p>
+
+<h2>ジェネリクスと組み合わせると</h2>
+
+<p>こんな感じにかけます、<code>{}</code>がちょっとダサいですね。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">Fuga</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kr">extends</span> <span class="p">{</span> <span class="nx">piyopiyo</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span> <span class="p">}</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">object</span><span class="o">:</span> <span class="nx">T</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">callPiyoPiyo</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">object</span><span class="p">.</span><span class="nx">piyopiyo</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これで<code>piyopiyp</code>を実装しているものだけ受け付けるようになります。便利ですね。</p>
+
+<h2>使う側でも書けて</h2>
+
+<p>こういうこともできますが、こっちはまず使わないですね、はい。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">new</span> <span class="nx">Fuga</span><span class="o">&lt;</span><span class="p">{</span><span class="nx">piyopiyo</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span> <span class="nx">foofoo</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span><span class="p">}</span><span class="o">&gt;</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>あんまりやすぎるとしんどいので</h2>
+
+<p>実装してほしいメソッドが1つあるけど、その為にinterface書くのだるいし〜、くらいの時につかうとよいと思います。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[いい感じのViewControllerのテストの書き方を考えてみる]]></title>
@@ -4515,136 +4598,6 @@ BDD系のフレームワーク使うときはこれが邪魔なので、テス�
 <h2>おわり</h2>
 
 <p>Sublime Text良いですね。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[半周遅れでBower使ってみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/04/02/hello-bower/"/>
-    <updated>2013-04-02T02:12:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/04/02/hello-bower</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！curlしにいくのがだるいです。
-そういや<a href="http://twitter.github.com/bower/">bower</a>ってあったなと思ったので試してみたメモ。といってもまだ使ってみたレベルなので使い方くらいです。</p>
-
-<h2>bower をインストール</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ npm install -g bower</span></code></pre></td></tr></table></div></figure>
-
-
-<p>やりましたね！</p>
-
-<h2>どんな品揃えかみてみる</h2>
-
-<p><code>search</code>を引数なしでやると全部出てきます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower search</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ドドドドドドドーーーー！！！ときて僕のScrollback Linesが足りなくなりました。行数でも数えてみます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower search | wc -l
-</span><span class='line'>1505</span></code></pre></td></tr></table></div></figure>
-
-
-<p>すごい！むかし30個くらいしかなかった気がする！！！
-jQuery PlugingとかBackboneの拡張とか、Angularの拡張はたくさんありました。(関係ないけどBackboke Pluginとか名前になってるか分からないのでこう書いてる)</p>
-
-<p>で、大体有名どころとそのプラグインはあるし、<code>npm</code>も組み合わせればほとんど大丈夫だろなーという感じでした。</p>
-
-<h2>使ってみる</h2>
-
-<p>大体npmと似たような感じで使います。例えばjQueryほしいなーと思ったら、</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install jquery</span></code></pre></td></tr></table></div></figure>
-
-
-<p>これで <code>components</code> というディレクトリが出来るので、ここにjQueryが入ってます。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ tree
-</span><span class='line'>.
-</span><span class='line'>└── components
-</span><span class='line'>    └── jquery
-</span><span class='line'>        ├── component.json
-</span><span class='line'>        ├── composer.json
-</span><span class='line'>        ├── jquery-migrate.js
-</span><span class='line'>        ├── jquery-migrate.min.js
-</span><span class='line'>        ├── jquery.js
-</span><span class='line'>        └── jquery.min.js</span></code></pre></td></tr></table></div></figure>
-
-
-<p>npmでいうところの<code>node_modules</code>ですね。あとはほしいものをどんどん突っ込んでいけば</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install jasmine
-</span><span class='line'>$ bower install backbone
-</span><span class='line'>$ tree -L 2
-</span><span class='line'>.
-</span><span class='line'>└── components
-</span><span class='line'>    ├── backbone
-</span><span class='line'>    ├── jasmine
-</span><span class='line'>    └── jquery</span></code></pre></td></tr></table></div></figure>
-
-
-<p>という感じに揃っていきます。便利ですね。</p>
-
-<h2>component.json</h2>
-
-<p>npmで言うところの<code>package.json</code>ですね。中身もほぼ一緒です。</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>{
-</span><span class='line'>  "name" : "thogehoge",
-</span><span class='line'>  "version" : "0.0.0",
-</span><span class='line'>  "dependencies" : {
-</span><span class='line'>    "backbone" : "~1.0.0",
-</span><span class='line'>    "jquery" : "~1.9.1",
-</span><span class='line'>  }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>みたいに書いておいて、</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ bower install</span></code></pre></td></tr></table></div></figure>
-
-
-<p>すれば<code>dependencies</code>が全部<code>components</code>に入ります。</p>
-
-<h2>便利そうかどうか</h2>
-
-<p>まあ便利なんじゃないでしょうか、ロードするときにパスが長くなるのがちょっと面倒くらいですね。
-この辺は多分<code>git clone</code>してきてるだけなので、元のリポジトリ依存っぽいような臭いがします。(たいして調べてないのでテキトーです。)</p>
-
-<p>ただでさえ汚くなりがちなJavaScriptのリポジトリですが、<code>components</code>をgitignoreしておけばちょっとは綺麗になりそうですね。</p>
 ]]></content>
   </entry>
   
