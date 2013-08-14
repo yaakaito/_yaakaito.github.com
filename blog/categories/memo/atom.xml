@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Memo | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/memo/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-08-15T04:06:01+09:00</updated>
+  <updated>2013-08-15T04:07:53+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -93,8 +93,10 @@ TypeScriptでライブラリ作って公開したいときのあれこれです�
 <p>複数ファイルになった時に同じような<code>module</code>が複数定義される場合がある。(というかほとんどそうなる)
 言語の仕様上正攻法では回避できないので、諦める or 原始的な解決。</p>
 
-<p>原始的に解決する場合は、そもそもmoduleを書かずに、コンパイル前にmoduleの部分を結合、コンパイル、という方式。
+<p>原始的に解決する場合は、そもそも<code>module</code>を書かずに、コンパイル前に<code>module</code>の部分を結合、コンパイル、という方式。
 どこぞのMakefileみたいで懐かしい、退化してる気分だ。</p>
+
+<p><code>module</code>はないけど、あると思って書かないと<code>export</code>とかで死ぬので気をつけましょう。</p>
 ]]></content>
   </entry>
   
