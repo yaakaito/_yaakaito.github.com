@@ -4,7 +4,7 @@
   <title><![CDATA[yaakaito.org]]></title>
   <link href="http://yaakaito.org/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-07-30T03:32:44+09:00</updated>
+  <updated>2013-08-15T04:06:01+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,120 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptでライブラリ書くときのあれこれメモ]]></title>
+    <link href="http://yaakaito.org/blog/2013/08/15/typescript-library-development/"/>
+    <updated>2013-08-15T03:49:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/08/15/typescript-library-development</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！ほぼ自分用のメモなのであとでまともに書くかもしれません。
+TypeScriptでライブラリ作って公開したいときのあれこれです。</p>
+
+<h2>配布方法</h2>
+
+<p>bowerでの配布を想定。一旦registryには置かずに、URLを直で指定する。
+いつも通りgithubから配布</p>
+
+<h2>配布するもの</h2>
+
+<ul>
+<li>本体.js</li>
+<li>本体.min.js</li>
+<li>本体.d.ts</li>
+</ul>
+
+
+<p>あとは必要ならREADMEとかLICENCEあたり。</p>
+
+<p>d.tsはDefinitelyTypedという手もあるが、せっかくTypeScriptで書いてあるんだから、入っている分には問題ないだろう。</p>
+
+<h2>d.ts</h2>
+
+<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a>に準拠するように作った方がよさげ。
+依存ライブラリなにもないなら深く考えなくていい。</p>
+
+<p>依存ライブラリがある場合、DefinitelyTypedは以下のような構成をとっているので</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>// ....
+</span><span class='line'>├── jake
+</span><span class='line'>│   ├── jake-tests.ts
+</span><span class='line'>│   └── jake.d.ts
+</span><span class='line'>├── jasmine
+</span><span class='line'>│   ├── jasmine-tests.ts
+</span><span class='line'>│   └── jasmine.d.ts
+</span><span class='line'>├── jasmine-matchers
+</span><span class='line'>│   ├── jasmine-matchers-tests.ts
+</span><span class='line'>│   └── jasmine-matchers.d.ts
+</span><span class='line'>├── jqrangeslider
+</span><span class='line'>│   ├── jqrangeslider-tests.ts
+</span><span class='line'>│   └── jqrangeslider.d.ts
+</span><span class='line'>├── jquery
+</span><span class='line'>│   ├── jquery-tests.ts
+</span><span class='line'>│   └── jquery.d.ts
+</span><span class='line'>├── jquery.autosize
+</span><span class='line'>│   └── jquery.autosize.d.ts
+</span><span class='line'>├── jquery.bbq
+</span><span class='line'>│   ├── jquery.bbq-tests.ts
+</span><span class='line'>│   └── jquery.bbq.d.ts
+</span><span class='line'>├── jquery.bootstrap.wizard
+</span><span class='line'>│   └── jquery.bootstrap.wizard.d.ts
+</span><span class='line'>├── jquery.clientSideLogging
+</span><span class='line'>│   ├── jquery.clientSideLogging-tests.ts
+</span><span class='line'>│   └── jquery.clientSideLogging.d.ts
+</span><span class='line'>├── jquery.colorbox
+</span><span class='line'>│   ├── jquery.colorbox-tests.ts
+</span><span class='line'>│   └── jquery.colorbox.d.ts
+</span><span class='line'>// ....</span></code></pre></td></tr></table></div></figure>
+
+
+<p>たとえばjQueryに依存するライブラリ <code>hogefuga</code> を書くなら、<code>hogefuga/hogefuga.d.ts</code>は<code>&lt;reference path="../jquery/jquery.d.ts"&gt;</code>と読むようにしなければいけない。</p>
+
+<p>で、最初からTypeScriptで書くとおそらくこういう構成にはならない。(<code>src</code>以下に外部ライブラリがたくさん並んでたらいやですよね？)
+なんで面倒なのであとでくっつける。具体的に言えば<code>grunt concat</code>で、コンパイルされたd.tsの頭にreferenceだけ書いたd.tsくっつける。</p>
+
+<h2>本体のビルド</h2>
+
+<p>JavaScriptとそんな変わらん。コンパイルしてminifyしてライセンスくっつけて終わり。</p>
+
+<h2>moduleが分裂する</h2>
+
+<p>複数ファイルになった時に同じような<code>module</code>が複数定義される場合がある。(というかほとんどそうなる)
+言語の仕様上正攻法では回避できないので、諦める or 原始的な解決。</p>
+
+<p>原始的に解決する場合は、そもそもmoduleを書かずに、コンパイル前にmoduleの部分を結合、コンパイル、という方式。
+どこぞのMakefileみたいで懐かしい、退化してる気分だ。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypescriptのジェネリクスをObject Type Literalと組み合わせると結構強力]]></title>
@@ -4392,212 +4506,6 @@ BDD系のフレームワーク使うときはこれが邪魔なので、テス�
 <h2>まとめ</h2>
 
 <p><a href="http://www.project-railgun.net/">Sはよ</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SublimeText入れたあとにやること]]></title>
-    <link href="http://yaakaito.org/blog/2013/04/04/sublime-text-setup/"/>
-    <updated>2013-04-04T05:34:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/04/04/sublime-text-setup</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
-ずいぶん前にVimからSublimeTextに変えたんですが、設定覚えられないので、いれたらやることのメモです。</p>
-
-<p>バージョン番号とかは適当に補完して読んでください。</p>
-
-<h2>Package Control 入れる</h2>
-
-<p>とりあえずないと始まらないので入れます。</p>
-
-<p><a href="http://wbond.net/sublime_packages/package_control/installation">Sublime Package Control : Installation</a></p>
-
-<p>control+` でコンソールを呼びます。そして流し込みます。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib2</span><span class="o">,</span><span class="nn">os</span><span class="p">;</span> <span class="n">pf</span><span class="o">=</span><span class="s">&#39;Package Control.sublime-package&#39;</span><span class="p">;</span> <span class="n">ipp</span><span class="o">=</span><span class="n">sublime</span><span class="o">.</span><span class="n">installed_packages_path</span><span class="p">();</span> <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">ipp</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ipp</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span><span class="p">;</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">()));</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ipp</span><span class="p">,</span><span class="n">pf</span><span class="p">),</span><span class="s">&#39;wb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s">&#39;http://sublime.wbond.net/&#39;</span><span class="o">+</span><span class="n">pf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="s">&#39;%20&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">());</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Please restart Sublime Text to finish installation&#39;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>キーバインドを変える</h2>
-
-<p>変えます。といってもそんなに変えません。</p>
-
-<p>まず、Macの方のSystem Preferencesから(こっちからやるのが重要)、キーバインドに <code>Command+Option+Q</code>で<code>Quit Sublime Text</code>するようにします。
-こうするとcmd+Qで間違って殺してしまう心配もなくなりますし、Sublime Textが<code>Command+Option+Q</code>を使っているので、実質死ななくなります。</p>
-
-<p>え、死ななくなっても困らないですよね？それよりミスって殺さない事の方が大事っていうか・・・。(僕はAppCodeとかXcodeとかChromeとかもこうなってる)</p>
-
-<p>もっとも重要なキーバインドを変えたので、残りを変えます。こっちはSublime Textから。</p>
-
-<p>Preferences -> Key Bindings - User を開いて</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span>
-</span><span class='line'>  <span class="p">{</span> <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;super+shift+p&quot;</span><span class="p">],</span> <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;show_overlay&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;overlay&quot;</span><span class="o">:</span> <span class="s2">&quot;goto&quot;</span><span class="p">,</span> <span class="s2">&quot;show_files&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">}</span> <span class="p">},</span>
-</span><span class='line'>  <span class="p">{</span> <span class="s2">&quot;keys&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;super+p&quot;</span><span class="p">],</span> <span class="s2">&quot;command&quot;</span><span class="o">:</span> <span class="s2">&quot;show_overlay&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;overlay&quot;</span><span class="o">:</span> <span class="s2">&quot;command_palette&quot;</span><span class="p">}</span> <span class="p">},</span>
-</span><span class='line'><span class="p">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>として Command Palette と Goto を入れ替えます。これで Command+P でコマンド打てるようになります。便利ですね。(圧倒的にこっちのほうが使うので)</p>
-
-<h2>パッケージを取りにいく</h2>
-
-<p>あんまりいれてないですけどね！テーマとかもまとめてとります。</p>
-
-<p>Command+P -> Package Controll : Install Package</p>
-
-<ul>
-<li>Phoenix theme</li>
-<li>TypeScript</li>
-<li>CoffeeScript</li>
-<li>jQuery</li>
-<li>Markdown Preview</li>
-</ul>
-
-
-<p>あとはス二ペットとか、使う物によると思うけど、最近いれたのは</p>
-
-<ul>
-<li>jQuery</li>
-<li>Mocha</li>
-<li>Backbone</li>
-</ul>
-
-
-<p>とか。すきなの入れればいいと思う。スニペットも Command+P からそれっぽく呼び出せる。</p>
-
-<h2>テーマの設定する</h2>
-
-<p>さっきとってきた Phoenix theme をあてる。</p>
-
-<p>Preferences -> Settings - User に</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;color_scheme&quot;</span><span class="o">:</span> <span class="s2">&quot;Packages/Theme - Phoenix/Color Scheme/Tomorrow-Night.tmTheme&quot;</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;font_size&quot;</span><span class="o">:</span> <span class="mf">14.0</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_color_expanded_folder&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_color_orange&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_dirty_bottom_bar&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_dirty_bottom_bar_red&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_highlight_current_tab&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;phoenix_sidebar_tree_large&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="s2">&quot;theme&quot;</span><span class="o">:</span> <span class="s2">&quot;Phoenix Dark.sublime-theme&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>こんな感じで書いておわり。</p>
-
-<p>やってるのは上からカラースキームの設定、フォントサイズの設定、あとはPhoenix themeの設定。</p>
-
-<h2>インデントとか調整する</h2>
-
-<p>こっちは</p>
-
-<p>Preferences -> Settings - Defaults でやっていいと思う。どうせ変えない。</p>
-
-<p>デフォルト覚えてないけど多分、</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Set to true to turn spell checking on by default</span>
-</span><span class='line'><span class="s2">&quot;spell_check&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// The number of spaces a tab is considered equal to</span>
-</span><span class='line'><span class="s2">&quot;tab_size&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Set to true to insert spaces when tab is pressed</span>
-</span><span class='line'><span class="s2">&quot;translate_tabs_to_spaces&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>このあたり設定すれば、他のめぼしいのは全部ついてるはず。</p>
-
-<h2>Markdown pluginを複製する</h2>
-
-<p>Preference -> Browse Packages&#8230; を選択するとディレクトリが開くので、ここでmarkdownをおもむろに複製する。
-で、これをMarkdownJPとかにしておく。<code>.tmLanuage</code>を開いて、JPのサフィックスを付ける。</p>
-
-<p>なんでやるかって、スペルチェックのせいさ！</p>
-
-<h2>言語毎に設定変える</h2>
-
-<p>変え方は、エディターで対象を適用した状態で、 Preferences -> Settings - More -> Syntax Specific。</p>
-
-<h3>MarkdownJP</h3>
-
-<p>さっき設定した<code>spell_check</code>はブログとか書くmarkdownモードだと日本語が警告されまくってうざいのでJPの方は消す。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;spell_check&quot;</span><span class="o">:</span> <span class="kc">false</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>普通の方はREADMEとかも書くのでそのまま。日本語書く時だけスイッチする。</p>
-
-<h3>JavaScript, CoffeeScript</h3>
-
-<p>この二つだけインデントを4にする。(ネストしだすと見にくい)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="s2">&quot;tab_size&quot;</span> <span class="o">:</span> <span class="mi">4</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ファイル開いたときは空気読んでこのあたりを設定してくれるので安心ですね。</p>
-
-<h2>エイリアスを設定する</h2>
-
-<p>open経由で開けるようにする。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">alias</span> <span class="nx">sb</span><span class="o">=</span><span class="s2">&quot;open -a Sublime\Text&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span> <span class="nx">cd</span> <span class="nx">hoge</span>
-</span><span class='line'><span class="nx">$</span> <span class="nx">sb</span> <span class="p">.</span> <span class="c1">// SublimeがFoldersにカレントセットした状態で開くヤッターーーーーー！！！</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<h2>おわり</h2>
-
-<p>Sublime Text良いですね。</p>
 ]]></content>
   </entry>
   

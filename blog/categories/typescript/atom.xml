@@ -4,7 +4,7 @@
   <title><![CDATA[Category: TypeScript | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/typescript/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-07-30T03:32:44+09:00</updated>
+  <updated>2013-08-15T04:06:01+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptでライブラリ書くときのあれこれメモ]]></title>
+    <link href="http://yaakaito.org/blog/2013/08/15/typescript-library-development/"/>
+    <updated>2013-08-15T03:49:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/08/15/typescript-library-development</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！ほぼ自分用のメモなのであとでまともに書くかもしれません。
+TypeScriptでライブラリ作って公開したいときのあれこれです。</p>
+
+<h2>配布方法</h2>
+
+<p>bowerでの配布を想定。一旦registryには置かずに、URLを直で指定する。
+いつも通りgithubから配布</p>
+
+<h2>配布するもの</h2>
+
+<ul>
+<li>本体.js</li>
+<li>本体.min.js</li>
+<li>本体.d.ts</li>
+</ul>
+
+
+<p>あとは必要ならREADMEとかLICENCEあたり。</p>
+
+<p>d.tsはDefinitelyTypedという手もあるが、せっかくTypeScriptで書いてあるんだから、入っている分には問題ないだろう。</p>
+
+<h2>d.ts</h2>
+
+<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a>に準拠するように作った方がよさげ。
+依存ライブラリなにもないなら深く考えなくていい。</p>
+
+<p>依存ライブラリがある場合、DefinitelyTypedは以下のような構成をとっているので</p>
+
+<p><code>
+// ....
+├── jake
+│   ├── jake-tests.ts
+│   └── jake.d.ts
+├── jasmine
+│   ├── jasmine-tests.ts
+│   └── jasmine.d.ts
+├── jasmine-matchers
+│   ├── jasmine-matchers-tests.ts
+│   └── jasmine-matchers.d.ts
+├── jqrangeslider
+│   ├── jqrangeslider-tests.ts
+│   └── jqrangeslider.d.ts
+├── jquery
+│   ├── jquery-tests.ts
+│   └── jquery.d.ts
+├── jquery.autosize
+│   └── jquery.autosize.d.ts
+├── jquery.bbq
+│   ├── jquery.bbq-tests.ts
+│   └── jquery.bbq.d.ts
+├── jquery.bootstrap.wizard
+│   └── jquery.bootstrap.wizard.d.ts
+├── jquery.clientSideLogging
+│   ├── jquery.clientSideLogging-tests.ts
+│   └── jquery.clientSideLogging.d.ts
+├── jquery.colorbox
+│   ├── jquery.colorbox-tests.ts
+│   └── jquery.colorbox.d.ts
+// ....
+</code></p>
+
+<p>たとえばjQueryに依存するライブラリ <code>hogefuga</code> を書くなら、<code>hogefuga/hogefuga.d.ts</code>は<code>&lt;reference path="../jquery/jquery.d.ts"&gt;</code>と読むようにしなければいけない。</p>
+
+<p>で、最初からTypeScriptで書くとおそらくこういう構成にはならない。(<code>src</code>以下に外部ライブラリがたくさん並んでたらいやですよね？)
+なんで面倒なのであとでくっつける。具体的に言えば<code>grunt concat</code>で、コンパイルされたd.tsの頭にreferenceだけ書いたd.tsくっつける。</p>
+
+<h2>本体のビルド</h2>
+
+<p>JavaScriptとそんな変わらん。コンパイルしてminifyしてライセンスくっつけて終わり。</p>
+
+<h2>moduleが分裂する</h2>
+
+<p>複数ファイルになった時に同じような<code>module</code>が複数定義される場合がある。(というかほとんどそうなる)
+言語の仕様上正攻法では回避できないので、諦める or 原始的な解決。</p>
+
+<p>原始的に解決する場合は、そもそもmoduleを書かずに、コンパイル前にmoduleの部分を結合、コンパイル、という方式。
+どこぞのMakefileみたいで懐かしい、退化してる気分だ。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TypescriptのジェネリクスをObject Type Literalと組み合わせると結構強力]]></title>
@@ -532,193 +617,6 @@ error TS2081: Supplied parameters do not match any signature of call target.
 </code></p>
 
 <p>すごいぞTypeScript。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TypeScriptのGenerics試してみる]]></title>
-    <link href="http://yaakaito.org/blog/2013/05/16/typescript-generics/"/>
-    <updated>2013-05-16T06:34:00+09:00</updated>
-    <id>http://yaakaito.org/blog/2013/05/16/typescript-generics</id>
-    <content type="html"><![CDATA[<p>こんにちは！うきょーです！TypeScript0.9alpha使える環境作ったのでジェネリクス試すよ！
-<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>というのをはじめていたので、これを0.9対応することを見越して、<code>Identity</code> <code>Entity</code> <code>Repository</code>をジェネリクス使って考えてみる。</p>
-
-<h2>使い方</h2>
-
-<p><code>class</code>か<code>interface</code>で名前与えられたものと、<code>string</code> <code>number</code> なんかを使う事が出来ます。
-シンタックスはよくある感じで、特に違和感もない。</p>
-
-<p>```javascript
-interface Identity<T> {</p>
-
-<pre><code>value: T;
-</code></pre>
-
-<p>}</p>
-
-<p>class NumberIdentity implements Identity<number> {</p>
-
-<pre><code>constructor(public value: number) { }
-</code></pre>
-
-<p>}</p>
-
-<p>class StringIdentity implements Identity<string> {</p>
-
-<pre><code>constructor(public value: string) { }
-</code></pre>
-
-<p>}</p>
-
-<p>var numberIdentity = new NumberIdentity(1);
-var stringIdentity = new StringIdentity("A");
-```</p>
-
-<p>クラスのときはこんな感じ。</p>
-
-<p>```javascript
-class Entity<T extends Identity> {</p>
-
-<pre><code>constructor(public identity: T) { }
-</code></pre>
-
-<p>}
-```</p>
-
-<h2>推論</h2>
-
-<p>上の<code>Entity</code>みたいなやつの場合、コンストラクタで推論してくれる。
-さっき作った<code>numberIdentity</code>を使ってみる。</p>
-
-<p><code>javascript
-var entity = new Entity(numberIdentity);
-</code></p>
-
-<p>これの<code>identity</code>を<code>stringIdentity</code>で上書きしようとすると、</p>
-
-<p><code>javascript
-var entity = new Entity(numberIdentity);
-entity.identity = stringIdentity;
-</code></p>
-
-<p>こうなる</p>
-
-<p><code>
-error TS2012: Cannot convert 'StringIdentity' to 'NumberIdentity':
-  Types of property 'value' of types 'StringIdentity' and 'NumberIdentity' are incompatible.
-</code></p>
-
-<p>やりましたね！</p>
-
-<p>もちろんですが、こういう風にも書けます。</p>
-
-<p><code>javascript
-var entity = new Entity&lt;NumberIdentity&gt;(numberIdentity);
-</code></p>
-
-<p>推論できない場合には明示的に書く必要があります。</p>
-
-<h2>ネスト</h2>
-
-<p>ネストも出来ます。<code>Repository</code>を考えたときに、これは<code>Entity&lt;T&gt;</code>の集合なので、</p>
-
-<p><code>javascript
-class Repository&lt;E extends Entity&lt;I&gt;, I extends Identity&gt; {
-}
-</code></p>
-
-<p>こう書けます。
-本体もとりあえず書いてみる。(めんどくさいし説明用なので、ただ<code>value</code>にいれて返すだけにした)</p>
-
-<p>```javascript
-class Repository<E extends Entity<I>, I extends Identity> {</p>
-
-<pre><code>public value: E = null;
-
-store(entity: E) {
-    this.value = entity;
-}
-
-findByIdentity(identity: I): E {
-    return this.value;
-}
-</code></pre>
-
-<p>}
-```</p>
-
-<p>これの場合は推論できないので、このクラスを直接使う場合は、</p>
-
-<p><code>javascript
-var repository = new Repository&lt;Entity&lt;NumberIdentity&gt;, NumberIdentity&gt;();
-repository.store(entity);
-</code></p>
-
-<p>こんな感じになります。</p>
-
-<h2>もうちょっと書いてみる</h2>
-
-<p>ここまでのを元に<code>Person</code>モデルと<code>PersonRepository</code>を作ってみる、実装はない。</p>
-
-<p>```javascript
-class Person extends Entity<NumberIdentity> {</p>
-
-<pre><code>constructor(public identity: NumberIdentity) {
-    super(identity);
-}
-</code></pre>
-
-<p>}</p>
-
-<p>class PersonRepository extends Repository&lt;Person, NumberIdentity> {
-}</p>
-
-<p>var person = new Person(numberIdentity);
-var personRepository = new PersonRepository();
-repository.store(person);
-```</p>
-
-<p>こんな感じ。</p>
-
-<h2>関数</h2>
-
-<p>引数の前に書く。</p>
-
-<p><code>
-&lt;T&gt;(x: T) =&gt; x
-</code></p>
-
-<p>みたいな</p>
-
-<h2>ところで・・・</h2>
-
-<p>試してて途中で気づいたんだけど、</p>
-
-<p>```javascript
-class Hoge {</p>
-
-<pre><code>public a: string;
-</code></pre>
-
-<p>}
-class Fuga {</p>
-
-<pre><code>public a: string;
-</code></pre>
-
-<p>}</p>
-
-<p>var hoge: Hoge = new Fuga();
-```</p>
-
-<p>これが通るようになってた。で、2時間くらいハマってた。空のクラス定義にすると<code>Array&lt;Hoge&gt;</code>に<code>array.push("ばーか")</code>とかできるよ、やりましたね。
-試したのは<code>release-0.9.0-alpha</code>と<code>develop@c3835ab</code>で、どっちも通った。</p>
-
-<p>これって<code>0.8.x</code>だと<code>Cannot convert 'Fuga' to 'Hoge'</code>とかで通らなくて、やりたいなら<code>Interface</code>通してね、
-みたいな感じになってたと思うんだけど、変更あったんだろうか？
-いくらか探してみたんだけど、それっぽいものを見つけられなくて、よくわかっていない。
-眠いし見落としてる可能性もあるので、知ってる人いたら教えてほしい。
-挙動は分からんでもないし、バグかなーと思ったんだけど、さすがにテストでこけるんじゃぁ・・・的な。ツッコミなければ投げるつもり。</p>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Memo | yaakaito.org]]></title>
   <link href="http://yaakaito.org/blog/categories/memo/atom.xml" rel="self"/>
   <link href="http://yaakaito.org/"/>
-  <updated>2013-07-30T03:32:44+09:00</updated>
+  <updated>2013-08-15T04:06:01+09:00</updated>
   <id>http://yaakaito.org/</id>
   <author>
     <name><![CDATA[yaakaito]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptでライブラリ書くときのあれこれメモ]]></title>
+    <link href="http://yaakaito.org/blog/2013/08/15/typescript-library-development/"/>
+    <updated>2013-08-15T03:49:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/08/15/typescript-library-development</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！ほぼ自分用のメモなのであとでまともに書くかもしれません。
+TypeScriptでライブラリ作って公開したいときのあれこれです。</p>
+
+<h2>配布方法</h2>
+
+<p>bowerでの配布を想定。一旦registryには置かずに、URLを直で指定する。
+いつも通りgithubから配布</p>
+
+<h2>配布するもの</h2>
+
+<ul>
+<li>本体.js</li>
+<li>本体.min.js</li>
+<li>本体.d.ts</li>
+</ul>
+
+
+<p>あとは必要ならREADMEとかLICENCEあたり。</p>
+
+<p>d.tsはDefinitelyTypedという手もあるが、せっかくTypeScriptで書いてあるんだから、入っている分には問題ないだろう。</p>
+
+<h2>d.ts</h2>
+
+<p><a href="https://github.com/borisyankov/DefinitelyTyped">DefinitelyTyped</a>に準拠するように作った方がよさげ。
+依存ライブラリなにもないなら深く考えなくていい。</p>
+
+<p>依存ライブラリがある場合、DefinitelyTypedは以下のような構成をとっているので</p>
+
+<p><code>
+// ....
+├── jake
+│   ├── jake-tests.ts
+│   └── jake.d.ts
+├── jasmine
+│   ├── jasmine-tests.ts
+│   └── jasmine.d.ts
+├── jasmine-matchers
+│   ├── jasmine-matchers-tests.ts
+│   └── jasmine-matchers.d.ts
+├── jqrangeslider
+│   ├── jqrangeslider-tests.ts
+│   └── jqrangeslider.d.ts
+├── jquery
+│   ├── jquery-tests.ts
+│   └── jquery.d.ts
+├── jquery.autosize
+│   └── jquery.autosize.d.ts
+├── jquery.bbq
+│   ├── jquery.bbq-tests.ts
+│   └── jquery.bbq.d.ts
+├── jquery.bootstrap.wizard
+│   └── jquery.bootstrap.wizard.d.ts
+├── jquery.clientSideLogging
+│   ├── jquery.clientSideLogging-tests.ts
+│   └── jquery.clientSideLogging.d.ts
+├── jquery.colorbox
+│   ├── jquery.colorbox-tests.ts
+│   └── jquery.colorbox.d.ts
+// ....
+</code></p>
+
+<p>たとえばjQueryに依存するライブラリ <code>hogefuga</code> を書くなら、<code>hogefuga/hogefuga.d.ts</code>は<code>&lt;reference path="../jquery/jquery.d.ts"&gt;</code>と読むようにしなければいけない。</p>
+
+<p>で、最初からTypeScriptで書くとおそらくこういう構成にはならない。(<code>src</code>以下に外部ライブラリがたくさん並んでたらいやですよね？)
+なんで面倒なのであとでくっつける。具体的に言えば<code>grunt concat</code>で、コンパイルされたd.tsの頭にreferenceだけ書いたd.tsくっつける。</p>
+
+<h2>本体のビルド</h2>
+
+<p>JavaScriptとそんな変わらん。コンパイルしてminifyしてライセンスくっつけて終わり。</p>
+
+<h2>moduleが分裂する</h2>
+
+<p>複数ファイルになった時に同じような<code>module</code>が複数定義される場合がある。(というかほとんどそうなる)
+言語の仕様上正攻法では回避できないので、諦める or 原始的な解決。</p>
+
+<p>原始的に解決する場合は、そもそもmoduleを書かずに、コンパイル前にmoduleの部分を結合、コンパイル、という方式。
+どこぞのMakefileみたいで懐かしい、退化してる気分だ。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[世の中のサンプルがTODOアプリなのは案外理にかなってる気がした]]></title>
