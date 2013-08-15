@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>TypeScriptとDDDとLazyload - yaakaito.org</title>
+  <meta name="author" content="yaakaito">
+
+  
+  <meta name="description" content="こんにちは！うきょーです！
+DDDをやってるとRepositoryを経由してEntityをやり取りするわけなんですが、APIの都合とか、パフォーマンスの都合でAggregate内の一部をLazyloadしたい、みたいなケースがある。
+出来ればLazyloadは考えたくないし、 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/ios-scaling-bug-fix.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="yaakaito.org" type="application/atom+xml">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+  
+  
+
+</head>
+
+<body   >
+  <header role="banner"><a href="/">
+  <div class="blocked-linker">
+    <img src="/assets/svg/home.svg" width="64" height="64"/>
+    <h1>yaakaito.org</h1>
+  </div>
+</a></header>
+  
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">TypeScriptとDDDとLazyload</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-16T02:03:00+09:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ddd/'>DDD</a>, <a class='category' href='/blog/categories/typescript/'>TypeScript</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>こんにちは！うきょーです！
+DDDをやってるとRepositoryを経由してEntityをやり取りするわけなんですが、APIの都合とか、パフォーマンスの都合でAggregate内の一部をLazyloadしたい、みたいなケースがある。
+出来ればLazyloadは考えたくないし、諦めて外に出してしまうというのも一つの手ではあるが、これもあんまりしたくない。</p>
+
+<p>というわけで実装例を作ってみる。</p>
+
+<h2>サンプル</h2>
+
+<p><a href="http://developer.github.com/v3/issues/">GithubのIssues API</a>を例にしてみる。
+このAPIはIssueの取得と、<a href="http://developer.github.com/v3/issues/comments/">そのIssueのコメントの取得</a>という2つのAPIに分かれてる、まあよくある感じだ。</p>
+
+<p><a href="http://developer.github.com/v3/issues/#list-issues-for-a-repository">List issues for a repository</a>を叩いてIssueのリストを取得したあと、それぞれのコメントをLazyloadできる、という形にしてみよう。</p>
+
+<h2>モデルを考える</h2>
+
+<p>今回あんまり関係ないところは略す。</p>
+
+<p>実装都合で始まってはいるが、コメントのリストを扱う何かしらのものがあった方がいいように思える。
+GithubのIssueページの仕様から考えると、
+「Issueには複数件のCommentを投稿することができる。それを閲覧することができるが、リストで出す場合には不要、だがCommentの総数は表示したい。」
+みたいな要求なんだろう。
+「複数件のComment」はただのArrayでもよさそうだけど、「総数」だけ別に扱いたいようなので、そういうモデルを作った方がいいだろう。一旦「IssueComments」ということにしておくか。対応させて「Comment」も「IssueComment」にすることにする。</p>
+
+<p>この「IssueComments」っていうのが外向けのRepositoryみたいな役割をするイメージ。</p>
+
+<p>面倒なんで最初からコードで書いていく。
+<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>という自作のライブラリを使っている。</p>
+
+<h3>Issue</h3>
+
+<p>Issueのidentityとして「IssueId」を定義した。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">Github</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueId</span> <span class="kr">extends</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">Identity</span><span class="o">&lt;</span><span class="nx">number</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span><span class="nx">id</span><span class="o">:</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">super</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">Issue</span> <span class="kr">extends</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">IssueId</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>            <span class="kr">public</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">IssueId</span><span class="p">,</span>
+</span><span class='line'>            <span class="kr">public</span> <span class="nx">title</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span>
+</span><span class='line'>            <span class="kr">public</span> <span class="nx">body</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">super</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>IssueComment</h3>
+
+<p>Commentの部分。CommentはLocal Entityか。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">Github</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComments</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComment</span> <span class="kr">extends</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">DDD</span><span class="p">.</span><span class="nx">NumberIdentity</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>            <span class="nx">id</span><span class="o">:</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">NumberIdentity</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">body</span><span class="o">:</span> <span class="nx">string</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">super</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>さてどうしよう。</p>
+
+<h3>Repository</h3>
+
+<p>githubの方のRepository、今回はIssueで考えてしまったので、実装は割愛。そういうものがあると思ってください。
+RepositoryRepositoryとかってアレですね・・・。</p>
+
+<h3>ともかくIssueRepository</h3>
+
+<p>を作るか。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">Github</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueRepository</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kr">private</span> <span class="nx">apiClient</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GithubClient</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">issuesForRepository</span><span class="p">(</span><span class="nx">repository</span><span class="o">:</span> <span class="nx">Repository</span><span class="p">)</span><span class="o">:</span> <span class="nx">monapt</span><span class="p">.</span><span class="nx">Future</span><span class="o">&lt;</span><span class="nx">Issue</span><span class="p">[]</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// 本来は repository.onwer と repository.name とかその辺から</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">apiClient</span><span class="p">.</span><span class="nx">issuesForRepositry</span><span class="p">(</span><span class="s1">&#39;yaakaito&#39;</span><span class="p">,</span> <span class="s1">&#39;typescript-ddd-lazyload&#39;</span><span class="p">).</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">IssueFactory</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">p</span><span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="nx">factory</span><span class="p">.</span><span class="nx">issuesFromAPIResponse</span><span class="p">(</span><span class="nx">response</span><span class="p">));</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://github.com/yaakaito/monapt">monapt</a>っていう自作のライブラリをまた使ってる。Scalaの Option Try Future を真似したライブラリ。僕はFutureが気に入っているし、Deferredはあんまり好きじゃないのでこっち。(JavaScriptなんでちょっと残念なAPIになってる)</p>
+
+<p><code>GithubClient</code>はgithubのAPIクライアントだと思ってください。(実装みたい人はコード見てください)</p>
+
+<h3>Factory</h3>
+
+<p>適当。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span> <span class="nx">Github</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueFactory</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">issuesFromAPIResponse</span><span class="p">(</span><span class="nx">response</span><span class="o">:</span> <span class="nb">Object</span><span class="p">[])</span><span class="o">:</span> <span class="nx">Issue</span><span class="p">[]</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">issue</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Issue</span><span class="p">(</span>
+</span><span class='line'>                <span class="k">new</span> <span class="nx">IssueId</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">issue</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="mi">10</span><span class="p">)),</span>
+</span><span class='line'>                <span class="nb">parseInt</span><span class="p">(</span><span class="nx">issue</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">],</span> <span class="mi">10</span><span class="p">),</span>
+</span><span class='line'>                <span class="nx">issue</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span>
+</span><span class='line'>                <span class="nx">issue</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">]</span>
+</span><span class='line'>            <span class="p">));</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>テスト用のアプリケーション</h2>
+
+<p>こんな感じで使ってみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Github</span><span class="p">.</span><span class="nx">IssueRepository</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">repos</span><span class="p">.</span><span class="nx">issuesForRepository</span><span class="p">(</span><span class="s1">&#39;yaakaito/typescript-ddd-lazyload&#39;</span><span class="p">).</span><span class="nx">onComplete</span><span class="p">(</span><span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">match</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">Success</span><span class="o">:</span> <span class="nx">issues</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">issues</span><span class="p">),</span>
+</span><span class='line'>        <span class="nx">Failure</span><span class="o">:</span> <span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/ts-ddd-lazyload-1.png" width="240">
+よさげ</p>
+
+<h2>やっと本題</h2>
+
+<p>ながかった・・・</p>
+
+<p>本題のIssueCommentを考える。</p>
+
+<p>当然Issueに属することになるわけなのだが、まずは初期化から考えよう。
+Commentの総数は別に扱う、という話で、これはAPIからやってくるので、こういう感じ？</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComments</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">count</span><span class="o">:</span> <span class="nx">number</span>
+</span><span class='line'>      <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Commentを引いてくるのに親のIssueの情報とかも必要だし、ポインタとnumberが必要か。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComments</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">count</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span>
+</span><span class='line'>        <span class="kr">private</span> <span class="nx">issueId</span><span class="o">:</span> <span class="nx">IssueId</span><span class="p">,</span>
+</span><span class='line'>        <span class="kr">private</span> <span class="nx">issueNumber</span><span class="o">:</span> <span class="nx">number</span>
+</span><span class='line'>    <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これをIssueにいれてあげるとこんな感じか、</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">export</span> <span class="kr">class</span> <span class="nx">Issue</span> <span class="kr">extends</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">IssueId</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">comments</span><span class="o">:</span> <span class="nx">IssueComments</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">IssueId</span><span class="p">,</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">issueNumber</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">title</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span>
+</span><span class='line'>        <span class="kr">public</span> <span class="nx">body</span><span class="o">:</span> <span class="nx">string</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">commentCount</span><span class="o">:</span> <span class="nx">number</span>
+</span><span class='line'>    <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kr">super</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">comments</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">IssueComments</span><span class="p">(</span><span class="nx">commentCount</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">issueNumber</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>これでIssueRepositoryから取り出したタイミングでCommentの総数は取得できるようになった。</p>
+
+<h2>Local Entity用のRepositoryを作る</h2>
+
+<p>今回の場合はCommentがLocal Entity。このRepositoryは公開したくないので、<code>export</code>せずに作る。
+他はさっきと同じ雰囲気で作っていって使う。Factoryも公開しなくていいかな。
+(公開したくないのでプロパティにはしない)</p>
+
+<p>さっきと一緒で本来はIssueから引けるとよさそうなんだけど、割愛。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">/// &lt;reference path=&quot;../../../../definitions/dddbase/dddbase.d.ts&quot; /&gt;</span>
+</span><span class='line'><span class="c1">/// &lt;reference path=&quot;../../../../definitions/monapt/monapt.d.ts&quot; /&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span> <span class="nx">Github</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComments</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>            <span class="kr">public</span> <span class="nx">count</span><span class="o">:</span> <span class="nx">number</span><span class="p">,</span>
+</span><span class='line'>            <span class="kr">private</span> <span class="nx">issueId</span><span class="o">:</span> <span class="nx">IssueId</span><span class="p">,</span>
+</span><span class='line'>            <span class="kr">private</span> <span class="nx">issueNumber</span><span class="o">:</span> <span class="nx">number</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">getAll</span><span class="p">()</span><span class="o">:</span> <span class="nx">monapt</span><span class="p">.</span><span class="nx">Future</span><span class="o">&lt;</span><span class="nx">IssueComment</span><span class="p">[]</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">repository</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">IssueCommentRepositry</span><span class="p">();</span>
+</span><span class='line'>            <span class="c1">// 本来はissueIdからIssueを取ってきたりするのだが略</span>
+</span><span class='line'>            <span class="c1">// ...</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">repository</span><span class="p">.</span><span class="nx">commentsForIssue</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">export</span> <span class="kr">class</span> <span class="nx">IssueComment</span> <span class="kr">extends</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">Entity</span><span class="o">&lt;</span><span class="nx">DDD</span><span class="p">.</span><span class="nx">NumberIdentity</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">constructor</span><span class="p">(</span>
+</span><span class='line'>            <span class="nx">id</span><span class="o">:</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">NumberIdentity</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">body</span><span class="o">:</span> <span class="nx">string</span>
+</span><span class='line'>        <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">super</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">class</span> <span class="nx">IssueCommentRepositry</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kr">private</span> <span class="nx">apiClient</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GithubClient</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">commentsForIssue</span><span class="p">(</span><span class="nx">issue</span><span class="o">:</span> <span class="nx">Issue</span><span class="p">)</span><span class="o">:</span> <span class="nx">monapt</span><span class="p">.</span><span class="nx">Future</span><span class="o">&lt;</span><span class="nx">IssueComment</span><span class="p">[]</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">apiClient</span><span class="p">.</span><span class="nx">issueCommentsForIssue</span><span class="p">(</span><span class="s1">&#39;yaakaito&#39;</span><span class="p">,</span> <span class="s1">&#39;typescript-ddd-lazyload&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">).</span><span class="nx">map</span><span class="p">((</span><span class="nx">response</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">IssueCommentFactory</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">p</span><span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="nx">factory</span><span class="p">.</span><span class="nx">issueCommentsFromAPIResponse</span><span class="p">(</span><span class="nx">response</span><span class="p">));</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kr">class</span> <span class="nx">IssueCommentFactory</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">issueCommentsFromAPIResponse</span><span class="p">(</span><span class="nx">response</span><span class="o">:</span> <span class="nb">Object</span><span class="p">[])</span><span class="o">:</span> <span class="nx">monapt</span><span class="p">.</span><span class="nx">Future</span><span class="o">&lt;</span><span class="nx">IssueComment</span><span class="p">[]</span><span class="o">&gt;</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">comment</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">IssueComment</span><span class="p">(</span>
+</span><span class='line'>                <span class="k">new</span> <span class="nx">DDD</span><span class="p">.</span><span class="nx">NumberIdentity</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">comment</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="mi">10</span><span class="p">)),</span>
+</span><span class='line'>                <span class="nx">comment</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">],</span>
+</span><span class='line'>            <span class="p">));</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>こんな感じだろうか。使ってみる。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">repositry</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Github</span><span class="p">.</span><span class="nx">IssueRepository</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">repos</span><span class="p">.</span><span class="nx">issuesForRepository</span><span class="p">(</span><span class="nx">repositry</span><span class="p">).</span><span class="nx">onComplete</span><span class="p">(</span><span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">match</span><span class="p">({</span>
+</span><span class='line'>        <span class="nx">Success</span><span class="o">:</span> <span class="nx">issues</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">issues</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">comments</span><span class="p">.</span><span class="nx">getAll</span><span class="p">().</span><span class="nx">onSuccess</span><span class="p">(</span><span class="nx">comments</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">comments</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">})</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">Failure</span><span class="o">:</span> <span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/ts-ddd-lazyload-2.png" width="240"></p>
+
+<p>よさげ。</p>
+
+<h2>雑感</h2>
+
+<p>まじめに解説/実装例作ろうとすると途中が長過ぎて心折れる。
+Issueの方が楽かと思ったけど最初からRepositoryでやればよかった！！！</p>
+</div>
+
+
+  <footer>
+  <!-- 
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">yaakaito</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-16T02:03:00+09:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
+    </p>
+   -->
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/" data-via="" data-counturl="http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="320" data-show-faces="true"></div>
+  
+</div>
+
+    
+
+  </footer>
+</article>
+
+  <div>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+  
+  <aside id="aboutme"><img src="http://www.gravatar.com/avatar/8ba73f340ca40f9aa49a521fdc9512ce?s=160"/>
+<hgroup class="ore">
+  <h2 class="name">KAZUMA Ukyo</h2>
+  <h3 class="detail">software-developer @ Tokyo</h3>
+</hgroup>
+<section class="social">
+  <ul>
+    <li><a href="https://github.com/yaakaito" target="_blank"><img src="/assets/svg/github.svg" width="32" height="32" /></a></li>
+    <li><a href="https://www.facebook.com/kazuma.ukyo" target="_blank"><img src="/assets/svg/facebook.svg" width="32" height="32" /></a></li>
+    <li><a href="http://twitter.com/yaakaito" target="_blank"><img src="/assets/svg/twitter.svg" width="32" height="32" /></a></li>
+    <li><a href="/atom.xml" target="_blank"><img src="/assets/svg/feed.svg" width="32" height="32" /></a></li>
+  </ul>
+</section></aside>
+  
+  <!-- <aside id="paginator"><p class="meta">
+  
+    <a class="basic-alignment left" href="/blog/2013/08/15/typescript-library-development/" title="Previous Post: TypeScriptでライブラリ書くときのあれこれメモ">&laquo; TypeScriptでライブラリ書くときのあれこれメモ</a>
+  
+  
+</p></aside> -->
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - yaakaito -
+  <span class="credit">Powered by <a href="https://github.com">Github</a> & <a href="http://octopress.org">Octopress</a>,
+  </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'yaakaitoorg';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/';
+        var disqus_url = 'http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

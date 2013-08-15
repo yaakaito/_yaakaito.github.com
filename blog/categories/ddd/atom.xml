@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: DDD | yaakaito.org]]></title>
+  <link href="http://yaakaito.org/blog/categories/ddd/atom.xml" rel="self"/>
+  <link href="http://yaakaito.org/"/>
+  <updated>2013-08-16T04:42:56+09:00</updated>
+  <id>http://yaakaito.org/</id>
+  <author>
+    <name><![CDATA[yaakaito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TypeScriptとDDDとLazyload]]></title>
+    <link href="http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload/"/>
+    <updated>2013-08-16T02:03:00+09:00</updated>
+    <id>http://yaakaito.org/blog/2013/08/16/typescript-ddd-lazyload</id>
+    <content type="html"><![CDATA[<p>こんにちは！うきょーです！
+DDDをやってるとRepositoryを経由してEntityをやり取りするわけなんですが、APIの都合とか、パフォーマンスの都合でAggregate内の一部をLazyloadしたい、みたいなケースがある。
+出来ればLazyloadは考えたくないし、諦めて外に出してしまうというのも一つの手ではあるが、これもあんまりしたくない。</p>
+
+<p>というわけで実装例を作ってみる。</p>
+
+<h2>サンプル</h2>
+
+<p><a href="http://developer.github.com/v3/issues/">GithubのIssues API</a>を例にしてみる。
+このAPIはIssueの取得と、<a href="http://developer.github.com/v3/issues/comments/">そのIssueのコメントの取得</a>という2つのAPIに分かれてる、まあよくある感じだ。</p>
+
+<p><a href="http://developer.github.com/v3/issues/#list-issues-for-a-repository">List issues for a repository</a>を叩いてIssueのリストを取得したあと、それぞれのコメントをLazyloadできる、という形にしてみよう。</p>
+
+<h2>モデルを考える</h2>
+
+<p>今回あんまり関係ないところは略す。</p>
+
+<p>実装都合で始まってはいるが、コメントのリストを扱う何かしらのものがあった方がいいように思える。
+GithubのIssueページの仕様から考えると、
+「Issueには複数件のCommentを投稿することができる。それを閲覧することができるが、リストで出す場合には不要、だがCommentの総数は表示したい。」
+みたいな要求なんだろう。
+「複数件のComment」はただのArrayでもよさそうだけど、「総数」だけ別に扱いたいようなので、そういうモデルを作った方がいいだろう。一旦「IssueComments」ということにしておくか。対応させて「Comment」も「IssueComment」にすることにする。</p>
+
+<p>この「IssueComments」っていうのが外向けのRepositoryみたいな役割をするイメージ。</p>
+
+<p>面倒なんで最初からコードで書いていく。
+<a href="https://github.com/yaakaito/typescript-dddbase">typescript-dddbase</a>という自作のライブラリを使っている。</p>
+
+<h3>Issue</h3>
+
+<p>Issueのidentityとして「IssueId」を定義した。</p>
+
+<p>```javascript
+module Github {</p>
+
+<pre><code>export class IssueId extends DDD.Identity&lt;number&gt; {
+    constructor(id: number) {
+        super(id);
+    }
+}
+
+export class Issue extends DDD.Entity&lt;IssueId&gt; {
+    constructor(
+        public id: IssueId,
+        public title: string,
+        public body: string,
+    ) {
+        super(id);
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>IssueComment</h3>
+
+<p>Commentの部分。CommentはLocal Entityか。</p>
+
+<p>```javascript
+module Github {</p>
+
+<pre><code>export class IssueComments {
+
+}
+
+export class IssueComment extends DDD.Entity&lt;DDD.NumberIdentity&gt; {
+    constructor(
+        id: DDD.NumberIdentity,
+        body: string
+    ) {
+        super(id);
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>さてどうしよう。</p>
+
+<h3>Repository</h3>
+
+<p>githubの方のRepository、今回はIssueで考えてしまったので、実装は割愛。そういうものがあると思ってください。
+RepositoryRepositoryとかってアレですね・・・。</p>
+
+<h3>ともかくIssueRepository</h3>
+
+<p>を作るか。</p>
+
+<p>```javascript
+module Github {</p>
+
+<pre><code>export class IssueRepository {
+
+    private apiClient = new GithubClient();
+
+    issuesForRepository(repository: Repository): monapt.Future&lt;Issue[]&gt; {
+        // 本来は repository.onwer と repository.name とかその辺から
+        return this.apiClient.issuesForRepositry('yaakaito', 'typescript-ddd-lazyload').map((response, p) =&gt; {
+            var factory = new IssueFactory();
+            p.success(factory.issuesFromAPIResponse(response));
+        });
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p><a href="https://github.com/yaakaito/monapt">monapt</a>っていう自作のライブラリをまた使ってる。Scalaの Option Try Future を真似したライブラリ。僕はFutureが気に入っているし、Deferredはあんまり好きじゃないのでこっち。(JavaScriptなんでちょっと残念なAPIになってる)</p>
+
+<p><code>GithubClient</code>はgithubのAPIクライアントだと思ってください。(実装みたい人はコード見てください)</p>
+
+<h3>Factory</h3>
+
+<p>適当。</p>
+
+<p>```javascript</p>
+
+<p>module Github {</p>
+
+<pre><code>export class IssueFactory {
+    issuesFromAPIResponse(response: Object[]): Issue[] {
+        return response.map(issue =&gt; new Issue(
+            new IssueId(parseInt(issue['id'], 10)),
+            parseInt(issue['number'], 10),
+            issue['title'],
+            issue['body']
+        ));
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>テスト用のアプリケーション</h2>
+
+<p>こんな感じで使ってみる。</p>
+
+<p>```javascript
+$(() => {</p>
+
+<pre><code>var repos = new Github.IssueRepository();
+repos.issuesForRepository('yaakaito/typescript-ddd-lazyload').onComplete(r =&gt; r.match({
+    Success: issues =&gt; console.log(issues),
+    Failure: error =&gt; console.error(error)
+}));
+</code></pre>
+
+<p>});
+```</p>
+
+<p><img src="/images/ts-ddd-lazyload-1.png" width="240">
+よさげ</p>
+
+<h2>やっと本題</h2>
+
+<p>ながかった・・・</p>
+
+<p>本題のIssueCommentを考える。</p>
+
+<p>当然Issueに属することになるわけなのだが、まずは初期化から考えよう。
+Commentの総数は別に扱う、という話で、これはAPIからやってくるので、こういう感じ？</p>
+
+<p>```javascript
+export class IssueComments {</p>
+
+<pre><code>constructor(
+    public count: number
+  ) {
+
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Commentを引いてくるのに親のIssueの情報とかも必要だし、ポインタとnumberが必要か。</p>
+
+<p>```javascript
+export class IssueComments {</p>
+
+<pre><code>constructor(
+    public count: number,
+    private issueId: IssueId,
+    private issueNumber: number
+) {
+
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>これをIssueにいれてあげるとこんな感じか、</p>
+
+<p>```javascript
+export class Issue extends DDD.Entity<IssueId> {</p>
+
+<pre><code>comments: IssueComments;
+
+constructor(
+    public id: IssueId,
+    public issueNumber: number,
+    public title: string,
+    public body: string,
+    commentCount: number
+) {
+    super(id);
+    this.comments = new IssueComments(commentCount, id, issueNumber);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>これでIssueRepositoryから取り出したタイミングでCommentの総数は取得できるようになった。</p>
+
+<h2>Local Entity用のRepositoryを作る</h2>
+
+<p>今回の場合はCommentがLocal Entity。このRepositoryは公開したくないので、<code>export</code>せずに作る。
+他はさっきと同じ雰囲気で作っていって使う。Factoryも公開しなくていいかな。
+(公開したくないのでプロパティにはしない)</p>
+
+<p>さっきと一緒で本来はIssueから引けるとよさそうなんだけど、割愛。</p>
+
+<p>```javascript
+/// <reference path="../../../../definitions/dddbase/dddbase.d.ts" />
+/// <reference path="../../../../definitions/monapt/monapt.d.ts" /></p>
+
+<p>module Github {</p>
+
+<pre><code>export class IssueComments {
+    constructor(
+        public count: number,
+        private issueId: IssueId,
+        private issueNumber: number
+    ) {
+
+    }
+
+    getAll(): monapt.Future&lt;IssueComment[]&gt; {
+        var repository = new IssueCommentRepositry();
+        // 本来はissueIdからIssueを取ってきたりするのだが略
+        // ...
+        return repository.commentsForIssue(null);
+    }
+}
+
+export class IssueComment extends DDD.Entity&lt;DDD.NumberIdentity&gt; {
+    constructor(
+        id: DDD.NumberIdentity,
+        body: string
+    ) {
+        super(id);
+    }
+}
+
+class IssueCommentRepositry {
+    private apiClient = new GithubClient();
+
+    commentsForIssue(issue: Issue): monapt.Future&lt;IssueComment[]&gt; {
+        return this.apiClient.issueCommentsForIssue('yaakaito', 'typescript-ddd-lazyload', '1').map((response, p) =&gt; {
+            var factory = new IssueCommentFactory();
+            p.success(factory.issueCommentsFromAPIResponse(response));
+        });
+    }
+}
+
+class IssueCommentFactory {
+    issueCommentsFromAPIResponse(response: Object[]): monapt.Future&lt;IssueComment[]&gt; {
+        return response.map(comment =&gt; new IssueComment(
+            new DDD.NumberIdentity(parseInt(comment['id'], 10)),
+            comment['body'],
+        ));
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>こんな感じだろうか。使ってみる。</p>
+
+<p>```javascript
+$(() => {</p>
+
+<pre><code>var repositry = null;
+var repos = new Github.IssueRepository();
+repos.issuesForRepository(repositry).onComplete(r =&gt; r.match({
+    Success: issues =&gt; {
+        issues[0].comments.getAll().onSuccess(comments =&gt; {
+            console.log(comments);    
+        })
+    },
+    Failure: error =&gt; console.error(error)
+}));
+</code></pre>
+
+<p>});
+```</p>
+
+<p><img src="/images/ts-ddd-lazyload-2.png" width="240"></p>
+
+<p>よさげ。</p>
+
+<h2>雑感</h2>
+
+<p>まじめに解説/実装例作ろうとすると途中が長過ぎて心折れる。
+Issueの方が楽かと思ったけど最初からRepositoryでやればよかった！！！</p>
+]]></content>
+  </entry>
+  
+</feed>
